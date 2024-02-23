@@ -180,7 +180,14 @@
                                 <td>{{ client.prenom }}</td>
                                 <td>{{ client.email }}</td>
                                 <td>{{ client.phone}}</td>
-                                <td><button type="button">Click me</button></td>
+                                <td>  <a   onclick="saveAndPopulateSecondFormm('{{client.id}}','{{client.nom}}', '{{client.prenom }}', '{{client.email}}', '{{client.phone}}','{{client.password}}' ,'{{client.username}}')"                style="display: inline-block;
+    padding: 10px 20px;
+    text-decoration: none;
+    color: white;
+    background-color: blue;
+    border: 1px solid blue;
+    border-radius: 5px;
+    cursor: pointer;   ">edit client</a></td>
                             </tr>
                         {% endfor %}
                         </tbody>
@@ -193,8 +200,9 @@
                         <h2>Edit Customer</h2>
                     </div>
 
-                    <form action="/submit" method="post" class="container mt-5">
+                    <form action="submit_form" method="post" class="container mt-5">
                     <div class="row justify-content-center">
+                     <input type="hidden"  id="id" name="id" >
                         <div class="col-md-6">
                             <!-- Username -->
                             <div class="mb-3">
@@ -298,6 +306,29 @@
     <script src="assets/js/chartsJS.js"></script>
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+     <script>
+  
+function saveAndPopulateSecondFormm(id, nom, prenom, email, phone,password,username) {
+    // Save the data to local storage (optional)
+    localStorage.setItem('id', id);
+    localStorage.setItem('nom', nom);
+    localStorage.setItem('prenom', prenom);
+    localStorage.setItem('email', email);
+     localStorage.setItem('phone', phone);
+    localStorage.setItem('password', password);
+       localStorage.setItem('username', username);
+    // Populate the hidden input fields in the second form
+     document.getElementById('id').value = id;
+    document.getElementById('nom').value = nom;
+    document.getElementById('prenom').value = prenom;
+    document.getElementById('email').value = email;
+    document.getElementById('phone').value = phone;
+    document.getElementById('password').value = password;
+     document.getElementById('username').value = username;
+}
+
+
+</script>
 </body>
 </html>
 <script src={{ asset('assets/js/main.js')}}></script>
