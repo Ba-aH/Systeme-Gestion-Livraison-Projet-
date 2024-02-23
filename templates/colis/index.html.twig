@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Colis index{% endblock %}
+
+{% block body %}
+    <h1>Colis index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nom_produit</th>
+                <th>Type</th>
+                <th>Poid</th>
+                <th>Prix</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for coli in colis %}
+            <tr>
+                <td>{{ coli.id }}</td>
+                <td>{{ coli.nomProduit }}</td>
+                <td>{{ coli.type }}</td>
+                <td>{{ coli.poid }}</td>
+                <td>{{ coli.prix }}</td>
+                <td>
+                    <a href="{{ path('app_colis_show', {'id': coli.id}) }}">show</a>
+                    <a href="{{ path('app_colis_edit', {'id': coli.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_colis_new') }}">Create new</a>
+{% endblock %}

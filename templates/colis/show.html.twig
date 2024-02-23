@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Colis{% endblock %}
+
+{% block body %}
+    <h1>Colis</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ coli.id }}</td>
+            </tr>
+            <tr>
+                <th>Nom_produit</th>
+                <td>{{ coli.nomProduit }}</td>
+            </tr>
+            <tr>
+                <th>Type</th>
+                <td>{{ coli.type }}</td>
+            </tr>
+            <tr>
+                <th>Poid</th>
+                <td>{{ coli.poid }}</td>
+            </tr>
+            <tr>
+                <th>Prix</th>
+                <td>{{ coli.prix }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_colis_index') }}">back to list</a>
+
+    <a href="{{ path('app_colis_edit', {'id': coli.id}) }}">edit</a>
+
+    {{ include('colis/_delete_form.html.twig') }}
+{% endblock %}

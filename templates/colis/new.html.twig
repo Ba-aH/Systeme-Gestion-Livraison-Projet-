@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Colis{% endblock %}
+
+{% block body %}
+    <h1>Create new Colis</h1>
+
+    {{ include('colis/_form.html.twig') }}
+
+    <a href="{{ path('app_colis_index') }}">back to list</a>
+{% endblock %}
