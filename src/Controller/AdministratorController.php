@@ -15,7 +15,11 @@ use App\Repository\StatutLivraisonRepository;
 use App\Repository\LivraisonRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
+
 use Doctrine\Persistence\ManagerRegistry;
+
+
+
 #[Route('/administrator')]
 class AdministratorController extends AbstractController
 {
@@ -104,7 +108,7 @@ class AdministratorController extends AbstractController
 
                      $mod_stat = $entityManager->getRepository(StatutLivraison::class)->findOneBy(['livraison' => $livraisonIdd]);
                      if ($mod_stat) {
-                        $mod_stat->setStatusTitle('en attent');
+                        $mod_stat->setStatusTitle('en attend');
                         $mod_stat->setStatusDateModifier($now);
                        }
                      // Persist the changes to the database
