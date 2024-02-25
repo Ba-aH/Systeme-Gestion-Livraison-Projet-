@@ -8,7 +8,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\UX\Turbo\Attribute\Broadcast;
 
 #[ORM\Entity(repositoryClass: StatutCoursierRepository::class)]
-#[Broadcast]
 class StatutCoursier
 {
     #[ORM\Id]
