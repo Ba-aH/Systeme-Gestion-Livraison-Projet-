@@ -199,7 +199,8 @@
 
                         <tbody>
                         {% for client in clients %}
-                        <form action="" method="POST" >
+                        <form method="post" action="{{ path('app_client_delete', {'id': client.id}) }}"  >
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ client.id) }}">
                             <tr>
                                 <td>{{ client.nom }}</td>
                                 <td>{{ client.prenom }}</td>
