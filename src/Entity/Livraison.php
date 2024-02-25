@@ -43,6 +43,9 @@ class Livraison
     #[ORM\OneToMany(targetEntity: Colis::class, mappedBy: 'livraison')]
     private Collection $colis;
 
+    #[ORM\ManyToOne(inversedBy: 'livraisons')]
+    private ?Client $client = null;
+
     public function __construct()
     {
         $this->colis = new ArrayCollection();
@@ -185,6 +188,18 @@ class Livraison
                 $coli->setLivraison(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getClient(): ?Client
+    {
+        return $this->client;
+    }
+
+    public function setClient(?Client $client): static
+    {
+        $this->client = $client;
 
         return $this;
     }
