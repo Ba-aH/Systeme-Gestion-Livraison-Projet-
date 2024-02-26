@@ -176,7 +176,7 @@
 
                         <tbody>
                         {% for livraison in livraisons %}
-                        <tr>
+                        <tr><td>{{ livraison.id }}</td>
                             <td>{{ livraison.codePin }}</td>
                             <td>{{ livraison.Tourner ? livraison.Tourner.id : '' }}</td>
                             <td>{{ livraison.livraisonDate ? livraison.livraisonDate|date('Y-m-d H:i:s') : '' }}</td>
@@ -185,7 +185,7 @@
                             <td>{{ livraison.reference }}</td>
                             <td>{{ livraison.poidLivraison }}</td>
                             <td>
-                                <a href="{{ path('app_couriers', {'id': livraison.id}) }}">Check Available Courier </a>
+                            <a href="{{ path('app_couriers', {'id': livraison.Client.id, 'livraisonId': livraison.id}) }}">Check Available Courier</a>
                             </td>
                         </tr>
                             {% else %}

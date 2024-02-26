@@ -1,14 +1,24 @@
 <?php
 
 namespace App\Controller;
+
+use App\Entity\Coursier;
 use App\Repository\LivraisonRepository;
 use App\Repository\StatutLivraisonRepository;
 use App\Repository\CoursierRepository;
+use App\Repository\AdresseRepository;
+use App\Repository\TournerRepository;
+use App\Repository\ClientRepository;
+use App\Entity\Tourner;
+use App\Repository\StatutCoursierRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\Id;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 #[Route('/administrator')]
 class GererTourController extends AbstractController
@@ -33,7 +43,7 @@ class GererTourController extends AbstractController
         
     
         return $this->render('gerer_tour/index.html.twig', [
-            'livraisons' => $livraisons,
+            'livraisons' => $livraisons, 
         ]);
     }
 
@@ -69,15 +79,60 @@ class GererTourController extends AbstractController
         return $this->json($data);
     }
 
+
 #[Route('available/couriers/{id}', name: 'app_couriers', methods: ['GET'])]
-public function show(CoursierRepository $coursierRepository): Response
+public function show(Request $request,LivraisonRepository $livraisonRepository, ClientRepository $clientRepository,AdresseRepository $adresseRepository,StatutCoursierRepository $statutCoursierRepository,CoursierRepository $coursierRepository,$id): Response
 {
+    // $client = $clientRepository->findBy();
+    $client=$clientRepository->findBy(['id' => $id]);
+    $idclient = $client[0]->getId();
+    $realAdr=$client[0]->getAdresses();
+    $idAdr=$realAdr[0]->getId();
+    $adr = $adresseRepository->findBy(['id' => $idAdr]);
+    $regionAdr = $adr[0]->getRegion();
+    $livraisonId = $request->get('livraisonId');
+
+    $coursierDispo = $statutCoursierRepository->findBy(['region' => $regionAdr,'titre_statut' => 'disponible',]);
     
-    $couriers = $coursierRepository->findAll();
     return $this->render('gerer_tour/couriers.html.twig', [
-        'couriers' => $couriers,
+        'couriers' => $coursierDispo,
     ]);
 }
+
+
+    #[Route('affect/{id}', name: 'affectRoute', methods: ['GET', 'POST'])]
+    public function affecterAuRoute(Request $request,TournerRepository $tournerRepository,CoursierRepository $coursierRepository,$id, EntityManagerInterface $entityManager,LivraisonRepository $livraisonRepository): Response
+    {
+        $coursier=$tournerRepository->findBy(['coursier' => $id]);
+        $livraisonId = $request->get('livraisonId');
+        if (empty($coursier)) {
+            $tour = new Tourner();  
+            $coursierN = $coursierRepository->findOneBy(['id' => $id]);
+            $tour->setCoursier($coursierN);
+            $tour->setPrixTourner(0);
+            $tour->setNbLivraison(1);
+            $entityManager->persist($tour);
+            $entityManager->flush();
+            $livraison = $livraisonRepository->findOneBy(['id' => $livraisonId]);
+            $livraison->setTourner($tour);
+            $entityManager->flush();
+            return $this->redirectToRoute('app_gerer_data', [], Response::HTTP_SEE_OTHER);
+            
+
+        } else {
+            $tour = $tournerRepository -> findOneBy(['coursier' => $id]);
+            $nb=$tour->getNbLivraison();
+            $tour -> setNbLivraison($nb+1);
+            $entityManager->flush();
+            $livraison = $livraisonRepository->findOneBy(['id' => $livraisonId]);
+            $livraison->setTourner($tour);
+            $entityManager->flush();
+            return $this->render('gerer_tour/test.html.twig', [
+                'couriers' => $coursier,   
+            ]);
+        }  
+       
+    }
       
     
 }
