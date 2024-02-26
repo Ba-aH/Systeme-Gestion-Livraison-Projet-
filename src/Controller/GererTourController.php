@@ -101,7 +101,7 @@ public function show(Request $request,LivraisonRepository $livraisonRepository, 
 
 
     #[Route('affect/{id}', name: 'affectRoute', methods: ['GET', 'POST'])]
-    public function affecterAuRoute(Request $request,TournerRepository $tournerRepository,CoursierRepository $coursierRepository,$id, EntityManagerInterface $entityManager,LivraisonRepository $livraisonRepository): Response
+    public function affecterAuRoute(Request $request,TournerRepository $tournerRepository,CoursierRepository $coursierRepository,$id, EntityManagerInterface $entityManager,LivraisonRepository $livraisonRepository,StatutLivraisonRepository $statutLivraisonRepository): Response
     {
         $coursier=$tournerRepository->findBy(['coursier' => $id]);
         $livraisonId = $request->get('livraisonId');
@@ -115,6 +115,9 @@ public function show(Request $request,LivraisonRepository $livraisonRepository, 
             $entityManager->flush();
             $livraison = $livraisonRepository->findOneBy(['id' => $livraisonId]);
             $livraison->setTourner($tour);
+            $changestat = $statutLivraisonRepository->findOneBy(['livraison' => $livraisonId]);
+         
+            $changestat->setStatusTitle('affecte');
             $entityManager->flush();
             return $this->redirectToRoute('app_gerer_data', [], Response::HTTP_SEE_OTHER);
             
@@ -126,6 +129,9 @@ public function show(Request $request,LivraisonRepository $livraisonRepository, 
             $entityManager->flush();
             $livraison = $livraisonRepository->findOneBy(['id' => $livraisonId]);
             $livraison->setTourner($tour);
+            $changestat = $statutLivraisonRepository->findOneBy(['livraison' => $livraisonId]);
+         
+            $changestat->setStatusTitle('affecte');
             $entityManager->flush();
             return $this->render('gerer_tour/test.html.twig', [
                 'couriers' => $coursier,   
