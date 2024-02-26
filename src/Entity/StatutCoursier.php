@@ -22,9 +22,6 @@ class StatutCoursier
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $debut_tourner = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $fin_tourner = null;
-
     #[ORM\OneToOne(inversedBy: 'statutCoursier', cascade: ['persist', 'remove'])]
     private ?Coursier $coursier = null;
 
@@ -60,17 +57,6 @@ class StatutCoursier
         return $this;
     }
 
-    public function getFinTourner(): ?\DateTimeInterface
-    {
-        return $this->fin_tourner;
-    }
-
-    public function setFinTourner(?\DateTimeInterface $fin_tourner): static
-    {
-        $this->fin_tourner = $fin_tourner;
-
-        return $this;
-    }
 
     public function getCoursier(): ?Coursier
     {

@@ -157,7 +157,7 @@
             <div class="details">
                 <div class="recentOrders">
                     <div class="cardHeader">
-                        <h2>Courier Disponible</h2>
+                        <h2>Courier Disponible a {{regionAdr}}</h2>
                         <a href="#" class="btn">View All</a>
                     </div>
 
@@ -181,7 +181,7 @@
                             <td>{{ courier.coursier.prenom }}</td>
                             <td>{{ courier.coursier.id }}</td>
                             <td>{{ courier.getDebutTourner()|date('Y-m-d H:i:s') }}</td>
-                            <td>{{ courier.getFinTourner()|date('Y-m-d H:i:s') }}</td>
+                            
                             
                             {# <td> <p> {{ statutLivraison.getLivraisonDate()|date('Y-m-d H:i:s') }}</p> #}
 

@@ -96,6 +96,7 @@ public function show(Request $request,LivraisonRepository $livraisonRepository, 
     
     return $this->render('gerer_tour/couriers.html.twig', [
         'couriers' => $coursierDispo,
+        'regionAdr' => $regionAdr,
     ]);
 }
 
