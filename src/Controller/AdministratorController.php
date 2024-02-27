@@ -5,12 +5,15 @@ use DateTime;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Entity\Client;
+use App\Entity\LivraisonHistory;
+
 use App\Entity\Livraison;
 use App\Entity\StatutLivraison;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\ClientRepository;
+use App\Repository\LivraisonHistoryRepository;
 use App\Repository\StatutLivraisonRepository;
 use App\Repository\LivraisonRepository;
 use Symfony\Component\HttpFoundation\Request;
@@ -108,7 +111,7 @@ class AdministratorController extends AbstractController
 
                      $mod_stat = $entityManager->getRepository(StatutLivraison::class)->findOneBy(['livraison' => $livraisonIdd]);
                      if ($mod_stat) {
-                        $mod_stat->setStatusTitle('en attend');
+                        $mod_stat->setStatusTitle('en attente');
                         $mod_stat->setStatusDateModifier($now);
                        }
                      // Persist the changes to the database
@@ -125,7 +128,7 @@ class AdministratorController extends AbstractController
              
          }
          
-    #[Route('/{id}', name: 'app_client_delete', methods: ['POST'])]
+    #[Route('/delete/{id}', name: 'app_client_delete', methods: ['POST'])]
     public function delete(Request $request, Client $client, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$client->getId(), $request->request->get('_token'))) {
@@ -137,4 +140,100 @@ class AdministratorController extends AbstractController
 
     }
 
+
+
+    #[Route('/history', name: 'history')]
+    public function history(EntityManagerInterface $entityManager,LivraisonHistoryRepository $LivraisonHistoryRepository): Response
+    {
+        $liv_hist=$LivraisonHistoryRepository->findAll();
+        $livraisons = [];
+
+  foreach ($liv_hist as $item) {
+            $livraisons[] = $item->getLivraison();
+        }
+        return $this->render('administrator/history.html.twig', [
+            'livraisons' => $livraisons, 
+        ]);
+    }
+    #[Route('/filtrer', name: 'filtrer', methods: ['POST'])]
+    public function filtrer(
+        EntityManagerInterface $entityManager,
+        LivraisonHistoryRepository $livraisonHistoryRepository,
+        Request $request,
+        LivraisonRepository $livraisonRepository
+    ): Response {
+        try {
+           
+
+            $date = $request->request->get('date');
+        $dateLivraison = DateTime::createFromFormat('Y-m-d', $date);
+
+            $liv_hist=$livraisonHistoryRepository->findAll();
+            $livraisons = [];
+            $liv = [];
+      foreach ($liv_hist as $item) {
+                $livraisons[] = $item->getLivraison();
+            }
+            foreach ($livraisons as $item) {
+               $dd= $item->getLivraisonDate();
+                if (  $dd=$dateLivraison) {
+                
+                $liv[] = $item;}
+            }
+
+
+          
+            if (!$dateLivraison) {
+                throw new \Exception("Invalid date format. Please provide date in 'Y-m-d' format.");
+            }
+    $x=1;
+            $livraisonsEchec = $livraisonRepository->findBy(['livraison_date' => $dateLivraison]);
+    
+            $data = [];
+        foreach (    $liv as $livraison) {
+          
+        
+                $data[] = [
+                    'id' => $livraison->getId(),
+                   
+                ];
+            
+        }
+            return $this->json($data);
+        } catch (\Exception $e) {
+            // Log the error or return a meaningful error response
+            return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        }
+    }
+
+
+
+
 }
+
+  // #[Route('/filtrer', name: 'filtrer', methods: ['POST']) ]
+    // public function filtrer(EntityManagerInterface $entityManager,LivraisonHistoryRepository $LivraisonHistoryRepository,Request $request): Response
+    // {  
+         // $date = $request->request->get('date');
+// $region = $request->request->get('region');
+// $coursier = $request->request->get('coursier');
+
+// $dql = "SELECT lh 
+// FROM App\Entity\LivraisonHistory lh
+// LEFT JOIN lh.livraison livraison
+// LEFT JOIN livraison.coursier coursier
+// LEFT JOIN livraison.adresse adresse
+// LEFT JOIN adresse.region region
+// WHERE lh.date = :date
+// AND coursier = :coursier
+// AND region = :region";
+
+// $query = $entityManager->createQuery($dql);
+// $query->setParameter('date', $date)
+// ->setParameter('coursier', $coursier)
+// ->setParameter('region', $region);
+
+// $result= $query->getResult();
+// $jsonResult = json_encode($result);
+// return $this->json($jsonResult);
+    // }
