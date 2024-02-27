@@ -47,14 +47,11 @@ class GererTourController extends AbstractController
         ]);
     }
 
-   
-
     #[Route('/gerer/data', name: 'app_gerer_data', methods: ['GET'])]
     public function data(LivraisonRepository $livraisonRepository): JsonResponse
     {
         $livraisons = $livraisonRepository->findAll();
         $data = [];
-
         foreach ($livraisons as $livraison) {
             $tourner = $livraison->getTourner();
 
@@ -75,7 +72,6 @@ class GererTourController extends AbstractController
                 ];
             }
         }
-
         return $this->json($data);
     }
 
@@ -108,13 +104,17 @@ public function show(Request $request,LivraisonRepository $livraisonRepository, 
         $livraisonId = $request->get('livraisonId');
         if (empty($coursier)) {
             $tour = new Tourner();  
+            $livraison = $livraisonRepository->findOneBy(['id' => $livraisonId]);
+            $prix= $livraison->getPrixTotaleLivraison();
+            $poid = $livraison->getPoidLivraison();
             $coursierN = $coursierRepository->findOneBy(['id' => $id]);
             $tour->setCoursier($coursierN);
-            $tour->setPrixTourner(0);
+            $tour->setPrixTourner($prix);
+            $tour->setPoidTourner($poid);
             $tour->setNbLivraison(1);
             $entityManager->persist($tour);
             $entityManager->flush();
-            $livraison = $livraisonRepository->findOneBy(['id' => $livraisonId]);
+            
             $livraison->setTourner($tour);
             $changestat = $statutLivraisonRepository->findOneBy(['livraison' => $livraisonId]);
          
@@ -124,11 +124,17 @@ public function show(Request $request,LivraisonRepository $livraisonRepository, 
             
 
         } else {
+            $livraison = $livraisonRepository->findOneBy(['id' => $livraisonId]);
+            $prix= $livraison->getPrixTotaleLivraison();
+            $poid = $livraison->getPoidLivraison();
             $tour = $tournerRepository -> findOneBy(['coursier' => $id]);
             $nb=$tour->getNbLivraison();
+            $poidTour = $poid + $tour->getPoidTourner();
+            $prixTour = $prix + $tour->getPrixTourner();
+            $tour -> setPoidTourner($poidTour);
+            $tour -> setPrixTourner($prixTour);
             $tour -> setNbLivraison($nb+1);
             $entityManager->flush();
-            $livraison = $livraisonRepository->findOneBy(['id' => $livraisonId]);
             $livraison->setTourner($tour);
             $changestat = $statutLivraisonRepository->findOneBy(['livraison' => $livraisonId]);
          

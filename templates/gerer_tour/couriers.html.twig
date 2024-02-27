@@ -199,7 +199,114 @@
                         
                     </table>
                 </div>
+            <div class="recentCustomers">
+                    <div class="cardHeader">
+                        <h2>Recent Customers</h2>
+                    </div>
 
+                       <form action="edit_byadmin" method="POST" class="container mt-5">
+                    <div class="row justify-content-center">
+                     <input type="hidden"  id="id" name="id" >
+                        <div class="col-md-6">
+                            <!-- Username -->
+                            <div class="mb-3">
+                                <label for="reference" class="form-label">reference:</label>
+                                <input type="text" class="form-control" id="reference" name="reference" required maxlength="255" readonly>
+                            </div>
+
+                            <!-- Password -->
+                            <div class="mb-3">
+                                <label for="id" class="form-label">id:</label>
+                                <input type="text" class="form-control" id="ids" name="ids" required maxlength="255" readonly>
+                            </div>
+
+                            <!-- Email -->
+                            <div class="mb-3">
+                                <label for="codepin " class="form-label">codepin:</label>
+                                <input type="text" class="form-control" id="codepin" name="codepin" required maxlength="255" readonly>
+                            </div>
+
+                            <!-- Nom -->
+                            <div class="mb-3">
+                                   <label for="date " class="form-label">date:</label>
+                                   <input type="datetime-local" class="form-control" id="date" name="date" required>
+                
+                            </div>
+
+                            <!-- Prenom -->
+                            <div class="mb-3">
+                                <label for="fraix" class="form-label">Frais de Livraison:</label>
+                                <input type="text" class="form-control" id="fraix" name="fraix" required maxlength="255" readonly>
+                            </div>
+
+                            <!-- Phone -->
+                            <div class="mb-3">
+                                <label for="prix" class="form-label">Prix Totale de Livraison:</label>
+                                <input type="text" class="form-control" id="prix" name="prix" required maxlength="255" readonly>
+                            </div>
+                             <div class="mb-3">
+                                <label for="poid" class="form-label">poid:</label>
+                                <input type="text" class="form-control" id="poid" name="poid" required maxlength="255" readonly>
+                            </div>
+
+                             <div class="mb-3">
+                                <label for="tourner" class="form-label">tourner:</label>
+                                <input type="text" class="form-control" id="tourner" name="tourner" required maxlength="255" readonly>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </div>
+                </form>
+
+                <style>
+                    input[readonly] {
+                            background-color: #f5f5f5; /* Light gray background */
+                            color: #666; /* Dark gray text color */
+                            border: 1px solid #ccc; /* Light gray border */
+                            cursor: not-allowed; /* Change cursor to not-allowed */
+                        }
+
+                    .form-label {
+                        font-weight: bold;
+                    }
+
+                    .mb-3 {
+                        margin-bottom: 15px;
+                    }
+
+                    .form-control {
+                        width: 100%;
+                        padding: 10px;
+                        box-sizing: border-box;
+                        border: 1px solid #ccc;
+                        border-radius: 4px;
+                    }
+
+                    .btn-primary {
+                        background-color: #007bff;
+                        color: #fff;
+                        padding: 10px 15px;
+                        border: none;
+                        border-radius: 4px;
+                        cursor: pointer;
+                    }
+
+                    .btn-primary:hover {
+                        background-color: #0056b3;
+                    }
+
+                    .row {
+                        margin-right: 0;
+                        margin-left: 0;
+                    }
+
+                    /* Optional: Add some spacing around the form */
+                    .mt-5 {
+                        margin-top: 50px;
+                    }
+                </style>
                 
             </div>
 
