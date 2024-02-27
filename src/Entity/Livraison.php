@@ -19,9 +19,12 @@ class Livraison
     #[ORM\Column(nullable: true)]
     private ?int $code_pin = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $livraison_date = null;
 
+
+    
     #[ORM\Column]
     private ?float $frais_livraison = null;
 
