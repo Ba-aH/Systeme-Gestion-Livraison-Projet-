@@ -27,7 +27,7 @@ class GererTourController extends AbstractController
     public function index(LivraisonRepository $livraisonRepository, StatutLivraisonRepository $statutLivraisonRepository): Response
     {
         $ann = $statutLivraisonRepository->findBy(['status_title' => "annulée"]);
-        $att = $statutLivraisonRepository->findBy(['status_title' => "en attend"]);
+        $att = $statutLivraisonRepository->findBy(['status_title' => "en attente"]);
         $livraisons = $livraisonRepository->findAll();
        
 

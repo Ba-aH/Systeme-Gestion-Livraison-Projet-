@@ -165,20 +165,33 @@
                         <h2>historique des livarisons</h2>
                         <a href="#" class="btn">View All</a>
                     </div>
-    <div class="form-container">
+
+
+
+
+
+
+
+
+
+
+
+
+                    
+    {# <div class="form-container">
         <h2>filtrer par:</h2>
         <form action="filtrer" method="POST">
             <div class="form-group">
                 <label for="date">Date:</label>
-                <input type="date" id="date" name="date" >
+                <input type="date" id="date" name="date"   >
             </div>
             <div class="form-group">
                 <label for="courier">Coursier:</label>
-                <input type="text" id="coursier" name="coursier" >
+                <input type="text" id="coursier" name="coursier"  >
             </div>
             <div class="form-group">
                 <label for="region">Region:</label>
-                <input type="text" id="region" name="region" >
+                <input type="text" id="region" name="region"  >
             </div>
             <div class="form-group">
                 <button type="submit">Submit</button>
@@ -247,7 +260,7 @@
                 width: 90%;
             }
         }
-    
+     #}
     
     
     </style>
@@ -255,30 +268,37 @@
                    <table>
                         <thead>
                             <tr>
-                                <td>Reference</td>
+                             
                                 <td>Id</td>
-                              <td>  CodePin</td>
-                                <td>FraisLivraison</td>
-                                <td>PrixTotaleLivraison</td>
-                                <td>PoidLivraison</td>
-                                     <td>LivraisonDate</td>
-                                          <td>Tourner</td>
+                              <td>  username</td>
+                                <td>email</td>
+                                <td>password</td>
+                                <td>nom </td>
+                                     <td>prenom</td>
+                                      <td>phone</td>         <td>region</td>
                             </tr>
                         </thead>
 
                         <tbody>
-{% for statutLivraison in livraisons %}
+{% for statutLivraison in coursiers %}
  
-      <tr>   <td> <p> {{ statutLivraison.getReference() }}</p></td>
-      <td> <p> {{ statutLivraison.getId() }}</p></td>
-      <td> <p> {{ statutLivraison.getCodePin() }}</p></td>
-      <td><p>{{ statutLivraison.getFraisLivraison() }}</p></td>
-      <td> <p> {{ statutLivraison.getPrixTotaleLivraison() }}</p></td>
-      <td> <p>{{ statutLivraison.getPoidLivraison() }}</p></td>
-      <td> <p> {{ statutLivraison.getLivraisonDate()|date('Y-m-d H:i:s') }}</p>
-   {% if statutLivraison.getTourner() is not null %}
-        <td> <p> {{ statutLivraison.getTourner().getId() }}</p></td>
-    {% endif %}
+      <tr>   <td> <p> {{ statutLivraison.getId() }}</p></td>
+      <td> <p> {{ statutLivraison.getUsername() }}</p></td>
+      <td> <p> {{ statutLivraison.getEmail() }}</p></td>
+      <td><p>{{ statutLivraison.getPassword() }}</p></td>
+      <td> <p> {{ statutLivraison.getNom() }}</p></td>
+      <td> <p>{{ statutLivraison.getPrenom() }}</p></td>
+      <td> <p> {{ statutLivraison.getPhone() }}</p></td>
+  
+        <td> <p> {{ statutLivraison.getStatutCoursier().getRegion()  }}</p></td>
+  <td>  <a          style="display: inline-block;
+    padding: 10px 20px;
+    text-decoration: none;
+    color: white;
+    background-color: blue;
+    border: 1px solid blue;
+    border-radius: 5px;
+    cursor: pointer;   ">historique </a></td>
    <td>  </td><tr>  
 {% endfor %}
 

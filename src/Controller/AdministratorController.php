@@ -16,9 +16,13 @@ use App\Repository\ClientRepository;
 use App\Repository\LivraisonHistoryRepository;
 use App\Repository\StatutLivraisonRepository;
 use App\Repository\LivraisonRepository;
+use App\Repository\AdresseRepository ;
+use App\Repository\TournerRepository ;
+use App\Repository\CoursierRepository ;
+use App\Repository\StatutCoursierRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
-
+ 
 use Doctrine\Persistence\ManagerRegistry;
 
 
@@ -142,74 +146,35 @@ class AdministratorController extends AbstractController
 
 
 
-    #[Route('/history', name: 'history')]
-    public function history(EntityManagerInterface $entityManager,LivraisonHistoryRepository $LivraisonHistoryRepository): Response
-    {
-        $liv_hist=$LivraisonHistoryRepository->findAll();
-        $livraisons = [];
+//     #[Route('/history', name: 'history')]
+//     public function history(EntityManagerInterface $entityManager,LivraisonHistoryRepository $LivraisonHistoryRepository): Response
+//     {
+//         $liv_hist=$LivraisonHistoryRepository->findAll();
+//         $livraisons = [];
 
-  foreach ($liv_hist as $item) {
-            $livraisons[] = $item->getLivraison();
-        }
+//   foreach ($liv_hist as $item) {
+//             $livraisons[] = $item->getLivraison();
+//         }
+//         return $this->render('administrator/history.html.twig', [
+//             'livraisons' => $livraisons, 
+//         ]);
+//     }
+   
+
+    #[Route('/history', name: 'history')]
+    public function history(CoursierRepository $CoursierRepository,EntityManagerInterface $entityManager,LivraisonHistoryRepository $LivraisonHistoryRepository): Response
+    {  $coursiers=$CoursierRepository->findAll();
+      
         return $this->render('administrator/history.html.twig', [
-            'livraisons' => $livraisons, 
+            'coursiers' => $coursiers, 
         ]);
     }
-    #[Route('/filtrer', name: 'filtrer', methods: ['POST'])]
-    public function filtrer(
-        EntityManagerInterface $entityManager,
-        LivraisonHistoryRepository $livraisonHistoryRepository,
-        Request $request,
-        LivraisonRepository $livraisonRepository
-    ): Response {
-        try {
-           
 
-            $date = $request->request->get('date');
-        $dateLivraison = DateTime::createFromFormat('Y-m-d', $date);
-
-            $liv_hist=$livraisonHistoryRepository->findAll();
-            $livraisons = [];
-            $liv = [];
-      foreach ($liv_hist as $item) {
-                $livraisons[] = $item->getLivraison();
-            }
-            foreach ($livraisons as $item) {
-               $dd= $item->getLivraisonDate();
-                if (  $dd=$dateLivraison) {
-                
-                $liv[] = $item;}
-            }
-
-
-          
-            if (!$dateLivraison) {
-                throw new \Exception("Invalid date format. Please provide date in 'Y-m-d' format.");
-            }
-    $x=1;
-            $livraisonsEchec = $livraisonRepository->findBy(['livraison_date' => $dateLivraison]);
-    
-            $data = [];
-        foreach (    $liv as $livraison) {
-          
-        
-                $data[] = [
-                    'id' => $livraison->getId(),
-                   
-                ];
-            
-        }
-            return $this->json($data);
-        } catch (\Exception $e) {
-            // Log the error or return a meaningful error response
-            return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
-        }
-    }
-
-
-
-
+               
 }
+
+
+
 
   // #[Route('/filtrer', name: 'filtrer', methods: ['POST']) ]
     // public function filtrer(EntityManagerInterface $entityManager,LivraisonHistoryRepository $LivraisonHistoryRepository,Request $request): Response
@@ -237,3 +202,19 @@ class AdministratorController extends AbstractController
 // $jsonResult = json_encode($result);
 // return $this->json($jsonResult);
     // }
+    
+        //     $data = [];
+        // foreach (    $liv as $livraison) {
+          
+        
+        //         $data[] = [
+        //             'id' => $livraison->getId(),
+                   
+        //         ];
+            
+        // }
+        //     return $this->json($data);
+        // } catch (\Exception $e) {
+        //     // Log the error or return a meaningful error response
+        //     return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        // }
