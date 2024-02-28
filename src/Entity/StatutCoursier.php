@@ -19,7 +19,7 @@ class StatutCoursier
     #[ORM\Column(length: 255)]
     private ?string $region = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $debut_tourner = null;
 
     #[ORM\OneToOne(inversedBy: 'statutCoursier', cascade: ['persist', 'remove'])]

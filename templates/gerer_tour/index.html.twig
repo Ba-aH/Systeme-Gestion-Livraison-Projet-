@@ -179,7 +179,7 @@
                         <tr><td>{{ livraison.id }}</td>
                             <td>{{ livraison.codePin }}</td>
                             <td>{{ livraison.Tourner ? livraison.Tourner.id : '' }}</td>
-                            <td>{{ livraison.livraisonDate ? livraison.livraisonDate|date('Y-m-d H:i:s') : '' }}</td>
+                            <td>{{ livraison.livraisonDate ? livraison.livraisonDate|date('Y-m-d') : '' }}</td>
                             <td>{{ livraison.fraisLivraison }}</td>
                             <td>{{ livraison.prixTotaleLivraison }}</td>
                             <td>{{ livraison.reference }}</td>

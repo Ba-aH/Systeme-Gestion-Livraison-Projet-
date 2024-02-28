@@ -27,7 +27,7 @@ class GererTourController extends AbstractController
     public function index(LivraisonRepository $livraisonRepository, StatutLivraisonRepository $statutLivraisonRepository): Response
     {
         $ann = $statutLivraisonRepository->findBy(['status_title' => "annulée"]);
-        $att = $statutLivraisonRepository->findBy(['status_title' => "en attente"]);
+        $att = $statutLivraisonRepository->findBy(['status_title' => "en attend"]);
         $livraisons = $livraisonRepository->findAll();
        
 
@@ -76,7 +76,7 @@ class GererTourController extends AbstractController
     }
 
 
-#[Route('available/couriers/{id}', name: 'app_couriers', methods: ['GET'])]
+#[Route('/available/couriers/{id}', name: 'app_couriers', methods: ['GET'])]
 public function show(Request $request,LivraisonRepository $livraisonRepository, ClientRepository $clientRepository,AdresseRepository $adresseRepository,StatutCoursierRepository $statutCoursierRepository,CoursierRepository $coursierRepository,$id): Response
 {
     // $client = $clientRepository->findBy();
@@ -87,8 +87,11 @@ public function show(Request $request,LivraisonRepository $livraisonRepository, 
     $adr = $adresseRepository->findBy(['id' => $idAdr]);
     $regionAdr = $adr[0]->getRegion();
     $livraisonId = $request->get('livraisonId');
+    $livraison = $livraisonRepository->findOneBy(['id'=>$livraisonId]);
+    $dateLivraison = $livraison->getLivraisonDate();
 
-    $coursierDispo = $statutCoursierRepository->findBy(['region' => $regionAdr,'titre_statut' => 'disponible',]);
+    
+    $coursierDispo = $statutCoursierRepository->findBy(['region' => $regionAdr,'titre_statut' => 'disponible','debut_tourner'=>$dateLivraison]);
     
     return $this->render('gerer_tour/couriers.html.twig', [
         'couriers' => $coursierDispo,
@@ -97,9 +100,21 @@ public function show(Request $request,LivraisonRepository $livraisonRepository, 
 }
 
 
-    #[Route('affect/{id}', name: 'affectRoute', methods: ['GET', 'POST'])]
+    #[Route('/affect/{id}', name: 'affectRoute', methods: ['GET', 'POST'])]
     public function affecterAuRoute(Request $request,TournerRepository $tournerRepository,CoursierRepository $coursierRepository,$id, EntityManagerInterface $entityManager,LivraisonRepository $livraisonRepository,StatutLivraisonRepository $statutLivraisonRepository): Response
     {
+        $ann = $statutLivraisonRepository->findBy(['status_title' => "annulée"]);
+        $att = $statutLivraisonRepository->findBy(['status_title' => "en attend"]);
+        $livraisons = $livraisonRepository->findAll();
+        $livraisons = [];
+        foreach ($ann as $item) {
+            $livraisons[] = $item->getLivraison();
+        }
+
+        foreach ($att as $item) {
+            $livraisons[] = $item->getLivraison();
+        }
+
         $coursier=$tournerRepository->findBy(['coursier' => $id]);
         $livraisonId = $request->get('livraisonId');
         if (empty($coursier)) {
@@ -120,7 +135,9 @@ public function show(Request $request,LivraisonRepository $livraisonRepository, 
          
             $changestat->setStatusTitle('affecte');
             $entityManager->flush();
-            return $this->redirectToRoute('app_gerer_data', [], Response::HTTP_SEE_OTHER);
+            return $this->render('gerer_tour/coursier_tour.html.twig', [
+                'livraisons' => $livraisons,   
+            ]);
             
 
         } else {
@@ -135,17 +152,35 @@ public function show(Request $request,LivraisonRepository $livraisonRepository, 
             $tour -> setPrixTourner($prixTour);
             $tour -> setNbLivraison($nb+1);
             $entityManager->flush();
+
             $livraison->setTourner($tour);
             $changestat = $statutLivraisonRepository->findOneBy(['livraison' => $livraisonId]);
-         
             $changestat->setStatusTitle('affecte');
             $entityManager->flush();
-            return $this->render('gerer_tour/test.html.twig', [
-                'couriers' => $coursier,   
+
+
+            return $this->render('gerer_tour/index.html.twig', [
+                // 'courier' => $coursierRepository->findOneBy(['id'=>$id]),
+                'livraisons' => $livraisons,   
             ]);
         }  
+
        
     }
-      
+    
+    #[Route('/available/couriers/{id}', name: 'app_courier_tour', methods: ['GET'])]
+    public function showCoursierTour(Request $request,LivraisonRepository $livraisonRepository,TournerRepository $tournerRepository,CoursierRepository $coursierRepository,$id): Response
+    {
+        $coursier=$tournerRepository->findBy(['coursier' => $id]);
+        $coursierTour = $tournerRepository->findBy(['coursier_id' => $id]);
+        $livraisons=[];
+        foreach($coursierTour as $item){
+            $livraisons[] = $item->getLivraisons();
+        }
+        return $this->render('gerer_tour/index.html.twig', [
+            'livraisons' => $livraisons, 
+            'couriers' => $coursier, 
+        ]);
+    }
     
 }

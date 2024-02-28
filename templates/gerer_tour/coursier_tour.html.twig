@@ -157,38 +157,33 @@
             <div class="details">
                 <div class="recentOrders">
                     <div class="cardHeader">
-                        <h2>Courier Disponible a {{regionAdr}}</h2>
+                        <h2>Tour des livraisons de {{courier.email}} </h2>
                         <a href="#" class="btn">View All</a>
                     </div>
 
                     <table>
                         <thead>
                             <tr>
-                                <td>Courier ID</td>
-                                <td>Nom</td>
-                                <td>Prenom</td>
-                                <td>Disponible de</td>
-                                <td>Jusqu'a</td>
-                                <td>Actions</td>
+                                <td>Livraison ID</td>
+                                <td>Livraison Reference</td>
+                                <td>Prix de Livraison</td>
+                                <td>Poid</td>
                             </tr>
                         </thead>
 
                         
-                        {% for courier in couriers %}
+                        {% for livraison in livraisons %}
                         <tr>
-                            <td>{{ courier.id }}</td>
-                            <td>{{ courier.coursier.nom }}</td>
-                            <td>{{ courier.coursier.prenom }}</td>
-                            <td>{{ courier.coursier.id }}</td>
-                            <td>{{ courier.getDebutTourner()|date('Y-m-d') }}</td>
-                            
+                            <td>{{ livraison.id }}</td>
+                            <td>{{ livraison.reference  }}</td>
+                            <td>{{ livraison.prixTotaleLivraison }}</td>
+                            <td>{{ livraison.poidLivraison  }}</td>
                             
                             {# <td> <p> {{ statutLivraison.getLivraisonDate()|date('Y-m-d H:i:s') }}</p> #}
 
                             
-                            <td>
-                            {% set livraisonId = app.request.query.get('livraisonId') %}
-                            <a href="{{ path('affectRoute', {'id': courier.coursier.id, 'livraisonId': livraisonId}) }}">Add to his tour</a></td>
+                            <td><a href="">Add to his tour</a></td>
+                            
                         </tr>
                             {% else %}
                                 <tr>
