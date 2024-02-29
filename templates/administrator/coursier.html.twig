@@ -1,7 +1,5 @@
 
 {% extends 'base.html.twig' %}
- 
-
  {% block body %}
 
 
@@ -9,12 +7,12 @@
    
 
 <body>
-     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
-  <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <!-- =============== Navigation ================ -->
-     <div class="container">
+    <div class="container">
         <div class="navigation">
-            <ul>
+          <ul>
                 <li>
                     <a href="">
                         <span class="icon">
@@ -158,57 +156,54 @@
                 </div>
             </div>
 
-            <!-- ================ Add Charts JS ================= -->
-        
-
-            <!-- ================ Order Details List ================= -->
+    <!-- debut affichache des client -->
+     <!-- ================ Order Details List ================= -->
             <div class="details">
                 <div class="recentOrders">
                     <div class="cardHeader">
-                        <h2>Recent Orders</h2>
+                        <h2>liste des coursiers</h2>
                         <a href="#" class="btn">View All</a>
                     </div>
-
-                   <table>
+{# <h1>Statuts</h1>
+<ul>
+  {% for statutLivraison in livraisonsEchec %}
+    <p>Status Title: {{ statutLivraison.getStatusTitle() }}</p>
+    <p>Status Class: {{ statutLivraison.getStatusClass() }}</p>
+    <p>Status Date Ajout: {{ statutLivraison.getStatusDateAjout()|date('Y-m-d H:i:s') }}</p>
+    {% if statutLivraison.getLivraison() is not null %}
+        <p>Livraison ID: {{ statutLivraison.getLivraison().getId() }}</p>
+    {% endif %}
+{% endfor %}
+ 
+</ul> #}
+{# {% for statutLivraison in livraisonsEchec %}
+    <p>Status Title: {{ statutLivraison.getReference() }}</p>
+  <p>Status Title: {{ statutLivraison.getId() }}</p>
+  <p>Status Title: {{ statutLivraison.getCodePin() }}</p>
+  <p>Status Title: {{ statutLivraison.getFraisLivraison() }}</p>
+  <p>Status Title: {{ statutLivraison.getPrixTotaleLivraison() }}</p>
+  <p>Status Title: {{ statutLivraison.getPoidLivraison() }}</p>
+    <p>Status Date Ajout: {{ statutLivraison.getLivraisonDate()|date('Y-m-d H:i:s') }}</p>
+ {% if statutLivraison.getTourner() is not null %}
+        <p>Livraison ID: {{ statutLivraison.getTourner().getId() }}</p>
+    {% endif %}
+  
+{% endfor %} #}
+                    <table>
                         <thead>
                             <tr>
-                                <td>Reference</td>
-                                <td>Id</td>
-                              <td>  CodePin</td>
-                                <td>FraisLivraison</td>
-                                <td>PrixTotaleLivraison</td>
-                                <td>PoidLivraison</td>
-                                     <td>LivraisonDate</td>
-                                          <td>Tourner</td>
+                                <td>Nom</td>
+                                <td>Prenom</td>
+                                <td>Email</td>
+                                <td>Numero Telephone</td>
+                                <td>Actions</td>
                             </tr>
                         </thead>
 
                         <tbody>
-{% for statutLivraison in livraisonsEchec %}
- 
-      <tr>   <td> <p> {{ statutLivraison.getReference() }}</p></td>
-      <td> <p> {{ statutLivraison.getId() }}</p></td>
-      <td> <p> {{ statutLivraison.getCodePin() }}</p></td>
-      <td><p>{{ statutLivraison.getFraisLivraison() }}</p></td>
-      <td> <p> {{ statutLivraison.getPrixTotaleLivraison() }}</p></td>
-      <td> <p>{{ statutLivraison.getPoidLivraison() }}</p></td>
-      <td> <p> {{ statutLivraison.getLivraisonDate()|date('Y-m-d H:i:s') }}</p>
- {% if statutLivraison.getTourner() is not null %}
-        <td> <p> {{ statutLivraison.getTourner().getId() }}</p></td>
-    {% endif %}
-   <td>  <a    onclick="populateForm('{{ statutLivraison.getReference() }}', '{{ statutLivraison.getId() }}', '{{ statutLivraison.getCodePin() }}', '{{ statutLivraison.getFraisLivraison() }}', '{{ statutLivraison.getPrixTotaleLivraison() }}', '{{ statutLivraison.getPoidLivraison() }}', '{{ statutLivraison.getLivraisonDate()|date('Y-m-d H:i:s') }}', {% if statutLivraison.getTourner() is not null %}'{{ statutLivraison.getTourner().getId() }}'{% endif %})"      style="display: inline-block;
-    padding: 10px 20px;
-    text-decoration: none;
-    color: white;
-    background-color: blue;
-    border: 1px solid blue;
-    border-radius: 5px;
-    cursor: pointer;   ">edit </a></td><tr>  
-{% endfor %}
-
-
-
-                        {# {% for client in clients %}
+                        {% for client in coursiers %}
+                        <form method="post" action="{{ path('app_client_delete', {'id': client.id}) }}"  >
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ client.id) }}">
                             <tr>
                                 <td>{{ client.nom }}</td>
                                 <td>{{ client.prenom }}</td>
@@ -221,9 +216,9 @@
     background-color: blue;
     border: 1px solid blue;
     border-radius: 5px;
-    cursor: pointer;   ">edit client</a></td>
-                            </tr>
-                        {% endfor %} #}
+    cursor: pointer;   ">edit coursier</a></td><td> <button type="submit" class="btn btn-primary">delete</button></td> 
+                            </tr></form>
+                        {% endfor %}
                         </tbody>
                     </table>
                 </div>
@@ -231,57 +226,50 @@
                 <!-- ================= New Customers ================ -->
                 <div class="recentCustomers">
                     <div class="cardHeader">
-                        <h2>Recent Customers</h2>
+                        <h2>Edit Customer</h2>
                     </div>
 
-                       <form action="edit_byadmin" method="POST" class="container mt-5">
+                    <form action="submit_form_coursier" method="post" class="container mt-5">
                     <div class="row justify-content-center">
+
+
+                    
                      <input type="hidden"  id="id" name="id" >
                         <div class="col-md-6">
                             <!-- Username -->
                             <div class="mb-3">
-                                <label for="reference" class="form-label">reference:</label>
-                                <input type="text" class="form-control" id="reference" name="reference" required maxlength="255" readonly>
+                                <label for="username" class="form-label">Username:</label>
+                                <input type="text" class="form-control" id="username" name="username" required maxlength="255">
                             </div>
 
                             <!-- Password -->
                             <div class="mb-3">
-                                <label for="id" class="form-label">id:</label>
-                                <input type="text" class="form-control" id="ids" name="ids" required maxlength="255" readonly>
+                                <label for="password" class="form-label">Password:</label>
+                                <input type="password" class="form-control" id="password" name="password" required maxlength="255">
                             </div>
 
                             <!-- Email -->
                             <div class="mb-3">
-                                <label for="codepin " class="form-label">codepin:</label>
-                                <input type="text" class="form-control" id="codepin" name="codepin" required maxlength="255" readonly>
+                                <label for="email" class="form-label">Email:</label>
+                                <input type="email" class="form-control" id="email" name="email" required maxlength="255">
                             </div>
 
                             <!-- Nom -->
                             <div class="mb-3">
-                                   <label for="date " class="form-label">date:</label>
-                                   <input type="datetime-local" class="form-control" id="date" name="date" required>
-                
+                                <label for="nom" class="form-label">Nom:</label>
+                                <input type="text" class="form-control" id="nom" name="nom" required maxlength="255">
                             </div>
 
                             <!-- Prenom -->
                             <div class="mb-3">
-                                <label for="fraix" class="form-label">Frais de Livraison:</label>
-                                <input type="text" class="form-control" id="fraix" name="fraix" required maxlength="255" readonly>
+                                <label for="prenom" class="form-label">Prenom:</label>
+                                <input type="text" class="form-control" id="prenom" name="prenom" required maxlength="255">
                             </div>
 
                             <!-- Phone -->
                             <div class="mb-3">
-                                <label for="prix" class="form-label">Prix Totale de Livraison:</label>
-                                <input type="text" class="form-control" id="prix" name="prix" required maxlength="255" readonly>
-                            </div>
-                             <div class="mb-3">
-                                <label for="poid" class="form-label">poid:</label>
-                                <input type="text" class="form-control" id="poid" name="poid" required maxlength="255" readonly>
-                            </div>
-
-                             <div class="mb-3">
-                                <label for="tourner" class="form-label">tourner:</label>
-                                <input type="text" class="form-control" id="tourner" name="tourner" required maxlength="255" readonly>
+                                <label for="phone" class="form-label">Phone:</label>
+                                <input type="tel" class="form-control" id="phone" name="phone" required maxlength="255">
                             </div>
 
                             <!-- Submit Button -->
@@ -289,14 +277,10 @@
                         </div>
                     </div>
                 </form>
-                 <style>
+
+                <style>
                 
- input[readonly] {
-        background-color: #f5f5f5; /* Light gray background */
-        color: #666; /* Dark gray text color */
-        border: 1px solid #ccc; /* Light gray border */
-        cursor: not-allowed; /* Change cursor to not-allowed */
-    }
+
 
                     .form-label {
                         font-weight: bold;
@@ -337,50 +321,48 @@
                         margin-top: 50px;
                     }
                 </style>
+
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- =========== Scripts =========  -->
+
+
+    <!-- fin affichage des clients -->
+
+            
+            
+
+   <!-- =========== Scripts =========  -->
     <script src="assets/js/main.js"></script>
-
-    <!-- ======= Charts JS ====== -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
     <script src="assets/js/chartsJS.js"></script>
-
-    <!-- ====== ionicons ======= -->
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
-   <script>
-    function populateForm(reference, id, codePin, fraisLivraison, prixTotaleLivraison, poidLivraison, livraisonDate, tournerId) {
-        localStorage.setItem('reference', reference);
-        localStorage.setItem('id', id);
-        localStorage.setItem('codepin', codePin);
-        localStorage.setItem('fraisLivraison', fraisLivraison);
-        localStorage.setItem('prixTotaleLivraison', prixTotaleLivraison);
-        localStorage.setItem('poidLivraison', poidLivraison);
-        localStorage.setItem('livraisonDate', livraisonDate);
-    
-            localStorage.setItem('tournerId', tournerId);
-       
+     <script>
+  
+function saveAndPopulateSecondFormm(id, nom, prenom, email, phone,password,username) {
+    // Save the data to local storage (optional)
+    localStorage.setItem('id', id);
+    localStorage.setItem('nom', nom);
+    localStorage.setItem('prenom', prenom);
+    localStorage.setItem('email', email);
+     localStorage.setItem('phone', phone);
+    localStorage.setItem('password', password);
+       localStorage.setItem('username', username);
+    // Populate the hidden input fields in the second form
+     document.getElementById('id').value = id;
+    document.getElementById('nom').value = nom;
+    document.getElementById('prenom').value = prenom;
+    document.getElementById('email').value = email;
+    document.getElementById('phone').value = phone;
+    document.getElementById('password').value = password;
+     document.getElementById('username').value = username;
+}
 
-           document.getElementById('reference').value = reference;
-        document.getElementById('ids').value = id;
-        document.getElementById('codepin').value = codePin;
-        document.getElementById('fraix').value = fraisLivraison;
-        document.getElementById('prix').value = prixTotaleLivraison;
-        document.getElementById('poid').value = poidLivraison;
-       
-        
-            document.getElementById('tourner').value = tournerId;
-    
-        
-    }
+
 </script>
 </body>
-
 </html>
-  <script src={{ asset('assets/js/main.js')}}></script>
-    <script src={{ asset('assets/js/chartsJS.js')}}></script>
+<script src={{ asset('assets/js/main.js')}}></script>
+<script src={{ asset('assets/js/chartsJS.js')}}></script>
   {% endblock %}

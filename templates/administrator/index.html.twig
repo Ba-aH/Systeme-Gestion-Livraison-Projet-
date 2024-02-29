@@ -25,7 +25,7 @@
                 </li>
 
                 <li>
-                    <a href="">
+                      <a href="{{ path('app_administrator') }}">
                         <span class="icon">
                             <ion-icon name="home-outline"></ion-icon>
                         </span>
@@ -43,11 +43,11 @@
                 </li>
 
                 <li>
-                    <a href="#">
+                    <a href="{{ path('app_gerer_tour') }}">
                         <span class="icon">
                             <ion-icon name="chatbubble-outline"></ion-icon>
                         </span>
-                        <span class="title">Messages</span>
+                        <span class="title">affecter livraisons</span>
                     </a>
                 </li>
 
@@ -56,16 +56,19 @@
                         <span class="icon">
                             <ion-icon name="help-outline"></ion-icon>
                         </span>
-                        <span class="title">echec</span>
+                        <span class="title">livraison echouée</span>
                     </a>
                 </li>
 
-                <li>
-                    <a href="#">
-                        <span class="icon">
-                            <ion-icon name="settings-outline"></ion-icon>
+                <li> 
+                    <a href="{{ path('coursiers') }}">       
+                       <span class="icon">
+                            <ion-icon name="people-outline"></ion-icon>
                         </span>
-                        <span class="title">Settings</span>
+                        {# <span class="icon">
+                            <ion-icon name="settings-outline"></ion-icon>
+                        </span> #}
+                        <span class="title">coursier</span>
                     </a>
                 </li>
 

@@ -5,6 +5,7 @@ use DateTime;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Entity\Client;
+use App\Entity\Coursier;
 use App\Entity\LivraisonHistory;
 
 use App\Entity\Livraison;
@@ -46,6 +47,17 @@ class AdministratorController extends AbstractController
         ]);
         
     }
+
+    #[Route('/coursiers', name: 'coursiers', methods: ['GET'])]
+    public function coursiers(CoursierRepository $coursierRepository): Response
+    {
+        return $this->render('administrator/coursier.html.twig', [
+            'coursiers' => $coursierRepository->findAll(),
+        ]);
+        
+    }
+
+
     #[Route('/submit_form', name: 'submit_form', methods: ['POST'])]
     public function submit_form(ClientRepository $clientRepository,Request $request ,EntityManagerInterface $entityManager): Response
     {
@@ -60,11 +72,37 @@ class AdministratorController extends AbstractController
             $user->setPhone($request->request->get('phone'));
             $user->setNom($request->request->get('nom'));
             $user->setPrenom($request->request->get('prenom'));
-            $user->setDateModification($now);
+          
             $entityManager->flush();
             $entityManager->flush();
-            $clients=$clientRepository->findAll();
+      
             return $this->redirectToRoute('app_colis_index');
+
+           } else {
+            return $this->redirectToRoute('app_colis_index');
+           }
+    }
+
+
+    #[Route('/submit_form_coursier', name: 'submit_form_coursier', methods: ['POST'])]
+    public function submit_form_coursier(CoursierRepository $coursierRepository,Request $request ,EntityManagerInterface $entityManager): Response
+    {
+        $id = $request->request->get('id');
+        $user = $entityManager->getRepository(Coursier::class)->findOneBy(['id' => $id]);
+
+        if ($user) {
+       
+            $user->setEmail($request->request->get('email'));
+            $user->setUsername($request->request->get('username'));
+            $user->setPassword($request->request->get('password'));
+            $user->setPhone($request->request->get('phone'));
+            $user->setNom($request->request->get('nom'));
+            $user->setPrenom($request->request->get('prenom'));
+
+            $entityManager->flush();
+            $entityManager->flush();
+         
+            return $this->redirectToRoute('coursiers');
 
            } else {
             return $this->redirectToRoute('app_colis_index');

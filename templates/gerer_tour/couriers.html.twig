@@ -14,7 +14,7 @@
         <div class="navigation">
             <ul>
                 <li>
-                    <a href="#">
+                    <a href="">
                         <span class="icon">
                             <ion-icon name="logo-apple"></ion-icon>
                         </span>
@@ -23,7 +23,7 @@
                 </li>
 
                 <li>
-                    <a href="{{ path('app_administrator') }}">
+                      <a href="{{ path('app_administrator') }}">
                         <span class="icon">
                             <ion-icon name="home-outline"></ion-icon>
                         </span>
@@ -32,7 +32,7 @@
                 </li>
 
                 <li>
-                    <a href="">
+                    <a href="{{ path('app_colis_index') }}">
                         <span class="icon">
                             <ion-icon name="people-outline"></ion-icon>
                         </span>
@@ -45,25 +45,28 @@
                         <span class="icon">
                             <ion-icon name="chatbubble-outline"></ion-icon>
                         </span>
-                        <span class="title">Messages</span>
+                        <span class="title">affecter livraisons</span>
                     </a>
                 </li>
 
                 <li>
-                    <a href="#">
+                  <a href="{{ path('echec') }}">
                         <span class="icon">
                             <ion-icon name="help-outline"></ion-icon>
                         </span>
-                        <span class="title">Help</span>
+                        <span class="title">livraison echouée</span>
                     </a>
                 </li>
 
-                <li>
-                    <a href="#">
-                        <span class="icon">
-                            <ion-icon name="settings-outline"></ion-icon>
+                <li> 
+                    <a href="{{ path('coursiers') }}">       
+                       <span class="icon">
+                            <ion-icon name="people-outline"></ion-icon>
                         </span>
-                        <span class="title">Settings</span>
+                        {# <span class="icon">
+                            <ion-icon name="settings-outline"></ion-icon>
+                        </span> #}
+                        <span class="title">coursier</span>
                     </a>
                 </li>
 
