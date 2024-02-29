@@ -102,7 +102,7 @@ public function show(Request $request,LivraisonRepository $livraisonRepository, 
 
 
     #[Route('/affect/{id}', name: 'affectRoute', methods: ['GET', 'POST'])]
-    public function affecterAuRoute(Request $request,TournerRepository $tournerRepository,CoursierRepository $coursierRepository,$id, EntityManagerInterface $entityManager,LivraisonRepository $livraisonRepository,StatutLivraisonRepository $statutLivraisonRepository): Response
+    public function affecterAuRoute(Request $request,TournerRepository $tournerRepository,CoursierRepository $coursierRepository,$id, EntityManagerInterface $entityManager,LivraisonRepository $livraisonRepository,StatutLivraisonRepository $statutLivraisonRepository,StatutCoursierRepository $statutCoursierRepository): Response
     {
         $ann = $statutLivraisonRepository->findBy(['status_title' => "annulée"]);
         $att = $statutLivraisonRepository->findBy(['status_title' => "en attend"]);
@@ -153,11 +153,17 @@ public function show(Request $request,LivraisonRepository $livraisonRepository, 
             $tour -> setPrixTourner($prixTour);
             $tour -> setNbLivraison($nb+1);
             $entityManager->flush();
-
             $livraison->setTourner($tour);
             $changestat = $statutLivraisonRepository->findOneBy(['livraison' => $livraisonId]);
             $changestat->setStatusTitle('affecte');
             $entityManager->flush();
+            
+            if($nb+1>=12){
+                $changestat = $statutCoursierRepository->findOneBy(['coursier' => $id]); 
+                $changestat->setTitreStatut('complet');
+                $entityManager->persist($changestat);
+                $entityManager->flush();
+            }
 
 
             return $this->render('gerer_tour/index.html.twig', [
