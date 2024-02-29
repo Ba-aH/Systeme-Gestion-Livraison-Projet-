@@ -22,11 +22,11 @@ class StatutCoursier
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $debut_tourner = null;
 
-    #[ORM\OneToOne(inversedBy: 'statutCoursier', cascade: ['persist', 'remove'])]
-    private ?Coursier $coursier = null;
-
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $titre_statut = null;
+
+    #[ORM\ManyToOne(inversedBy: 'statutCoursiers')]
+    private ?Coursier $coursier = null;
 
     public function getId(): ?int
     {
@@ -58,17 +58,7 @@ class StatutCoursier
     }
 
 
-    public function getCoursier(): ?Coursier
-    {
-        return $this->coursier;
-    }
-
-    public function setCoursier(?Coursier $coursier): static
-    {
-        $this->coursier = $coursier;
-
-        return $this;
-    }
+   
 
     public function getTitreStatut(): ?string
     {
@@ -78,6 +68,18 @@ class StatutCoursier
     public function setTitreStatut(?string $titre_statut): static
     {
         $this->titre_statut = $titre_statut;
+
+        return $this;
+    }
+
+    public function getCoursier(): ?Coursier
+    {
+        return $this->coursier;
+    }
+
+    public function setCoursier(?Coursier $coursier): static
+    {
+        $this->coursier = $coursier;
 
         return $this;
     }

@@ -33,8 +33,7 @@ class Coursier
     #[ORM\Column(length: 255)]
     private ?string $phone = null;
 
-    #[ORM\OneToOne(mappedBy: 'coursier', cascade: ['persist', 'remove'])]
-    private ?StatutCoursier $statutCoursier = null;
+   
 
     #[ORM\OneToMany(targetEntity: CoursierPositionHistory::class, mappedBy: 'coursier')]
     private Collection $coursierPositionHistories;
@@ -42,10 +41,14 @@ class Coursier
     #[ORM\OneToMany(targetEntity: Tourner::class, mappedBy: 'coursier')]
     private Collection $tourners;
 
+    #[ORM\OneToMany(mappedBy: 'coursier', targetEntity: StatutCoursier::class)]
+    private Collection $statutCoursiers;
+
     public function __construct()
     {
         $this->coursierPositionHistories = new ArrayCollection();
         $this->tourners = new ArrayCollection();
+        $this->statutCoursiers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -125,27 +128,7 @@ class Coursier
         return $this;
     }
 
-    public function getStatutCoursier(): ?StatutCoursier
-    {
-        return $this->statutCoursier;
-    }
-
-    public function setStatutCoursier(?StatutCoursier $statutCoursier): static
-    {
-        // unset the owning side of the relation if necessary
-        if ($statutCoursier === null && $this->statutCoursier !== null) {
-            $this->statutCoursier->setCoursier(null);
-        }
-
-        // set the owning side of the relation if necessary
-        if ($statutCoursier !== null && $statutCoursier->getCoursier() !== $this) {
-            $statutCoursier->setCoursier($this);
-        }
-
-        $this->statutCoursier = $statutCoursier;
-
-        return $this;
-    }
+   
 
     /**
      * @return Collection<int, CoursierPositionHistory>
@@ -201,6 +184,36 @@ class Coursier
             // set the owning side to null (unless already changed)
             if ($tourner->getCoursier() === $this) {
                 $tourner->setCoursier(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, StatutCoursier>
+     */
+    public function getStatutCoursiers(): Collection
+    {
+        return $this->statutCoursiers;
+    }
+
+    public function addStatutCoursier(StatutCoursier $statutCoursier): static
+    {
+        if (!$this->statutCoursiers->contains($statutCoursier)) {
+            $this->statutCoursiers->add($statutCoursier);
+            $statutCoursier->setCoursier($this);
+        }
+
+        return $this;
+    }
+
+    public function removeStatutCoursier(StatutCoursier $statutCoursier): static
+    {
+        if ($this->statutCoursiers->removeElement($statutCoursier)) {
+            // set the owning side to null (unless already changed)
+            if ($statutCoursier->getCoursier() === $this) {
+                $statutCoursier->setCoursier(null);
             }
         }
 

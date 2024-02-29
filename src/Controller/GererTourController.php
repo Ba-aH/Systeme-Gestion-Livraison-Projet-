@@ -9,6 +9,7 @@ use App\Repository\CoursierRepository;
 use App\Repository\AdresseRepository;
 use App\Repository\TournerRepository;
 use App\Repository\ClientRepository;
+use App\Repository\LivraisonHistoryRepository;
 use App\Entity\Tourner;
 use App\Repository\StatutCoursierRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -182,5 +183,19 @@ public function show(Request $request,LivraisonRepository $livraisonRepository, 
             'couriers' => $coursier, 
         ]);
     }
+
+        #[Route('/history', name: 'history')]
+        public function history(EntityManagerInterface $entityManager,LivraisonHistoryRepository $LivraisonHistoryRepository): Response
+        {
+        $liv_hist=$LivraisonHistoryRepository->findAll();
+        $livraisons = [];
+
+        foreach ($liv_hist as $item) {
+                    $livraisons[] = $item->getLivraison();
+                }
+                return $this->render('gerer_tour/history.html.twig', [
+                    'livraisons' => $livraisons, 
+                ]);
+            }
     
 }
