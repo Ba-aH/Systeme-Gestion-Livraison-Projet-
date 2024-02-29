@@ -130,7 +130,6 @@ public function show(Request $request,LivraisonRepository $livraisonRepository, 
             $tour->setNbLivraison(1);
             $entityManager->persist($tour);
             $entityManager->flush();
-            
             $livraison->setTourner($tour);
             $changestat = $statutLivraisonRepository->findOneBy(['livraison' => $livraisonId]);
          
@@ -139,8 +138,6 @@ public function show(Request $request,LivraisonRepository $livraisonRepository, 
             return $this->render('gerer_tour/coursier_tour.html.twig', [
                 'livraisons' => $livraisons,   
             ]);
-            
-
         } else {
             $livraison = $livraisonRepository->findOneBy(['id' => $livraisonId]);
             $prix= $livraison->getPrixTotaleLivraison();

@@ -199,14 +199,14 @@ class AdministratorController extends AbstractController
 //     }
    
 
-    #[Route('/history', name: 'history')]
-    public function history(CoursierRepository $CoursierRepository,EntityManagerInterface $entityManager,LivraisonHistoryRepository $LivraisonHistoryRepository): Response
-    {  $coursiers=$CoursierRepository->findAll();
+    //a #[Route('/history', name: 'history')]
+    // public function history(CoursierRepository $CoursierRepository,EntityManagerInterface $entityManager,LivraisonHistoryRepository $LivraisonHistoryRepository): Response
+    // {  $coursiers=$CoursierRepository->findAll();
       
-        return $this->render('administrator/history.html.twig', [
-            'coursiers' => $coursiers, 
-        ]);
-    }
+    //     return $this->render('administrator/history.html.twig', [
+    //         'coursiers' => $coursiers, 
+    //     ]);
+    // }
 
                
 }
