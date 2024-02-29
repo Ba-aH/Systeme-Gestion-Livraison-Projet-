@@ -161,26 +161,42 @@
                         <a href="#" class="btn">View All</a> 
                     </div>
 
-                    <form>
-                        <label for="firstInput">First Label:</label>
-                        <input type="text" id="firstInput" name="firstInput">
+                    <form id="myForm" method="post" action="{{ path('history', {'region': 'default', 'coursier': 'default', 'date':'default'}) }}" onsubmit="updateFormAction()">
+                        <label for="coursier">Coursier username:</label>
+                        <input type="text" id="coursier" name="coursier">
                         <br>
-                        <label for="secondInput">Second Label:</label>
-                        <input type="text" id="secondInput" name="secondInput">
+                        <label for="date">Select a date:</label>
+                        <input type="date" id="date" name="date">
                         <br>
-                        <label for="optionsLabel">Select region:</label>
-                        <select id="optionsLabel" name="optionsLabel">
-                            <option value="option1">Grand Tunis</option>
-                            <option value="option2">Nord-Est</option>
-                            <option value="option3">Nord-Ouest</option>
-                            <option value="option1">Centre-Est</option>
-                            <option value="option2">Centre-Ouest </option>
-                            <option value="option3">Sud-Est</option>
-                            <option value="option3">Sud-Ouest</option>
+                        <label for="region">Select region:</label>
+                        <select id="region" name="region">
+                            <option value="" disabled selected>Select a region</option>
+                            <option value="Grand Tunis">Grand Tunis</option>
+                            <option value="Nord-Est">Nord-Est</option>
+                            <option value="Nord-Ouest">Nord-Ouest</option>
+                            <option value="Centre-Est">Centre-Est</option>
+                            <option value="Centre-Ouest">Centre-Ouest</option>
+                            <option value="Sud-Est">Sud-Est</option>
+                            <option value="Sud-Ouest">Sud-Ouest</option>
                         </select>
-                    <br>
-                    <input type="submit" value="Submit">
-                </form>
+                        <br>
+                        <input type="submit" value="Submit">
+                    </form>
+
+                    <script>
+                        function updateFormAction() {
+                            var selectedRegion = document.getElementById('region').value;
+                            var selectedCoursier = document.getElementById('coursier').value;
+                            var selectedDate = document.getElementById('date').value;
+                            document.getElementById('myForm').action = "{{ path('history', {'region': ''}) }}" + selectedRegion + "&coursier=" + selectedCoursier+"&date=" +selectedDate;
+                            return true; 
+                        }
+                    </script>
+
+
+
+
+
 
                 
                 <table>
@@ -195,7 +211,21 @@
                                 <td>Actions</td>
                             </tr>
                         </thead>
-                      
+                      {% for history in livraisons %}
+                        <tr>
+                            <td>{{ history.livraison.id }}</td>
+                            <td>{{ history.livraison.client.email  }}</td>
+                            <td>{{ history.livraison.prixTotaleLivraison }}</td>
+                            <td>{{ history.livraison.poidLivraison  }}</td>
+                                          
+                            <td><a href="">Add to his tour</a></td>
+                            
+                        </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="8">no records found</td>
+                                </tr>
+                            {% endfor %}
                     </table>
                 </div>
             </div>

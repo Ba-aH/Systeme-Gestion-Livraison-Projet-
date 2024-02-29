@@ -20,6 +20,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use DateTime; 
 
 #[Route('/administrator')]
 class GererTourController extends AbstractController
@@ -171,7 +172,7 @@ public function show(Request $request,LivraisonRepository $livraisonRepository, 
     }
     
     #[Route('/available/couriers/{id}', name: 'app_courier_tour', methods: ['GET'])]
-    public function showCoursierTour(Request $request,LivraisonRepository $livraisonRepository,TournerRepository $tournerRepository,CoursierRepository $coursierRepository,$id): Response
+    public function showCoursierTour(Request $request,LivraisonRepository $livraisonRepository,TournerRepository $tournerRepository,CoursierRepository $coursierRepository,$id, AdresseRepository $adresseRepository): Response
     {
         $coursier=$tournerRepository->findBy(['coursier' => $id]);
         $coursierTour = $tournerRepository->findBy(['coursier_id' => $id]);
@@ -186,17 +187,74 @@ public function show(Request $request,LivraisonRepository $livraisonRepository, 
     }
 
         #[Route('/history', name: 'history')]
-        public function history(EntityManagerInterface $entityManager,LivraisonHistoryRepository $LivraisonHistoryRepository): Response
-        {
-        $liv_hist=$LivraisonHistoryRepository->findAll();
-        $livraisons = [];
+        public function history(Request $request,EntityManagerInterface $entityManager,LivraisonHistoryRepository $livraisonHistoryRepository,LivraisonRepository $livraisonRepository,AdresseRepository $adresseRepository,ClientRepository $clientRepository): Response
+        {  
+            $livraisons = $livraisonHistoryRepository->findAll();
+            $livDeRegion = [];
+            $region = $request->get('region');
+            $coursierUN = $request->get('coursier');
+            // $dateLivraison = $request->get('date');
+            // $selectedDate = $request->get('date');
+            // $selectedDate = DateTime::createFromFormat('Y-m-d\TH:i', $dateLivraison);
+            $selectedDate = $request->get('date');
+            foreach ($livraisons as $item) {
+                $coursier = $item->getCoursier();
+                $liv = $item->getLivraison();
+                $client = $liv->getClient();
+                
+                $dateLivr = $item->getDateAjout();
+                $dateLivrFormatted = $dateLivr->format('Y-m-d');
 
-        foreach ($liv_hist as $item) {
-                    $livraisons[] = $item->getLivraison();
+                $ClientAdr = $adresseRepository->findOneBy(['client' => $client]);
+                if ($coursierUN == '' && $region != '' && $selectedDate =='') {
+                    if ($ClientAdr && $ClientAdr->getRegion() == $region) {
+                        $livDeRegion[] = $item;
+                    }
                 }
-                return $this->render('gerer_tour/history.html.twig', [
-                    'livraisons' => $livraisons, 
-                ]);
+
+                if ($coursierUN != '' && $region == '' && $selectedDate =='') {
+                    if ($coursier->getUsername() == $coursierUN) {
+                        $livDeRegion[] = $item;
+                    }
+                }
+
+                if ($coursierUN != '' && $region != '' && $selectedDate =='') {
+                    if ($coursier->getUsername() == $coursierUN && $ClientAdr->getRegion() == $region ) {
+                        $livDeRegion[] = $item;
+                    }
+                }
+                
+                if ($coursierUN != '' && $region != '' && $selectedDate !='') {
+                    if ($coursier->getUsername() == $coursierUN && $ClientAdr->getRegion() == $region && $dateLivrFormatted==$selectedDate ) {
+                        $livDeRegion[] = $item;
+                    }
+                } 
+
+                if ($coursierUN == '' && $region != '' && $selectedDate !='') {
+                    if ($ClientAdr->getRegion() == $region && $dateLivrFormatted==$selectedDate ) {
+                        $livDeRegion[] = $item;
+                    }
+                } 
+
+                if ($coursierUN != '' && $region == '' && $selectedDate !='') {
+                    if ( $coursier->getUsername() == $coursierUN && $dateLivrFormatted==$selectedDate ) {
+                        $livDeRegion[] = $item;
+                    }
+                } 
+
+                if ($coursierUN == '' && $region == '' && $selectedDate !='') {
+                    if ($dateLivrFormatted==$selectedDate ) {
+                        $livDeRegion[] = $item;
+                    }
+                } 
+
+
             }
+
+            return $this->render('gerer_tour/history.html.twig', [
+                'livraisons' => $livDeRegion, 
+            ]);}
+
+
     
 }
