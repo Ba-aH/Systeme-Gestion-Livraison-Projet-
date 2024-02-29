@@ -202,7 +202,7 @@
 
                         <tbody>
                         {% for client in coursiers %}
-                        <form method="post" action="{{ path('app_client_delete', {'id': client.id}) }}"  >
+                        <form method="post" action="{{ path('deletecoursier', {'id': client.id}) }}"  >
                         <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ client.id) }}">
                             <tr>
                                 <td>{{ client.nom }}</td>

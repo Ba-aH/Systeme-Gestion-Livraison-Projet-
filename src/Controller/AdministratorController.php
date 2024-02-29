@@ -181,7 +181,17 @@ class AdministratorController extends AbstractController
         return $this->redirectToRoute('app_colis_index');
 
     }
+    #[Route('/deletecoursier/{id}', name: 'deletecoursier', methods: ['POST'])]
+    public function deletecoursier(Request $request, Coursier $coursier, EntityManagerInterface $entityManager): Response
+    {
+        if ($this->isCsrfTokenValid('delete'.$coursier->getId(), $request->request->get('_token'))) {
+            $entityManager->remove($coursier);
+            $entityManager->flush();
+        }
 
+        return $this->redirectToRoute('coursiers');
+
+    }
 
 
 //     #[Route('/history', name: 'history')]

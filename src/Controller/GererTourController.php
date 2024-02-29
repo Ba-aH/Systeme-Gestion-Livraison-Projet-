@@ -161,9 +161,7 @@ public function show(Request $request,LivraisonRepository $livraisonRepository, 
                 $entityManager->persist($changestat);
                 $entityManager->flush();
             }
-
-
-            return $this->render('gerer_tour/index.html.twig', [
+              return $this->render('gerer_tour/index.html.twig', [
                 // 'courier' => $coursierRepository->findOneBy(['id'=>$id]),
                 'livraisons' => $livraisons,   
             ]);
