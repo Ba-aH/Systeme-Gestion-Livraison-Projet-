@@ -187,10 +187,13 @@ public function show(Request $request,LivraisonRepository $livraisonRepository, 
     }
 
         #[Route('/history', name: 'history')]
-        public function history(Request $request,EntityManagerInterface $entityManager,LivraisonHistoryRepository $livraisonHistoryRepository,LivraisonRepository $livraisonRepository,AdresseRepository $adresseRepository,ClientRepository $clientRepository): Response
-        {  
+        public function history(Request $request,EntityManagerInterface $entityManager,LivraisonHistoryRepository $livraisonHistoryRepository,LivraisonRepository $livraisonRepository,AdresseRepository $adresseRepository,ClientRepository $clientRepository,CoursierRepository $coursierRepository): Response
+        {   
+            $Display='';
             $livraisons = $livraisonHistoryRepository->findAll();
             $livDeRegion = [];
+            $prix=0;
+            $nb=0;
             $region = $request->get('region');
             $coursierUN = $request->get('coursier');
             // $dateLivraison = $request->get('date');
@@ -209,42 +212,63 @@ public function show(Request $request,LivraisonRepository $livraisonRepository, 
                 if ($coursierUN == '' && $region != '' && $selectedDate =='') {
                     if ($ClientAdr && $ClientAdr->getRegion() == $region) {
                         $livDeRegion[] = $item;
+                        $Display = 'Liste des livraisons livrées à ' . $region; 
+                        $prix=$prix+$liv->getPrixTotaleLivraison();
+                        $nb++;
                     }
                 }
 
                 if ($coursierUN != '' && $region == '' && $selectedDate =='') {
                     if ($coursier->getUsername() == $coursierUN) {
                         $livDeRegion[] = $item;
+                        $Display = 'Liste des livraisons livrées par ' . $coursierUN;
+                        $prix=$prix+$liv->getPrixTotaleLivraison();
+                        $nb++;
                     }
                 }
 
                 if ($coursierUN != '' && $region != '' && $selectedDate =='') {
                     if ($coursier->getUsername() == $coursierUN && $ClientAdr->getRegion() == $region ) {
                         $livDeRegion[] = $item;
+                        $Display = 'Liste des livraisons livrées par ' . $coursierUN . ' à ' . $region;
+                        $prix=$prix+$liv->getPrixTotaleLivraison();
+                        $nb++;
                     }
                 }
                 
                 if ($coursierUN != '' && $region != '' && $selectedDate !='') {
                     if ($coursier->getUsername() == $coursierUN && $ClientAdr->getRegion() == $region && $dateLivrFormatted==$selectedDate ) {
                         $livDeRegion[] = $item;
+                        $Display = 'Liste des livraisons livrées par ' . $coursierUN . ' à ' . $region . ' en ' . $dateLivrFormatted;
+                        $prix=$prix+$liv->getPrixTotaleLivraison();
+                        $nb++;
                     }
                 } 
 
                 if ($coursierUN == '' && $region != '' && $selectedDate !='') {
                     if ($ClientAdr->getRegion() == $region && $dateLivrFormatted==$selectedDate ) {
                         $livDeRegion[] = $item;
+                        $Display = 'Liste des livraisons livrées à ' . $region . ' en ' . $dateLivrFormatted ;
+                        $prix=$prix+$liv->getPrixTotaleLivraison();
+                        $nb++;
                     }
                 } 
 
                 if ($coursierUN != '' && $region == '' && $selectedDate !='') {
                     if ( $coursier->getUsername() == $coursierUN && $dateLivrFormatted==$selectedDate ) {
                         $livDeRegion[] = $item;
+                        $Display = 'Liste des livraisons livrées par ' . $coursierUN . ' en ' . $dateLivrFormatted ;
+                        $prix=$prix+$liv->getPrixTotaleLivraison();
+                        $nb++;
                     }
                 } 
 
                 if ($coursierUN == '' && $region == '' && $selectedDate !='') {
                     if ($dateLivrFormatted==$selectedDate ) {
                         $livDeRegion[] = $item;
+                        $Display = 'Liste des livraisons livrées en ' . $dateLivrFormatted ;
+                        $prix=$prix+$liv->getPrixTotaleLivraison();
+                        $nb++;
                     }
                 } 
 
@@ -253,6 +277,10 @@ public function show(Request $request,LivraisonRepository $livraisonRepository, 
 
             return $this->render('gerer_tour/history.html.twig', [
                 'livraisons' => $livDeRegion, 
+                'display'=> $Display,
+                'coursiers'=> $coursierRepository->findAll(),
+                'prix'=>$prix,
+                'nb'=>$nb,
             ]);}
 
 

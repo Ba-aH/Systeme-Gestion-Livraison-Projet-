@@ -108,21 +108,11 @@
 
             <!-- ======================= Cards ================== -->
             <div class="cardBox">
+            
                 <div class="card">
                     <div>
-                        <div class="numbers">1,504</div>
-                        <div class="cardName">Daily Views</div>
-                    </div>
-
-                    <div class="iconBx">
-                        <ion-icon name="eye-outline"></ion-icon>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div>
-                        <div class="numbers">80</div>
-                        <div class="cardName">Sales</div>
+                        <div class="numbers">{{nb}}</div>
+                        <div class="cardName">Livraisons</div>
                     </div>
 
                     <div class="iconBx">
@@ -130,21 +120,11 @@
                     </div>
                 </div>
 
-                <div class="card">
-                    <div>
-                        <div class="numbers">284</div>
-                        <div class="cardName">Comments</div>
-                    </div>
-
-                    <div class="iconBx">
-                        <ion-icon name="chatbubbles-outline"></ion-icon>
-                    </div>
-                </div>
 
                 <div class="card">
                     <div>
-                        <div class="numbers">$7,842</div>
-                        <div class="cardName">Earning</div>
+                        <div class="numbers">${{prix}}</div>
+                        <div class="cardName">Revenus</div>
                     </div>
 
                     <div class="iconBx">
@@ -157,18 +137,18 @@
             <div class="details">
                 <div class="recentOrders">
                     <div class="cardHeader">
-                        <h2>Recent Orders</h2>
+                        <h2> Choisie la méthode de filtrage pour l'historique des livraisons</h2>
                         <a href="#" class="btn">View All</a> 
                     </div>
 
                     <form id="myForm" method="post" action="{{ path('history', {'region': 'default', 'coursier': 'default', 'date':'default'}) }}" onsubmit="updateFormAction()">
-                        <label for="coursier">Coursier username:</label>
+                        <label for="coursier" style='font-weight: bold;'>Coursier Username:</label>
                         <input type="text" id="coursier" name="coursier">
-                        <br>
-                        <label for="date">Select a date:</label>
+                        
+                        <label for="date" style='font-weight: bold;'>Select a Date :</label>
                         <input type="date" id="date" name="date">
-                        <br>
-                        <label for="region">Select region:</label>
+                        
+                        <label for="region" style='font-weight: bold;'>Select Region:</label>
                         <select id="region" name="region">
                             <option value="" disabled selected>Select a region</option>
                             <option value="Grand Tunis">Grand Tunis</option>
@@ -179,9 +159,11 @@
                             <option value="Sud-Est">Sud-Est</option>
                             <option value="Sud-Ouest">Sud-Ouest</option>
                         </select>
-                        <br>
-                        <input type="submit" value="Submit">
+                        <input type="submit" value="Lister">
                     </form>
+                    
+                        <h3>{{display}}</h3>
+                    
 
                     <script>
                         function updateFormAction() {
@@ -193,33 +175,94 @@
                         }
                     </script>
 
+                <style>
+                   .cardBox {
+                        display: flex;
+                        justify-content: center;
+                        
+                    }
+                    .card {
+                        width: 280px; /* Adjust the width as needed */
+                        margin: 0 10px; /* Add some margin between the cards if desired */
+                        
+                    }
 
+                    label {                     
+                        margin-bottom: 8px;
+                    }
 
+                    input[type="text"],
+                    input[type="date"],
+                    select {
+                        padding: 8px;
+                        
+                    }
 
+                    select {
+                        margin-bottom: 20px;
+                    }
+
+                    input[type="submit"] {
+                        background-color: var(--blue);
+                        color: white;
+                        padding: 10px 15px;
+                        border: none;
+                        border-radius: 3px;
+                        cursor: pointer;
+                    }
+
+                    input[type="submit"]:hover {
+                        background-color: var(--blue);
+                    }
+
+                    
+                    table {
+                        width: 100%;
+                        border-collapse: collapse;
+                        margin-top: 20px;
+                    }
+
+                    thead {
+                        background-color: #f2f2f2;
+                    }
+
+                    thead, td {
+                        border: 1px solid #ddd;
+                        padding: 8px;
+                        text-align: left;
+                    }
+
+                    td {
+                        height: 40px;
+                    }
+
+                    
+
+                    tr:hover {
+                        background-color: #f1f1f1;
+                    }
+
+                      
+                </style>
 
 
                 
-                <table>
+                    <table>
                         <thead>
                             <tr>
-                                <td>Code pin</td>
-                                <td>Date livraison</td>
+                                <td>Reference de livraison</td>
+                                <td>Client Email</td>
                                 <td>Frais livraison</td>
-                                <td>Prix livraison</td>
-                                <td>Reference</td>
-                                <td>Poid</td>
-                                <td>Actions</td>
+                                <td>Poid en kg</td>
+                               
                             </tr>
                         </thead>
                       {% for history in livraisons %}
                         <tr>
-                            <td>{{ history.livraison.id }}</td>
+                            <td>{{ history.livraison.reference }}</td>
                             <td>{{ history.livraison.client.email  }}</td>
-                            <td>{{ history.livraison.prixTotaleLivraison }}</td>
-                            <td>{{ history.livraison.poidLivraison  }}</td>
-                                          
-                            <td><a href="">Add to his tour</a></td>
-                            
+                            <td>${{ history.livraison.prixTotaleLivraison }}</td>
+                            <td>{{ history.livraison.poidLivraison  }} kg</td>                           
                         </tr>
                             {% else %}
                                 <tr>
@@ -228,8 +271,34 @@
                             {% endfor %}
                     </table>
                 </div>
+
+                <div class="recentCustomers">
+                    <div class="cardHeader">
+                        <h2>Coursiers liste</h2>
+                    </div>
+
+                    <table>
+                        {% for coursier in coursiers %}
+                        <tr>
+                            <td width="60px">
+                                <div class="imgBx"><img src={{ asset('assets/imgs/coursiers.png')}}></div>
+                            </td>
+                            <td>
+                                <h4>{{ coursier.username }} <br> <span>{{ coursier.nom }} {{ coursier.prenom }}</span></h4>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="2">No records found</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+ 
+                
             </div>
   
+            
 
 
 
@@ -243,8 +312,9 @@
     <script src="assets/js/chartsJS.js"></script>
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <script src={{ asset('assets/js/main.js')}}></script>
+    <script src={{ asset('assets/js/chartsJS.js')}}></script>
 </body>
 </html>
-<script src={{ asset('assets/js/main.js')}}></script>
-<script src={{ asset('assets/js/chartsJS.js')}}></script>
+
   {% endblock %}

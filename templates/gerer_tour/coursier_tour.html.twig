@@ -195,10 +195,38 @@
                     </table>
                 </div>
             
-            <div class="recentCustomers">
+                <div class="recentCustomers">
                     <div class="cardHeader">
                         <h2>Coursier  tour</h2>
                     </div>
+
+
+                    <table>
+                        
+
+                        
+                        {% for livraison in livraisons %}
+                        <tr>
+                            <td>{{ livraison.id }}</td>
+                            <td>{{ livraison.reference  }}</td>
+                            <td>{{ livraison.prixTotaleLivraison }}</td>
+                            <td>{{ livraison.poidLivraison  }}</td>
+                            
+                            {# <td> <p> {{ statutLivraison.getLivraisonDate()|date('Y-m-d H:i:s') }}</p> #}
+
+                            
+                            <td><a href="">Add to his tour</a></td>
+                            
+                        </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="8">no records found</td>
+                                </tr>
+                            {% endfor %}
+
+                        
+                    </table>
+                <div>    
             
 
                       
