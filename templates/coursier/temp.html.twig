@@ -1,0 +1,176 @@
+{% extends 'index.html.twig' %}
+
+{% block title %}Hello CoursierController!{% endblock %}
+
+
+
+{% block body %}
+<style>
+        .containerr {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #f9f9f9;
+            overflow: hidden; /* Clearfix to contain floated cards */
+        }
+
+        .cardr {
+            border: 1px solid #eee;
+            border-radius: 5px;
+            padding: 20px;
+            margin-right: 20px;
+            margin-bottom: 20px;
+            background-color: #fff;
+            float: left;
+            width: calc(50% - 20px);
+            box-sizing: border-box; /* Ensure padding is included in width */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+        }
+
+        .cardr:hover {
+            background-color: #DB9C;
+            color: #fff;
+        }
+
+        .cardr p {
+            margin: 5px 0;
+        }
+
+        .card-buttonsr {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .card-buttonsr a {
+            display: inline-block;
+            padding: 10px 20px;
+            text-decoration: none;
+            color: white;
+            background-color: #985321;
+            border: 1px solid #007bff;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease; /* Added color transition */
+        }
+
+        .card-buttonsr a:hover {
+            background-color: WHITE;
+            color: black; /* Change text color to black on hover */
+        }
+
+        .containerr h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #333;
+        }
+
+          .row {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 4px; /* Adjust the vertical gap as needed */
+    }
+    </style>
+<!-- Favicons -->
+
+ 
+<!-- ======= Hero Section ======= -->
+  <section id="hero" class="hero d-flex align-items-center">
+    <div class="container">
+    <div class="container position-relative">
+          <div class="row d-flex justify-content-center">
+            <div class="col-lg-6 text-center">
+              <h2>commencer maintenant </h2>
+              <p>Odio et unde deleniti. Deserunt numquam exercitationem. Officiis quo odio sint voluptas consequatur ut a odio voluptatem. Sit dolorum debitis veritatis natus dolores. Quasi ratione sint. Sit quaerat ipsum dolorem.</p>
+            </div>
+          </div>
+        </div>
+    </div>
+  </section><!-- End Hero Section --> 
+  
+  
+
+  <main id="main">
+
+    <!-- ======= Featured Services Section ======= -->
+    <section id="featured-services" class="featured-services">
+      <div class="container">
+
+        <div class="row">
+
+        
+          <!-- End Service Item -->
+
+          <div class="col-lg-4 col-md-6 service-item d-flex" data-aos="fade-up" data-aos-delay="100">
+            <div class="icon flex-shrink-0"><i class="fa-solid fa-truck"></i></div>
+            <div>
+              <h4 class="title">livraisons en cours</h4>
+              <p class="description">Minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat tarad limino ata</p>
+              <a href="" class="readmore stretched-link"><span>Learn More</span><i class="bi bi-arrow-right"></i></a>
+            </div>
+          </div><!-- End Service Item -->
+
+          <div class="col-lg-4 col-md-6 service-item d-flex" data-aos="fade-up" data-aos-delay="200">
+            <div class="icon flex-shrink-0"><i class="fa-solid fa-truck-ramp-box"></i></div>
+            <div>
+              <h4 class="title">disponibilité</h4>
+              <p class="description">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur</p>
+              <a href="" class="readmore stretched-link"><span>Learn More</span><i class="bi bi-arrow-right"></i></a>
+            </div>
+          </div><!-- End Service Item -->
+
+        </div>
+
+      </div>
+    </section><!-- End Featured Services Section -->
+      <section id="featured-services" class="featured-services">
+      <div class="container">
+{% for livraisonArray in livraisons %}
+        <div class="containerr">
+            <h2>Tourner Number: {{ loop.index }}</h2>
+            <div class="rowr">
+                {% for livraison in livraisonArray %}
+                    <div class="cardr">
+                        <p><strong>Reference:</strong> {{ livraison.getReference() }}</p>
+                       
+                        
+                        <p><strong>FraisLivraison:</strong> {{ livraison.getFraisLivraison() }}</p>
+                        <p><strong>PrixTotaleLivraison:</strong> {{ livraison.getPrixTotaleLivraison() }}</p>
+                        <p><strong>PoidLivraison:</strong> {{ livraison.getPoidLivraison() }}</p>
+                        <p><strong>LivraisonDate:</strong> {{ livraison.getLivraisonDate()|date('Y-m-d ') }}</p>
+                     
+                        <div class="card-buttonsr">
+                         {# <a href="{{ path('details', {'livraisonId': livraison.id}) }}">Check Available Courier</a> #}
+                            <a href="{{ path('details', {'id': livraison.id}) }}" class="edit-buttonr">détails</a>
+                            <a href="#" class="delete-buttonr">echec</a>
+                            <a href="#" class="view-buttonr">confirmer </a>
+                            <a href="#" class="complete-buttonr">annuler </a>
+                        </div>
+                    </div><!-- /.card -->
+                    {% if loop.index % 2 == 0 and not loop.last %}
+                        </div><div class="rowr">
+                    {% endif %}
+                {% endfor %}
+            </div><!-- /.row -->
+        </div><!-- /.container -->
+    {% endfor %}
+  </div>
+   </section>
+
+
+
+  <a href="#" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <div id="preloader"></div>
+
+  <!-- Vendor JS Files -->
+
+
+
+
+{% endblock %}

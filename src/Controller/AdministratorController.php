@@ -155,7 +155,9 @@ class AdministratorController extends AbstractController
                      if ($mod_stat) {
                         $mod_stat->setStatusTitle('en attente');
                         $mod_stat->setStatusDateModifier($now);
+                        $livraison->setTourner(null);
                        }
+
                      // Persist the changes to the database
                      $entityManager->flush();
                      $clients=$clientRepository->findAll();

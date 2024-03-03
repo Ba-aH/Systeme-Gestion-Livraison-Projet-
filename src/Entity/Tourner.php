@@ -30,6 +30,9 @@ class Tourner
     #[ORM\OneToMany(targetEntity: Livraison::class, mappedBy: 'tourner')]
     private Collection $livraisons;
 
+    #[ORM\Column(length: 255)]
+    private ?string $statut_tourner = null;
+
     public function __construct()
     {
         $this->livraisons = new ArrayCollection();
@@ -114,6 +117,18 @@ class Tourner
                 $livraison->setTourner(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getStatutTourner(): ?string
+    {
+        return $this->statut_tourner;
+    }
+
+    public function setStatutTourner(string $statut_tourner): static
+    {
+        $this->statut_tourner = $statut_tourner;
 
         return $this;
     }
