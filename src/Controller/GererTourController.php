@@ -26,26 +26,37 @@ use DateTime;
 class GererTourController extends AbstractController
 {
     #[Route('/gerer/tour', name: 'app_gerer_tour', methods: ['GET'])]
-    public function index(LivraisonRepository $livraisonRepository, StatutLivraisonRepository $statutLivraisonRepository): Response
+    public function index(LivraisonRepository $livraisonRepository, StatutLivraisonRepository $statutLivraisonRepository,CoursierRepository $coursierRepository): Response
     {
         $ann = $statutLivraisonRepository->findBy(['status_title' => "annulée"]);
         $att = $statutLivraisonRepository->findBy(['status_title' => "en attente"]);
-        $livraisons = $livraisonRepository->findAll();
-       
-
+        $nb=0;
+        $prix=0;
+        $prixTotale=0;
         $livraisons = [];
 
         foreach ($ann as $item) {
-            $livraisons[] = $item->getLivraison();
+            $liv = $item->getLivraison();
+            $livraisons[] = $liv;
+            $prix= $liv->getPrixTotaleLivraison();
+            $prixTotale += $prix ;
+            $nb++;
         }
 
         foreach ($att as $item) {
-            $livraisons[] = $item->getLivraison();
+            $liv = $item->getLivraison();
+            $livraisons[] = $liv;
+            $nb++;
+            $prix= $liv->getPrixTotaleLivraison();
+            $prixTotale += $prix ;
         }
         
     
         return $this->render('gerer_tour/index.html.twig', [
             'livraisons' => $livraisons, 
+            'prixTotale' => $prixTotale,
+            'nbLivraisons' => $nb,
+            'coursiers' => $coursierRepository->findAll(),
         ]);
     }
 
@@ -91,13 +102,14 @@ public function show(Request $request,LivraisonRepository $livraisonRepository, 
     $livraisonId = $request->get('livraisonId');
     $livraison = $livraisonRepository->findOneBy(['id'=>$livraisonId]);
     $dateLivraison = $livraison->getLivraisonDate();
-
+    $dateLivrFormatted = $dateLivraison->format('Y-m-d');
     
     $coursierDispo = $statutCoursierRepository->findBy(['region' => $regionAdr,'titre_statut' => 'disponible','debut_tourner'=>$dateLivraison]);
     
     return $this->render('gerer_tour/couriers.html.twig', [
         'couriers' => $coursierDispo,
         'regionAdr' => $regionAdr,
+        'dateLivraison' =>$dateLivrFormatted,
     ]);
 }
 

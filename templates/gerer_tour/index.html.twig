@@ -111,21 +111,11 @@
 
             <!-- ======================= Cards ================== -->
             <div class="cardBox">
+            
                 <div class="card">
                     <div>
-                        <div class="numbers">1,504</div>
-                        <div class="cardName">Daily Views</div>
-                    </div>
-
-                    <div class="iconBx">
-                        <ion-icon name="eye-outline"></ion-icon>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div>
-                        <div class="numbers">80</div>
-                        <div class="cardName">Sales</div>
+                        <div class="numbers">{{nbLivraisons}}</div>
+                        <div class="cardName">Livraisons</div>
                     </div>
 
                     <div class="iconBx">
@@ -133,21 +123,11 @@
                     </div>
                 </div>
 
-                <div class="card">
-                    <div>
-                        <div class="numbers">284</div>
-                        <div class="cardName">Comments</div>
-                    </div>
-
-                    <div class="iconBx">
-                        <ion-icon name="chatbubbles-outline"></ion-icon>
-                    </div>
-                </div>
 
                 <div class="card">
                     <div>
-                        <div class="numbers">$7,842</div>
-                        <div class="cardName">Earning</div>
+                        <div class="numbers">${{prixTotale}}</div>
+                        <div class="cardName">Revenus</div>
                     </div>
 
                     <div class="iconBx">
@@ -160,35 +140,28 @@
             <div class="details">
                 <div class="recentOrders">
                     <div class="cardHeader">
-                        <h2>Recent Orders</h2>
-                        <a href="#" class="btn">View All</a>
+                        <h2>Les nouvelles livraisons sont maintenant disponibles et doivent être attribuées au coursier disponible.</h2>                   
                     </div>
 
                     <table>
                         <thead>
                             <tr>
-                                <td>Code pin</td>
+                                <td>Reference de livraison</td>
                                 <td>Date livraison</td>
-                                <td>Frais livraison</td>
                                 <td>Prix livraison</td>
-                                <td>Reference</td>
                                 <td>Poid</td>
-                                <td>Actions</td>
-                            </tr>
+                            </tr>   
                         </thead>
 
                         <tbody>
                         {% for livraison in livraisons %}
-                        <tr><td>{{ livraison.id }}</td>
-                            <td>{{ livraison.codePin }}</td>
-                            <td>{{ livraison.Tourner ? livraison.Tourner.id : '' }}</td>
-                            <td>{{ livraison.livraisonDate ? livraison.livraisonDate|date('Y-m-d') : '' }}</td>
-                            <td>{{ livraison.fraisLivraison }}</td>
-                            <td>{{ livraison.prixTotaleLivraison }}</td>
+                            <tr class="hoverable-tr">
                             <td>{{ livraison.reference }}</td>
+                            <td>{{ livraison.livraisonDate ? livraison.livraisonDate|date('Y-m-d') : '' }}</td>
+                            <td>{{ livraison.prixTotaleLivraison }}</td>                 
                             <td>{{ livraison.poidLivraison }}</td>
                             <td>
-                            <a href="{{ path('app_couriers', {'id': livraison.Client.id, 'livraisonId': livraison.id}) }}">Check Available Courier</a>
+                            <a href="{{ path('app_couriers', {'id': livraison.Client.id, 'livraisonId': livraison.id}) }}" class="add-to-tour-link">Vérifier le courrier disponible</a>
                             </td>
                         </tr>
                             {% else %}
@@ -200,9 +173,92 @@
                         
                     </table>
                 </div>
+                <div class="recentCustomers">
+                    <div class="cardHeader">
+                        <h2>Coursiers liste</h2>
+                    </div>
 
+                    <table>
+                        {% for coursier in coursiers %}
+                        <tr>
+                            <td width="10px">
+                                <div class="imgBx"><img src={{ asset('assets/imgs/coursiers.png')}}></div>
+                            </td>
+                            <td>
+                                <h4>{{ coursier.username }} <br> <span>{{ coursier.nom }} {{ coursier.prenom }}</span></h4>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="2">No records found</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
                 
             </div>
+
+
+            <style>
+            .add-to-tour-link {
+                color: var(--blue); 
+                text-decoration: none; 
+                font-weight: bold; 
+                
+            }
+            .hoverable-tr:hover .add-to-tour-link {
+                color: #ffffff; /* Change the color to white on td hover */
+            }
+
+
+            .cardBox {
+                display: flex;
+                justify-content: center;
+                        
+             }
+            .card {
+                width: 280px; /* Adjust the width as needed */
+                margin: 0 10px; /* Add some margin between the cards if desired */            
+             }
+
+            input[type="submit"] {
+                        background-color: var(--blue);
+                        color: white;
+                        padding: 10px 15px;
+                        border: none;
+                        border-radius: 3px;
+                        cursor: pointer;
+                    }
+
+            input[type="submit"]:hover {
+             background-color: var(--blue);
+            }
+                
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 20px;
+                }
+
+            thead {
+                background-color: #f2f2f2;
+            }
+
+            thead, td {
+                border: 1px solid #ddd;
+                padding: 8px;
+                text-align: left;
+            }
+
+            td {
+                height: 40px;
+            }
+
+            tr:hover {
+                background-color: #f1f1f1;
+            }
+
+            </style>
 
 
 

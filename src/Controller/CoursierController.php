@@ -41,7 +41,7 @@ class CoursierController extends AbstractController
     public function afficher_tournees(TournerRepository $tournerRepository,LivraisonRepository $livraisonRepository): Response
     {
     $idcoursier=1;
-    $tabtourner=$tournerRepository->findBy(['coursier' => 1,'statut_tourner'=>'en cours']);
+    $tabtourner=$tournerRepository->findBy(['coursier' => 1,'statut_tourner'=>'²']);
     
 
 
