@@ -49,6 +49,9 @@ class Livraison
     #[ORM\ManyToOne(inversedBy: 'livraisons')]
     private ?Client $client = null;
 
+    #[ORM\Column]
+    private ?int $address_id = null;
+
     public function __construct()
     {
         $this->colis = new ArrayCollection();
@@ -203,6 +206,18 @@ class Livraison
     public function setClient(?Client $client): static
     {
         $this->client = $client;
+
+        return $this;
+    }
+
+    public function getAddressId(): ?int
+    {
+        return $this->address_id;
+    }
+
+    public function setAddressId(int $address_id): static
+    {
+        $this->address_id = $address_id;
 
         return $this;
     }

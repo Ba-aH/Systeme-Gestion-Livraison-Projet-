@@ -1,0 +1,141 @@
+{% extends 'index.html.twig' %}
+
+{% block title %}Hello CoursierController!{% endblock %}
+
+
+
+{% block body %}
+
+    </style>
+<!-- Favicons -->
+
+ 
+<!-- ======= Hero Section ======= -->
+  <section id="hero" class="hero d-flex align-items-center">
+    <div class="container">
+    <div class="container position-relative">
+          <div class="row d-flex justify-content-center">
+            <div class="col-lg-6 text-center">
+              <h2>commencer maintenant </h2>
+              <p>Odio et unde deleniti. Deserunt numquam exercitationem. Officiis quo odio sint voluptas consequatur ut a odio voluptatem. Sit dolorum debitis veritatis natus dolores. Quasi ratione sint. Sit quaerat ipsum dolorem.</p>
+            </div>
+          </div>
+        </div>
+    </div>
+  </section><!-- End Hero Section --> 
+  
+  
+
+  <main id="main">
+
+    <!-- ======= Featured Services Section ======= -->
+    <section id="featured-services" class="featured-services">
+      <div class="container">
+
+       
+            
+    </section><!-- End Featured Services Section -->
+
+</head>
+<body>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+    }
+
+    .containerm {
+        max-width: 600px;
+        margin: 50px auto;
+       height: 400px; /* Increased height of the container */
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+    .button-container {
+        display: flex;
+        justify-content: space-between; 
+        /* Space buttons evenly */
+        margin-bottom: 20px; /* Added margin at bottom */
+    }
+
+    .button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    .confirm-normal {
+        background-color: #4caf50;
+        color: #fff;
+    }
+
+    .confirm-with-pin {
+        background-color: #007bff;
+        color: #fff;
+    }
+
+    input[type="text"] {
+        width: 200px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+        margin: 0 auto; /* Center input horizontally */
+        display: block; /* Display input as block element */
+    }
+
+    .divider {
+        border-right: 1px solid #ccc; /* Vertical line between buttons and input */
+        height: 60px; /* Adjust height as needed */
+        margin: 0 20px; /* Added margin around divider */
+    }
+</style>
+</head>
+<body>
+
+<div class="containerm">
+    <div class="top-container">
+        <h1>Order Confirmation</h1>
+        
+    </div>
+       <form method="post" action="{{ path('confirmsubmit') }}" >
+    <div class="button-container">
+        <div class="left-container">
+            <button  value="normal" name="submit_button" type="submit" class="button confirm-normal">Confirm</button>
+        </div>
+        <div class="divider"></div> <!-- Vertical line between buttons -->
+        <div class="right-container">
+            <button value="pin" name="submit_button" type="submit"  class="button confirm-with-pin">Confirm with PIN</button></br></br>
+            <input type="text" name="pin" id="pin" placeholder="Enter PIN">
+           <input type="text" name="livraisonId" id="livraisonId" value="{{ livraisonId }}"><br />
+        </div>
+    </div>
+     </form>
+</div>
+{# <i class="confirmed-icon fas fa-check"></i> Confirmed #}
+
+<!-- Alternatively, you can use text and CSS to create a simple checkmark -->
+
+
+<!-- Make sure to include Font Awesome CSS if you're using it -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <a  class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <div id="preloader"></div>
+
+  <!-- Vendor JS Files -->
+
+
+
+
+{% endblock %}

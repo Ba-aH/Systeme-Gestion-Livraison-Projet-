@@ -118,7 +118,7 @@ public function show(Request $request,LivraisonRepository $livraisonRepository, 
     public function affecterAuRoute(Request $request,TournerRepository $tournerRepository,CoursierRepository $coursierRepository,$id, EntityManagerInterface $entityManager,LivraisonRepository $livraisonRepository,StatutLivraisonRepository $statutLivraisonRepository,StatutCoursierRepository $statutCoursierRepository): Response
     {
         $ann = $statutLivraisonRepository->findBy(['status_title' => "annulée"]);
-        $att = $statutLivraisonRepository->findBy(['status_title' => "en attend"]);
+        $att = $statutLivraisonRepository->findBy(['status_title' => "en attente"]);
         $livraisons = $livraisonRepository->findAll();
         $livraisons = [];
         foreach ($ann as $item) {

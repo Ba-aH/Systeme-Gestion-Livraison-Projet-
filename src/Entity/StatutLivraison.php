@@ -29,6 +29,9 @@ class StatutLivraison
     #[ORM\OneToOne(inversedBy: 'statutLivraison', cascade: ['persist', 'remove'])]
     private ?Livraison $livraison = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $note = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -90,6 +93,18 @@ class StatutLivraison
     public function setLivraison(?Livraison $livraison): static
     {
         $this->livraison = $livraison;
+
+        return $this;
+    }
+
+    public function getNote(): ?string
+    {
+        return $this->note;
+    }
+
+    public function setNote(?string $note): static
+    {
+        $this->note = $note;
 
         return $this;
     }
