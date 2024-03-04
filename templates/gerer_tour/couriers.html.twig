@@ -109,59 +109,12 @@
                 </div>
             </div>
 
-            <!-- ======================= Cards ================== -->
-            <div class="cardBox">
-                <div class="card">
-                    <div>
-                        <div class="numbers">1,504</div>
-                        <div class="cardName">Daily Views</div>
-                    </div>
-
-                    <div class="iconBx">
-                        <ion-icon name="eye-outline"></ion-icon>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div>
-                        <div class="numbers">80</div>
-                        <div class="cardName">Sales</div>
-                    </div>
-
-                    <div class="iconBx">
-                        <ion-icon name="cart-outline"></ion-icon>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div>
-                        <div class="numbers">284</div>
-                        <div class="cardName">Comments</div>
-                    </div>
-
-                    <div class="iconBx">
-                        <ion-icon name="chatbubbles-outline"></ion-icon>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div>
-                        <div class="numbers">$7,842</div>
-                        <div class="cardName">Earning</div>
-                    </div>
-
-                    <div class="iconBx">
-                        <ion-icon name="cash-outline"></ion-icon>
-                    </div>
-                </div>
-            </div>
 
     
             <div class="details">
                 <div class="recentOrders">
                     <div class="cardHeader">
-                        <h2>Courier Disponible a {{regionAdr}}</h2>
-                        <a href="#" class="btn">View All</a>
+                        <h2>Liste des courier disponible a {{regionAdr}} en {{dateLivraison}}</h2>
                     </div>
 
                     <table>
@@ -179,6 +132,7 @@
                         
                         {% for courier in couriers %}
                         <tr>
+                            <tr class="hoverable-tr">
                             <td>{{ courier.id }}</td>
                             <td>{{ courier.coursier.nom }}</td>
                             <td>{{ courier.coursier.prenom }}</td>
@@ -191,7 +145,7 @@
                             
                             <td>
                             {% set livraisonId = app.request.query.get('livraisonId') %}
-                            <a href="{{ path('affectRoute', {'id': courier.coursier.id, 'livraisonId': livraisonId}) }}">Add to his tour</a></td>
+                            <a href="{{ path('affectRoute', {'id': courier.coursier.id, 'livraisonId': livraisonId}) }}" class="add-to-tour-link">Add to his tour</a></td>
                         </tr>
                             {% else %}
                                 <tr>
@@ -216,7 +170,66 @@
             </div>
 
 
+    <style>
+            .add-to-tour-link {
+                color: var(--blue); 
+                text-decoration: none; 
+                font-weight: bold; 
+                
+            }
+            .hoverable-tr:hover .add-to-tour-link {
+                color: #ffffff; /* Change the color to white on td hover */
+            }
 
+
+            .cardBox {
+                display: flex;
+                justify-content: center;
+                        
+             }
+            .card {
+                width: 280px; /* Adjust the width as needed */
+                margin: 0 10px; /* Add some margin between the cards if desired */            
+             }
+
+            input[type="submit"] {
+                        background-color: var(--blue);
+                        color: white;
+                        padding: 10px 15px;
+                        border: none;
+                        border-radius: 3px;
+                        cursor: pointer;
+                    }
+
+            input[type="submit"]:hover {
+             background-color: var(--blue);
+            }
+                
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 20px;
+                }
+
+            thead {
+                background-color: #f2f2f2;
+            }
+
+            thead, td {
+                border: 1px solid #ddd;
+                padding: 8px;
+                text-align: left;
+            }
+
+            td {
+                height: 40px;
+            }
+
+            tr:hover {
+                background-color: #f1f1f1;
+            }
+
+            </style>
   
 
             
