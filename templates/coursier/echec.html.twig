@@ -1,0 +1,267 @@
+{% extends 'index.html.twig' %}
+
+{% block title %}Hello CoursierController!{% endblock %}
+
+
+
+{% block body %}
+
+    </style>
+<!-- Favicons -->
+
+ 
+<!-- ======= Hero Section ======= -->
+  <section id="hero" class="hero d-flex align-items-center">
+    <div class="container">
+    <div class="container position-relative">
+          <div class="row d-flex justify-content-center">
+            <div class="col-lg-6 text-center">
+              <h2>commencer maintenant </h2>
+              <p>Odio et unde deleniti. Deserunt numquam exercitationem. Officiis quo odio sint voluptas consequatur ut a odio voluptatem. Sit dolorum debitis veritatis natus dolores. Quasi ratione sint. Sit quaerat ipsum dolorem.</p>
+            </div>
+          </div>
+        </div>
+    </div>
+  </section><!-- End Hero Section --> 
+  
+  
+
+  <main id="main">
+
+    <!-- ======= Featured Services Section ======= -->
+    <section id="featured-services" class="featured-services">
+      <div class="container">
+
+       
+            
+    </section><!-- End Featured Services Section -->
+<style>
+  /* Container styles */
+  .containerp {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  /* List styles */
+  .listp {
+    list-style: none;
+    padding: 0;
+  }
+
+  .list-itemp {
+    padding: 10px;
+    margin-bottom: 5px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Input styles */
+  .input-containerp {
+    margin-top: 20px;
+    position: relative;
+  }
+
+  .input-containerp input[type="text"] {
+    width: calc(100% - 40px);
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    outline: none;
+  }
+
+  .input-containerp button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 10px;
+    border: none;
+    border-radius: 0 5px 5px 0;
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .input-containerp button:hover {
+    background-color: #0056b3;
+  }
+
+  /* Submit button styles */
+  .submit-button {
+    display: block;
+    margin-top: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #28a745;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .submit-button:hover {
+    background-color: #218838;
+  }
+</style>
+</head>
+<body>
+
+
+        </section><!-- End Featured Services Section -->
+        <style>
+            /* Container styles */
+            .containerp {
+                max-width: 600px;
+                margin: 20px auto;
+                padding: 20px;
+                background-color: #f9f9f9;
+                border-radius: 10px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+
+            /* List styles */
+            .listp {
+                list-style: none;
+                padding: 0;
+            }
+
+            .list-itemp {
+                padding: 10px;
+                margin-bottom: 5px;
+                background-color: #fff;
+                border-radius: 5px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                cursor: pointer; /* Add cursor pointer to indicate selectable */
+            }
+
+            .list-itemp.selected {
+                background-color: #007bff; /* Change background color of selected item */
+                color: #fff; /* Change text color of selected item */
+            }
+
+            /* Input styles */
+            .input-containerp {
+                margin-top: 20px;
+                position: relative;
+            }
+
+            .input-containerp input[type="text"] {
+                width: calc(100% - 40px);
+                padding: 10px;
+                border: none;
+                border-radius: 5px;
+                background-color: #fff;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                outline: none;
+            }
+
+            .input-containerp button {
+                position: absolute;
+                top: 0;
+                right: 0;
+                padding: 10px;
+                border: none;
+                border-radius: 0 5px 5px 0;
+                background-color: #007bff;
+                color: #fff;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
+
+            .input-containerp button:hover {
+                background-color: #0056b3;
+            }
+
+            /* Submit button styles */
+            .submit-button {
+                display: block;
+                margin-top: 10px;
+                padding: 10px 20px;
+                border: none;
+                border-radius: 5px;
+                background-color: #28a745;
+                color: #fff;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
+
+            .submit-button:hover {
+                background-color: #218838;
+            }
+        </style>
+        </head>
+        <body>
+
+        <div class="containerp">
+            <h2>choisir un raison pour confirmer l'echec de cette livraison</h2>
+
+            <!-- List -->
+            <ul class="listp">
+                 {% for li in list %}
+                        <li class="list-itemp"> 
+                            
+                             {{ li.raison }}
+                             
+                              </li>
+                        {% endfor %}
+             
+                <!-- Add more list items as needed -->
+            </ul>
+
+            <!-- Input -->
+            <form method="post" action="{{ path('echecsubmit') }}" >
+            <label for="newItem">donner votre propre raison:</label><br /><br />
+                <input type="text" name="newItem" placeholder="Add new reason..."style="width: 560px; height: 40px;"><br />
+              
+                <input type="hidden" name="selectedItem" id="selectedItem">
+                <input type="hidden" name="livraisonId" id="livraisonId" value="{{ livraisonId }}"><br />
+
+               <button type="submit" class="submit-button" id="submitItemButton">confirmer</button>
+                <!-- Hidden input field to store selected item -->
+            </form>
+
+            <!-- Submit Selected Item button -->
+     
+        </div>
+
+        <script>
+       
+
+            // Function to handle submission of selected item
+           var listItems = document.querySelectorAll(".list-itemp");
+    listItems.forEach(function (item) {
+        item.addEventListener("click", function () {
+            // Deselect all list items
+            listItems.forEach(function (item) {
+                item.classList.remove("selected");
+            });
+            // Select the clicked item
+            this.classList.add("selected");
+
+            // Update the value of the hidden input field with the selected item
+            var selectedItemValue = this.textContent.trim();
+            document.getElementById("selectedItem").value = selectedItemValue;
+        });
+    });
+
+         
+        </script>
+
+
+  <a  class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <div id="preloader"></div>
+
+  <!-- Vendor JS Files -->
+
+
+
+
+{% endblock %}

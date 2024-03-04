@@ -130,10 +130,12 @@
     </section><!-- End Featured Services Section -->
       <section id="featured-services" class="featured-services">
       <div class="container">
-{% for livraisonArray in livraisons %}
+      {% set myVariable = 0 %}
+      {% for livraisonArray in livraisons %}
         <div class="containerr">
             <h2>Tourner Number: {{ loop.index }}</h2>
             <div class="rowr">
+         
                 {% for livraison in livraisonArray %}
                     <div class="cardr">
                         <p><strong>Reference:</strong> {{ livraison.getReference() }}</p>
@@ -143,18 +145,24 @@
                         <p><strong>PrixTotaleLivraison:</strong> {{ livraison.getPrixTotaleLivraison() }}</p>
                         <p><strong>PoidLivraison:</strong> {{ livraison.getPoidLivraison() }}</p>
                         <p><strong>LivraisonDate:</strong> {{ livraison.getLivraisonDate()|date('Y-m-d ') }}</p>
-                     
+
+                          {% if status[myVariable]  == 'confirmé' %}
+                         <P><strong>confirmer : </strong>         <img src="{{ asset('conf.png') }}" alt="Description of the image" width="25" height="25">   </p> 
+                        {% elseif status[myVariable]  != 'confirmé' %}
+                          <P><strong>confirmer : </strong>         <img src="{{ asset('tt.png') }}" alt="Description of the image" width="25" height="25">   </p> 
+                          {% endif %} 
                         <div class="card-buttonsr">
                          {# <a href="{{ path('details', {'livraisonId': livraison.id}) }}">Check Available Courier</a> #}
                             <a href="{{ path('details', {'id': livraison.id}) }}" class="edit-buttonr">détails</a>
-                            <a href="#" class="delete-buttonr">echec</a>
-                            <a href="#" class="view-buttonr">confirmer </a>
-                            <a href="#" class="complete-buttonr">annuler </a>
+                            <a href="{{ path('echecc', {'id': livraison.id}) }}" class="delete-buttonr">echec</a>
+                            <a href="{{ path('confirmer', {'id': livraison.id}) }}"class="view-buttonr">confirmer </a>
+                            <a href="{{ path('coursier_annulation', {'id': livraison.id}) }}"class="complete-buttonr">annuler </a>
                         </div>
                     </div><!-- /.card -->
                     {% if loop.index % 2 == 0 and not loop.last %}
                         </div><div class="rowr">
                     {% endif %}
+                    {% set myVariable = myVariable + 1 %}
                 {% endfor %}
             </div><!-- /.row -->
         </div><!-- /.container -->
@@ -163,8 +171,7 @@
    </section>
 
 
-
-  <a href="#" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+  <a  class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
   <div id="preloader"></div>
 
