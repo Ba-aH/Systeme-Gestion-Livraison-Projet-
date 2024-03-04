@@ -31,9 +31,12 @@ class CoursierController extends AbstractController
         $livraisonId = $request->get('id');
         $liv = $entityManager->getRepository(Livraison::class)->findOneBy(['id' =>  $livraisonId]);
         $client=$liv->getClient();
-        $address=$adresseRepository->findBy(['id' =>    $liv->getAddressId()]);
+        $address=$adresseRepository->findOneBy(['id' => $liv->getAddressId()]);
+        $latitude=$address->getLatitude();
+        $longtitude=$address->getLongitude();
+
         return $this->render('coursier/details.html.twig', [
-            'liv' =>  $liv,'client' =>$client,'address' =>$address
+            'liv' =>  $liv,'client' =>$client,'address' =>$address,'lat'=>$latitude, 'long'=>$longtitude,
         ]);
     }
 
@@ -42,7 +45,7 @@ class CoursierController extends AbstractController
     public function afficher_tournees(EntityManagerInterface $entityManager,TournerRepository $tournerRepository,LivraisonRepository $livraisonRepository): Response
     {
     $idcoursier=1;
-    $tabtourner=$tournerRepository->findBy(['coursier' => 1,'statut_tourner'=>'²']);
+    $tabtourner=$tournerRepository->findBy(['coursier' => 1,'statut_tourner'=>'en cours']);
     
 
 
