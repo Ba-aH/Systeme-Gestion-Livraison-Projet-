@@ -4,7 +4,6 @@ namespace App\Controller;
 use App\Repository\LivraisonRepository;
 use App\Repository\StatutLivraisonRepository;
 use App\Repository\CoursierRepository;
-
 use App\Repository\TournerRepository;
 use App\Repository\ClientRepository;
 use Symfony\Component\HttpFoundation\Request;
