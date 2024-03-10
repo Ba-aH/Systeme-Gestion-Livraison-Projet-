@@ -93,14 +93,22 @@ class GererTourController extends AbstractController
 public function show(Request $request,LivraisonRepository $livraisonRepository, ClientRepository $clientRepository,AdresseRepository $adresseRepository,StatutCoursierRepository $statutCoursierRepository,CoursierRepository $coursierRepository,$id): Response
 {
     // $client = $clientRepository->findBy();
-    $client=$clientRepository->findBy(['id' => $id]);
-    $idclient = $client[0]->getId();
-    $realAdr=$client[0]->getAdresses();
-    $idAdr=$realAdr[0]->getId();
-    $adr = $adresseRepository->findBy(['id' => $idAdr]);
-    $regionAdr = $adr[0]->getRegion();
     $livraisonId = $request->get('livraisonId');
+
+    // $client=$clientRepository->findBy(['id' => $id]);
+    // $idclient = $client[0]->getId();
+    // $realAdr=$client[0]->getAdresses();
+    // $idAdr=$realAdr[0]->getId();
+    // $adr = $adresseRepository->findBy(['id' => $idAdr]);
+    // $regionAdr = $adr[0]->getRegion();
+
+
+ 
     $livraison = $livraisonRepository->findOneBy(['id'=>$livraisonId]);
+    $idaddress=$livraison->getAddressId();
+    $adr = $adresseRepository->findBy(['id' => $idaddress]);
+    $regionAdr = $adr[0]->getRegion();
+
     $dateLivraison = $livraison->getLivraisonDate();
     $dateLivrFormatted = $dateLivraison->format('Y-m-d');
     
@@ -128,8 +136,10 @@ public function show(Request $request,LivraisonRepository $livraisonRepository, 
         foreach ($att as $item) {
             $livraisons[] = $item->getLivraison();
         }
-
-        $coursier=$tournerRepository->findBy(['coursier' => $id]);
+        $livraisonId121 = $request->get('livraisonId');
+        $livraison121 = $livraisonRepository->findOneBy(['id' => $livraisonId121]);
+        $datess= $livraison121->getLivraisonDate();
+        $coursier=$tournerRepository->findBy(['coursier' => $id,'date'=>$datess]);
         $livraisonId = $request->get('livraisonId');
         if (empty($coursier)) {
             $tour = new Tourner();  
@@ -141,6 +151,8 @@ public function show(Request $request,LivraisonRepository $livraisonRepository, 
             $tour->setPrixTourner($prix);
             $tour->setPoidTourner($poid);
             $tour->setNbLivraison(1);
+            $tour->setStatutTourner('en cours');
+            $tour->setDate($datess);
             $entityManager->persist($tour);
             $entityManager->flush();
             $livraison->setTourner($tour);
@@ -148,20 +160,19 @@ public function show(Request $request,LivraisonRepository $livraisonRepository, 
          
             $changestat->setStatusTitle('affecte');
             $entityManager->flush();
-            return $this->render('gerer_tour/coursier_tour.html.twig', [
-                'livraisons' => $livraisons,   
-            ]);
+            return $this->redirectToRoute('app_gerer_tour');
         } else {
             $livraison = $livraisonRepository->findOneBy(['id' => $livraisonId]);
             $prix= $livraison->getPrixTotaleLivraison();
             $poid = $livraison->getPoidLivraison();
-            $tour = $tournerRepository -> findOneBy(['coursier' => $id]);
+            $tour = $tournerRepository -> findOneBy(['coursier' => $id,'date'=>$datess]);
             $nb=$tour->getNbLivraison();
             $poidTour = $poid + $tour->getPoidTourner();
             $prixTour = $prix + $tour->getPrixTourner();
             $tour -> setPoidTourner($poidTour);
             $tour -> setPrixTourner($prixTour);
             $tour -> setNbLivraison($nb+1);
+            $tour->setStatutTourner('en cours');
             $entityManager->flush();
             $livraison->setTourner($tour);
             $changestat = $statutLivraisonRepository->findOneBy(['livraison' => $livraisonId]);
@@ -174,13 +185,12 @@ public function show(Request $request,LivraisonRepository $livraisonRepository, 
                 $entityManager->persist($changestat);
                 $entityManager->flush();
             }
-              return $this->render('gerer_tour/index.html.twig', [
-                // 'courier' => $coursierRepository->findOneBy(['id'=>$id]),
-                'livraisons' => $livraisons,   
-            ]);
+            return $this->redirectToRoute('app_gerer_tour');
         }  
 
-       
+        // $livraisonId = $request->get('livraisonId');
+        // $livraison = $livraisonRepository->findOneBy(['id' => $livraisonId]);
+        // $datess= $livraison->getLivraisonDate();
     }
     
     #[Route('/available/couriers/{id}', name: 'app_courier_tour', methods: ['GET'])]

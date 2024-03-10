@@ -1,0 +1,223 @@
+{% extends 'index.html.twig' %}
+
+{% block title %}Hello CoursierController!{% endblock %}
+
+
+
+{% block body %}
+
+ 
+<!-- Favicons -->
+
+ 
+<!-- ======= Hero Section ======= -->
+  <section id="hero" class="hero d-flex align-items-center">
+    <div class="container">
+    <div class="container position-relative">
+          <div class="row d-flex justify-content-center">
+            <div class="col-lg-6 text-center">
+              <h2>commencer maintenant </h2>
+              <p>Odio et unde deleniti. Deserunt numquam exercitationem. Officiis quo odio sint voluptas consequatur ut a odio voluptatem. Sit dolorum debitis veritatis natus dolores. Quasi ratione sint. Sit quaerat ipsum dolorem.</p>
+            </div>
+          </div>
+        </div>
+    </div>
+  </section><!-- End Hero Section --> 
+  
+  
+
+  <main id="main">
+
+    <!-- ======= Featured Services Section ======= -->
+    <section id="featured-services" class="featured-services">
+      <div class="container">
+
+       
+            
+    </section><!-- End Featured Services Section -->
+
+</head>
+<body>
+<style>
+  /* Table container styles */
+  .containerrr {
+    background-color: #ccc;
+    padding: 20px;
+    max-width: 840px; /* Adjust width here */
+    margin: 0 auto; /* Center the container */
+  }
+
+  /* Table styles */
+  .table-container {
+    max-width: calc(100% - 40px); /* Adjust width here */
+    margin: 0 auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+  }
+
+  th, td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+
+  th {
+    background-color: #007bff;
+    color: #fff;
+    font-weight: bold;
+  }
+
+  /* Hover effect for table rows */
+  tr:hover {
+    background-color: #f5f5f5;
+  }
+
+  /* Hover effect for table cells */
+  td:hover {
+    background-color: #ddd; /* Reverse hover color for cells */
+  }
+
+  /* Alternate row color */
+  tr {
+    background-color: #f2f2f2;
+  }
+
+  /* Button styles */
+  .annuler-button {
+    background-color: red;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .annuler-button:hover {
+    background-color: darkred;
+  }
+
+  /* Container styles */
+  .containerm {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #f4f4f4;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+
+  label {
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+
+  input[type="text"],
+  input[type="date"],
+  button[type="submit"] {
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+
+  button[type="submit"] {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  button[type="submit"]:hover {
+    background-color: #0056b3;
+  }
+</style>
+</head>
+<body>
+
+<div class="containerrr">
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>id</th>
+          <th>region</th>
+          <th>date</th>
+          <th>statut</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+        
+      <tbody>
+          {% for stat in status %}
+                      
+                            <tr>
+                                <td>{{ stat.getId() }}</td>
+                                <td>{{ stat.getRegion() }}</td>
+                                <td>{{ stat.getDebutTourner()|date('Y-m-d') }}</td>
+                                <td>{{ stat.getTitreStatut()}}</td>
+
+                              <td>
+                              
+                                 <form method="post" action="{{ path('annulerstatut', {'id': stat.getId()}) }}"  >
+                                 <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ stat.getId()) }}">
+                              
+                                 <button  type="submit" class="annuler-button">  annuler</button></td> </form>
+                            </tr>
+                        {% endfor %}
+       
+      </tbody>
+    </table>
+  </div>
+  <div class="containerm">
+        <form method="post" action="{{ path('ajout_disponibilté') }}" >
+      <label for="region">Region:</label>
+      <input type="text" id="region" name="region" placeholder="Enter region" required>
+  
+      <label for="date">Date:</label>
+      <input type="date" id="date" name="date" required>
+  
+      <button type="submit">Submit</button>
+    </form>
+  </div>
+ {% if error == 1 %}
+    <div class="alert alert-danger" role="alert">
+       <p>Un StatutCoursier avec la même date existe déjà .</p>
+    </div>
+{% elseif error == 2  %}
+<div class="alert alert-danger" role="alert">
+       <p>veuillez choisir une date ultérieure</p>
+    </div>
+{% else %}
+  <div class="alert alert-success" role="alert">
+<p>operation terminé avec succès .</p>
+   </div>
+{% endif %}
+
+</div>
+<!-- Alternatively, you can use text and CSS to create a simple checkmark -->
+</br></br></br>
+
+<!-- Make sure to include Font Awesome CSS if you're using it -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <a  class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <div id="preloader"></div>
+
+  <!-- Vendor JS Files -->
+
+
+
+</body>
+{% endblock %}

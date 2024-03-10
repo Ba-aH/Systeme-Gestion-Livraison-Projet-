@@ -130,12 +130,14 @@
     </section><!-- End Featured Services Section -->
       <section id="featured-services" class="featured-services">
       <div class="container">
-      {% set myVariable = 0 %}
+       {% set myVariable = 0 %}
+      {% set  Variable = 0 %}
       {% for livraisonArray in livraisons %}
         <div class="containerr">
-            <h2>Tourner Number: {{ loop.index }}</h2>
+            {# <h2>Tourner Number: {{ loop.index }}</h2> #}
+           <h2>Tourner de : {{ livraisonArray[0].getLivraisonDate()|date('Y-m-d ') }}</h2> 
             <div class="rowr">
-         
+            
                 {% for livraison in livraisonArray %}
                     <div class="cardr">
                         <p><strong>Reference:</strong> {{ livraison.getReference() }}</p>

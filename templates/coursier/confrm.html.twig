@@ -121,6 +121,16 @@
         </div>
     </div>
      </form>
+     {% if error == 1 %}
+    <div class="alert alert-danger" role="alert">
+       <p>code incorrecte</p>
+    </div>
+ 
+   {% elseif error == 2  %}
+<div class="alert alert-success" role="alert">
+       <p>operation terminé avec succés</p>
+    </div>
+    {% endif %}
 </div>
 {# <i class="confirmed-icon fas fa-check"></i> Confirmed #}
 

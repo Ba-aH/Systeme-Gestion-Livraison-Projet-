@@ -1,28 +1,36 @@
 <?php
 
 namespace App\Controller;
+
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use App\Entity\Coursier;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use App\Repository\LivraisonRepository;
 use App\Repository\StatutLivraisonRepository;
 use App\Repository\CoursierRepository;
 use App\Repository\TournerRepository;
 use App\Repository\ClientRepository;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\AdresseRepository ;
+use App\Repository\StatutCoursierRepository;
 use App\Repository\RaisonsEchecRepository;
 use App\Entity\Tourner;
+use App\Entity\StatutCoursier;
 use App\Entity\StatutLivraison;
 use App\Entity\Livraison;
+use DateTime; 
 #[Route('/coursier')]
 class CoursierController extends AbstractController
 {
     #[Route('/test', name: 'test', methods: ['GET'])]
     public function index(LivraisonRepository $livraisonRepository): Response
     {
-        return $this->render('coursier/confrm.html.twig');
+        return $this->render('coursier/disponibilité.html.twig');
     }
     #[Route('/details/{id}', name: 'details', methods: ['GET'])]
     public function details(Request $request ,LivraisonRepository $livraisonRepository,EntityManagerInterface $entityManager,AdresseRepository $adresseRepository): Response
@@ -87,23 +95,39 @@ class CoursierController extends AbstractController
     public function confirmer(Request $request,RaisonsEchecRepository $raisonsEchecRepository ,LivraisonRepository $livraisonRepository,EntityManagerInterface $entityManager,AdresseRepository $adresseRepository): Response
     {
         $livraisonId = $request->get('id');
-
+       $error=0;
        
        
         return $this->render('coursier/confrm.html.twig', [
-            'livraisonId' =>  $livraisonId
+            'livraisonId' =>  $livraisonId,'error' =>  $error
         ]);
     }
     #[Route('/confirmsubmit', name: 'confirmsubmit', methods: ['post'])]
     public function confirmsubmit(Request $request ,StatutLivraisonRepository $statutLivraison,EntityManagerInterface $entityManager,AdresseRepository $adresseRepository): Response
-    {  
+    {   $pinform = $request->get('pin');
+        $error=0;
         $livraisonId = $request->get('livraisonId');
         $livraison= $entityManager->getRepository(Livraison::class)->findOneBy(['id' =>  $livraisonId]);
+        $pinlivraison= $livraison->getCodePin();
         $livstat= $entityManager->getRepository(StatutLivraison::class)->findOneBy(['livraison' => $livraisonId]);
         $submitButton = $request->request->get('submit_button');
         if ($submitButton === 'normal') {
+            $error=2;
+
             $livstat->setStatusTitle('confirmé');
         } elseif ($submitButton === 'pin') {
+          if($pinform== $pinlivraison){
+            $error=2;
+            $livstat->setStatusTitle('confirmé');
+
+            $livstat->setNote( 'confirmé avec code pin ');
+          }else{
+            $error=1;
+            return $this->render('coursier/confrm.html.twig', [
+                'livraisonId' =>  $livraisonId ,'error' =>  $error
+            ]);
+          }
+
            
         }
 
@@ -144,6 +168,16 @@ class CoursierController extends AbstractController
         $livraison= $entityManager->getRepository(Livraison::class)->findOneBy(['id' =>  $livraisonId]);
         $livstat= $entityManager->getRepository(StatutLivraison::class)->findOneBy(['livraison' => $livraisonId]);
         $livstat->setStatusTitle('annulée');
+      
+        $prix= $livraison->getPrixTotaleLivraison();
+        $poid = $livraison->getPoidLivraison();
+        $tour=$livraison->getTourner();
+        $nb=$tour->getNbLivraison();
+        $poidTour =  $tour->getPoidTourner() - $poid ;
+        $prixTour =$tour->getPrixTourner() -  $prix ;
+        $tour -> setPoidTourner($poidTour);
+        $tour -> setPrixTourner($prixTour);
+        $tour -> setNbLivraison($nb-1);
         $livraison->setTourner(null);
         // $livstat->setNote(null);
         $entityManager->flush();
@@ -151,5 +185,82 @@ class CoursierController extends AbstractController
     }
 
 
+
+
+
+
+
+
+
+
+    #[Route('/disponibilté', name: 'disponibilté', methods: ['GET'])]
+    public function disponibilté(Request $request,StatutCoursierRepository $statutCoursierRepository): Response
+    {
+        $livraisonId = $request->get('id');
+        $status = $statutCoursierRepository->findBy(['coursier' => 1,'titre_statut' => 'disponible']);
+       $error=0;
+       
+        return $this->render('coursier/disponibilité.html.twig', [
+            'status' =>   $status,'error'=>   $error
+        ]);
+    }
+
+
+    #[Route('/ajout_disponibilté', name: 'ajout_disponibilté', methods: ['post'])]
+    public function ajout_disponibilté(StatutCoursierRepository $statutCoursierRepository,Request $request, EntityManagerInterface $entityManager,SessionInterface $session ): Response
+    {   $error=0;
+        $region = $request->get('region');
+        $date = $request->get('date');
+        $datedate = DateTime::createFromFormat('Y-m-d', $date);
+        $currentDate = new DateTime();
+
+        $existingStatut = $entityManager->getRepository(StatutCoursier::class)->findOneBy(['debut_tourner' => $datedate]);
+        if($datedate <= $currentDate){
+            $error=2;
+            $livraisonId = $request->get('id');
+            $status = $statutCoursierRepository->findBy(['coursier' => 1,'titre_statut' => 'disponible']);
+           
+           
+            return $this->render('coursier/disponibilité.html.twig', [
+                'status' =>   $status,'error'=>   $error
+            ]);
+
+        }else{
+        if (!$existingStatut) {
+        $statut = new StatutCoursier();  
+        $statut->setDebutTourner($datedate);
+        $statut->setRegion($region);
+        $statut->setTitreStatut('disponible');
+        $cour= $entityManager->getRepository(Coursier::class)->findOneBy(['id' => 1]);
+        $statut->setCoursier($cour);
+
+        $entityManager->persist( $statut);
+        $entityManager->flush();
+        return $this->redirectToRoute('disponibilté');
+
+        }else{
+            $error=1;
+            $livraisonId = $request->get('id');
+            $status = $statutCoursierRepository->findBy(['coursier' => 1,'titre_statut' => 'disponible']);
+           
+           
+            return $this->render('coursier/disponibilité.html.twig', [
+                'status' =>   $status,'error'=>   $error
+            ]);
+        }}
+            
+    }
+
+    #[Route('/annulerstatut/{id}', name: 'annulerstatut', methods: ['POST'])]
+    public function annulerstatut(Request $request, StatutCoursier $StatutCoursier, EntityManagerInterface $entityManager): Response
+    {
+        if ($this->isCsrfTokenValid('delete'.$StatutCoursier->getId(), $request->request->get('_token'))) {
+            $entityManager->remove($StatutCoursier);
+            $entityManager->flush();
+        }
+
+        return $this->redirectToRoute('disponibilté');
+
+    }
   
 }

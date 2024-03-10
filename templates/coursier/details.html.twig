@@ -189,38 +189,38 @@
 
 
   <div class="section">
-    <h2>addresse</h2>
+    <h2>adresse</h2>
        <div >
       <label></label>
       <p></p>
     </div>
-    {% for addres in address %}
+  
     <div class="infot">
       <label>FormattedAddress:</label>
-      <p>{{ addres.getFormattedAddress()}}</p>
+      <p>{{ address.getFormattedAddress()}}</p>
     </div>
       <div class="infot">
       <label>Ville:</label>
-      <p>{{ addres.getVille()}}</p>
+      <p>{{ address.getVille()}}</p>
     </div>
     
     <div class="infot">
       <label>Longitude:</label>
-      <p>{{ addres.getLongitude()}}</p>
+      <p>{{ address.getLongitude()}}</p>
     </div>
    <div class="infot">
       <label>Latitude:</label>
-      <p>{{ addres.getLatitude()}}</p>
+      <p>{{ address.getLatitude()}}</p>
     </div>
     <div class="infot">
       <label>Region:</label>
-      <p>{{ addres.getVille()}}</p>
+      <p>{{ address.getVille()}}</p>
     </div>
     <div class="infot">
       <label>ZipCode:</label>
-      <p>{{ addres.getZipCode()}}</p>
+      <p>{{ address.getZipCode()}}</p>
     </div>
-    {% endfor %}
+ 
   </div>
 </div>
 {# <p> client</p>
@@ -264,7 +264,7 @@
     <script>
     // Map initialization 
     // var map = L.map('map').setView([ 36.76806 , 10.27528], 18);
-        var map = L.map('map').setView([{{lat}},{{long}}], 18);
+        var map = L.map('map').setView([{{lat}},{{long}}], 12);
        
 
     //osm layer

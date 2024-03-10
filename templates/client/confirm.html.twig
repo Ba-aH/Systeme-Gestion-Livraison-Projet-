@@ -1,0 +1,252 @@
+{% extends 'index.html.twig' %}
+
+{% block title %}Hello CoursierController!{% endblock %}
+
+
+
+{% block body %}
+
+ <section id="hero" class="hero d-flex align-items-center">
+    <div class="container">
+    <div class="container position-relative">
+          <div class="row d-flex justify-content-center">
+            <div class="col-lg-6 text-center">
+              <h2>commencer maintenant </h2>
+              <p>Odio et unde deleniti. Deserunt numquam exercitationem. Officiis quo odio sint voluptas consequatur ut a odio voluptatem. Sit dolorum debitis veritatis natus dolores. Quasi ratione sint. Sit quaerat ipsum dolorem.</p>
+            </div>
+          </div>
+        </div>
+    </div>
+  </section><!-- End Hero Section --> </br></br>
+  
+<style>
+  /* .containert {
+    width: 80%;
+    margin: 50px auto;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+  }
+
+  .section {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: minmax(100px, auto);
+    gap: 20px;
+       margin-bottom: 60px; 
+  } */
+  .containert {
+    width: 80%;
+    margin: 50px auto;
+  
+  
+    padding: 20px;
+  }
+
+  .section {
+  width: 80%;
+    margin: 50px auto;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: minmax(100px, auto);
+    gap: 20px;
+       margin-bottom: 60px; 
+  }
+  .infot {
+    width: 100%;
+  }
+
+  label {
+    font-weight: bold;
+  }
+    .infot:hover {
+    background-color: #f0f0f0;
+    transition: background-color 0.3s ease;
+  }
+    h2 {
+    margin-bottom: 60px; /* Add more space between h2 and sections */
+  }
+.section.bt  {
+   
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+}
+
+.form {
+  width: 300px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+label {
+  font-weight: bold;
+}
+
+input[type="date"],
+select {
+  width: calc(100% - 12px);
+  padding: 6px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+
+input[type="submit"] {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+input[type="submit"]:hover {
+  background-color: #0056b3;
+}
+.alert{
+ display: flex;
+  justify-content: center;
+  align-items: center;
+    width: 1200px;
+}
+</style>
+</head>
+<body>
+
+<div class="containert">
+<div class="section bt ">
+
+<form  method="post" action="{{ path('confirmedit') }}">
+  <label for="reference">date:</label>
+  {# <input type="date" id="reference" name="reference"  value="{{ liv.getLivraisonDate()|date('Y-m-d ') }}" ><br><br> #}
+  {% if liv.getLivraisonDate() is not null %}
+    {% set formattedDate = liv.getLivraisonDate()|date('Y-m-d') %}
+    <input type="date" id="reference" name="reference" value="{{ formattedDate }}">
+{% else %}
+    <input type="date" id="reference" name="reference" value="">
+{% endif %}
+  <input type="hidden" id="idd" name="idd"  value="{{ liv.getId() }}"><br><br>
+  <label for="address">address :</label>
+ <select id="items" name="items" id="address">
+    {% for item in items %}
+      <option value="{{ item.getId() }}">{{ item.getId() ~ "   "~ item.getFormattedAddress() ~"   "~  item.getVille() ~ "   "~  item.getVille() ~ "   "~ item.getZipCode()}}</option>
+    {% endfor %}
+  </select><br><br>
+
+  
+  
+  <input type="submit"  value="confirmer modification " >
+</form>
+  
+</div>  
+ {% if error == 1 %}
+                  <div class="section bt ">     
+    <div class="alert alert-danger" role="alert" >
+       <p>cette livraison et déja en cours {{error}} </p>
+    </div></div>
+
+     {% elseif error == 2 %}
+  <div class="section bt ">     
+    <div class="alert alert-danger" role="alert" >
+ <p>veuillez choisir une date ultérieure {{error}} </p>
+    </div></div>
+{%  elseif error == 3 %}
+ <div class="section bt "> 
+  <div class="alert alert-success" role="alert">
+<p>operation terminé avec succès .</p>
+   </div>
+</div>
+  {% endif %}
+  <div class="section">
+    <h2>Informations de livraison</h2>
+    <div>
+      <label></label>
+      <p></p>
+    </div>
+    <div class="infot">
+      <label>Référence:</label>
+      <p>{{ liv.getReference() }}</p>
+    </div>
+    <div class="infot">
+      <label>ID:</label>
+      <p>{{ liv.getId() }}</p>
+    </div>
+    <div class="infot">
+      <label>Code PIN:</label>
+      <p>{{ liv.getCodePin() }}</p>
+    </div>
+    <div class="infot">
+      <label>Frais de livraison:</label>
+      <p>{{ liv.getFraisLivraison() }}</p>
+    </div>
+    <div class="infot">
+      <label>Prix total de livraison:</label>
+      <p>{{ liv.getPrixTotaleLivraison() }}</p>
+    </div>
+    <div class="infot">
+      <label>Poids de livraison:</label>
+      <p>{{ liv.getPoidLivraison() }}</p>
+    </div>
+    <div class="infot">
+      <label>Date de livraison:</label>
+      <p>{{ liv.getLivraisonDate()|date('Y-m-d ') }}</p>
+    </div>
+    {% if liv.getTourner() is not null %}
+    <div class="infot">
+      <label>ID du tourner:</label>
+      <p>{{ liv.getTourner().getId() }}</p>
+    </div>
+    {% endif %}
+  </div>
+
+
+
+
+  <div class="section">
+    <h2>adresse</h2>
+       <div >
+      <label></label>
+      <p></p>
+    </div>
+  
+    <div class="infot">
+      <label>FormattedAddress:</label>
+      <p>{{ address.getFormattedAddress()}}</p>
+    </div>
+      <div class="infot">
+      <label>Ville:</label>
+      <p>{{ address.getVille()}}</p>
+    </div>
+    
+    <div class="infot">
+      <label>Longitude:</label>
+      <p>{{ address.getLongitude()}}</p>
+    </div>
+   <div class="infot">
+      <label>Latitude:</label>
+      <p>{{ address.getLatitude()}}</p>
+    </div>
+    <div class="infot">
+      <label>Region:</label>
+      <p>{{ address.getVille()}}</p>
+    </div>
+    <div class="infot">
+      <label>ZipCode:</label>
+      <p>{{ address.getZipCode()}}</p>
+    </div>
+ 
+  </div>
+</div>
+
+   
+{% endblock %}

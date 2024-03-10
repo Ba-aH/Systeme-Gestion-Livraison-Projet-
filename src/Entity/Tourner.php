@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\TournerRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TournerRepository::class)]
@@ -33,6 +34,10 @@ class Tourner
     #[ORM\Column(length: 255)]
     private ?string $statut_tourner = null;
 
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $date = null;
+
+    
     public function __construct()
     {
         $this->livraisons = new ArrayCollection();
@@ -132,4 +137,18 @@ class Tourner
 
         return $this;
     }
+
+    public function getDate(): ?\DateTimeInterface
+    {
+        return $this->date;
+    }
+
+    public function setDate(?\DateTimeInterface $date): static
+    {
+        $this->date = $date;
+
+        return $this;
+    }
+
+ 
 }
