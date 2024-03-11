@@ -5,22 +5,39 @@ namespace App\Repository;
 use App\Entity\Coursier;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 
 /**
  * @extends ServiceEntityRepository<Coursier>
- *
+* @implements PasswordUpgraderInterface<Coursier>
  * @method Coursier|null find($id, $lockMode = null, $lockVersion = null)
  * @method Coursier|null findOneBy(array $criteria, array $orderBy = null)
  * @method Coursier[]    findAll()
  * @method Coursier[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class CoursierRepository extends ServiceEntityRepository
+class CoursierRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Coursier::class);
     }
 
+    /**
+     * Used to upgrade (rehash) the user's password automatically over time.
+     */
+    public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newHashedPassword): void
+    {
+        if (!$user instanceof Coursier) {
+            throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', $user::class));
+        }
+
+        $user->setPassword($newHashedPassword);
+        $this->getEntityManager()->persist($user);
+        $this->getEntityManager()->flush();
+    }
+    
 //    /**
 //     * @return Coursier[] Returns an array of Coursier objects
 //     */

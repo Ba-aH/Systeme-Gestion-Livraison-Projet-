@@ -2,17 +2,63 @@ security:
     # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+        App\Entity\Client:
+            algorithm: auto
+        App\Entity\Coursier:
+            algorithm: auto
+        App\Entity\Administrateur:
+            algorithm: auto
+
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
-        users_in_memory: { memory: null }
+        chain_provider:
+            chain:
+                providers: [app_admin_provider,app_client_provider,app_coursier_provider]
+
+        app_admin_provider:
+            entity:
+                class: App\Entity\Administrateur
+                property: email
+
+        app_coursier_provider:
+            entity:
+                class: App\Entity\Coursier
+                property: email
+
+        app_client_provider:
+            entity:
+                class: App\Entity\Client
+                property: email
+                
+    # used to reload user from session & other features (e.g. switch_user)
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+
         main:
             lazy: true
-            provider: users_in_memory
+            provider: chain_provider
+            form_login:
+                # "app_login" is the name of the route created previously
+                login_path: app_login
+                check_path: app_login
+                enable_csrf: true
+            json_login:
+                # api_login is a route we will create below
+                username_path: email
+                password_path: password
+                check_path: /api/login_check
+                success_handler: lexik_jwt_authentication.handler.authentication_success
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+            logout:
+                path: app_logout
 
+        api:
+            pattern: ^/api/
+            provider: chain_provider
+            stateless: true
+            jwt: ~
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
 
@@ -23,7 +69,7 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        # - { path: ^/home, roles: ROLE_USER }
 
 when@test:
     security:

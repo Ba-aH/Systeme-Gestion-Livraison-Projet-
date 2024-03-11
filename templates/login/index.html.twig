@@ -1,0 +1,83 @@
+{# templates/login/index.html.twig #}
+{% extends 'base.html.twig' %}
+
+{# ... #}
+
+{% block body %}
+    {% if error %}
+        <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+    {% endif %}
+
+    <form action="{{ path('app_login') }}" method="post">
+        <label for="username">Email:</label>
+        <input type="text" id="username" name="_username" value="{{ last_username }}">
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="_password">
+
+        {# If you want to control the URL the user is redirected to on success
+        <input type="hidden" name="_target_path" value="/account"> #}
+     <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+        <button type="submit">login</button>
+    </form>
+
+    <script>
+        function submitForm() {
+            var formData = {
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value,
+            };
+
+            fetch('/api/login_check', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Handle the token response
+                console.log('Token:', data.token);
+                localStorage.setItem('token', data.token);
+
+                // Redirect to another page if needed
+
+                // Send the token to the server
+                fetch('/api/login', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer ' + data.token,
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Handle the response from the server
+                    console.log('Server Response:', data);
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+
+            // Function to get user data can be outside the submitForm function
+            function getUserData() {
+                var token = localStorage.getItem('token');
+
+                if (token) {
+                    var userData = JSON.parse(atob(token.split('.')[1]));
+
+                    console.log('User Data:', userData);
+
+                    // Use the user data as needed
+                } else {
+                    console.error('Token not found.');
+                }
+            }
+            getUserData();
+        }
+    </script>
+{% endblock %}

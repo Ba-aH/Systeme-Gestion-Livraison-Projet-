@@ -31,7 +31,7 @@ use Doctrine\Persistence\ManagerRegistry;
 #[Route('/administrator')]
 class AdministratorController extends AbstractController
 {
-    #[Route('/index', name: 'app_administrator')]
+    #[Route('/', name: 'app_administrator')]
     public function index(): Response
     {
         return $this->render('administrator/index.html.twig', [

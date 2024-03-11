@@ -6,9 +6,12 @@ use App\Repository\CoursierRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: CoursierRepository::class)]
-class Coursier
+class Coursier  implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -18,11 +21,17 @@ class Coursier
     #[ORM\Column(length: 255)]
     private ?string $username = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $email = null;
-
-    #[ORM\Column(length: 255)]
+    /**
+     * @var string The hashed password
+     */
+    #[ORM\Column]
     private ?string $password = null;
+
+    #[ORM\Column(type: 'json')]
+    private array $roles = [];
+
+    #[ORM\Column(length: 180, unique: true)]
+    private ?string $email = null;
 
     #[ORM\Column(length: 255)]
     private ?string $nom = null;
@@ -34,18 +43,22 @@ class Coursier
     private ?string $phone = null;
 
    
-
+    
     #[ORM\OneToMany(targetEntity: CoursierPositionHistory::class, mappedBy: 'coursier')]
     private Collection $coursierPositionHistories;
 
+    
     #[ORM\OneToMany(targetEntity: Tourner::class, mappedBy: 'coursier')]
     private Collection $tourners;
 
+   
     #[ORM\OneToMany(mappedBy: 'coursier', targetEntity: StatutCoursier::class)]
     private Collection $statutCoursiers;
 
+   
     #[ORM\OneToMany(mappedBy: 'coursier', targetEntity: LivraisonHistory::class)]
     private Collection $livraisonHistories;
+
 
     public function __construct()
     {
@@ -82,9 +95,43 @@ class Coursier
         $this->email = $email;
 
         return $this;
+    }  
+
+    /**
+     * A visual identifier that represents this user.
+     *
+     * @see UserInterface
+     */
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->email;
     }
 
-    public function getPassword(): ?string
+    /**
+     * @see UserInterface
+     */
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
+    }
+
+    public function setRoles(array $roles): static
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
+    
+
+    /**
+     * @see PasswordAuthenticatedUserInterface
+     */
+    public function getPassword(): string
     {
         return $this->password;
     }
@@ -94,6 +141,15 @@ class Coursier
         $this->password = $password;
 
         return $this;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function eraseCredentials(): void
+    {
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
     }
 
     public function getNom(): ?string
@@ -253,4 +309,6 @@ class Coursier
 
         return $this;
     }
+
+    
 }
