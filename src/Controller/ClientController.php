@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Controller;
+
+use App\Entity\Colis;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use App\Entity\Coursier;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -211,4 +213,19 @@ public function history(Request $request,EntityManagerInterface $entityManager,L
             'liv' =>  $liv,'address' =>$address ,'error'=>$error, 'colis' =>$colis
         ]);
     }
+
+
+      
+    #[Route('/nonrecu/{id}', name: 'nonrecu', methods: ['GET'])]
+    public function colis_nonrecu(Request $request ,ColisRepository $colisRepository,LivraisonRepository $livraisonRepository,EntityManagerInterface $entityManager,AdresseRepository $adresseRepository): Response
+    {   $idd = $request->get('idliv');        
+        $colisId = $request->get('id');
+        $coli = $entityManager->getRepository(Colis::class)->findOneBy(['id' =>  $colisId]);
+        $coli->setStatut('non recu');
+        $entityManager->flush();
+        return $this->redirectToRoute('history_details', ['id' => $idd]);
+
+    }
+
+
 }

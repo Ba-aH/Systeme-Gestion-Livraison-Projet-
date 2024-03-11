@@ -20,9 +20,7 @@ class LivraisonHistory
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?Livraison $livraison = null;
 
-    #[ORM\ManyToOne(inversedBy: 'livraisonHistories')]
-    private ?Coursier $coursier = null;
-
+ 
     public function getId(): ?int
     {
         return $this->id;
@@ -52,15 +50,5 @@ class LivraisonHistory
         return $this;
     }
 
-    public function getCoursier(): ?Coursier
-    {
-        return $this->coursier;
-    }
-
-    public function setCoursier(?Coursier $coursier): static
-    {
-        $this->coursier = $coursier;
-
-        return $this;
-    }
+ 
 }

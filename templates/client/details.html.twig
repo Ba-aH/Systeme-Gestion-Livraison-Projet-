@@ -350,14 +350,18 @@ h2 {
                         </h3></br>
         <div class="card-content">
          <p><strong>nom produit::</strong> {{ coli.getNomProduit() }}</p></br>
-                        <p><strong>type produit::</strong> {{ coli.getType() }}</p></br>
+                        <p><strong>type produit:</strong> {{ coli.getType() }}</p></br>
                         <p><strong>prix:</strong> {{ coli.getPrix() }}</p></br>
-                        <p><strong>poid:</strong> {{ coli. getPoid () }}</p></br>
+                        <p><strong>poid:</strong> {{ coli. getPoid() }}</p></br>
+                         {# {% if coli.getStatut()=='non recu'  %} #}
+                         <p><strong>statut:</strong> {{ coli.getStatut() }}</p></br> 
+                             {# {% endif %} #}
         </div>
       </div>
   
       <div class="card-link-wrapper">
-        <a href="" class="card-link">colis non reçu </a>
+
+        <a href="{{ path('nonrecu',{'id': coli.id,'idliv': liv.id}) }}" class="card-link">colis non reçu </a>
         
       
       

@@ -223,10 +223,11 @@ public function show(Request $request,LivraisonRepository $livraisonRepository, 
             // $selectedDate = DateTime::createFromFormat('Y-m-d\TH:i', $dateLivraison);
             $selectedDate = $request->get('date');
             foreach ($livraisons as $item) {
-                $coursier = $item->getCoursier();
+                // $coursier = $item->getCoursier();
                 $liv = $item->getLivraison();
+                $tourner=$liv->getTourner();
+                $coursier= $tourner-> getCoursier();
                 $client = $liv->getClient();
-                
                 $dateLivr = $item->getDateAjout();
                 $dateLivrFormatted = $dateLivr->format('Y-m-d');
 
