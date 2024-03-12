@@ -56,8 +56,7 @@ class Coursier  implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $statutCoursiers;
 
    
-    #[ORM\OneToMany(mappedBy: 'coursier', targetEntity: LivraisonHistory::class)]
-    private Collection $livraisonHistories;
+
 
 
     public function __construct()
@@ -65,7 +64,7 @@ class Coursier  implements UserInterface, PasswordAuthenticatedUserInterface
         $this->coursierPositionHistories = new ArrayCollection();
         $this->tourners = new ArrayCollection();
         $this->statutCoursiers = new ArrayCollection();
-        $this->livraisonHistories = new ArrayCollection();
+       
     }
 
     public function getId(): ?int
@@ -280,35 +279,9 @@ class Coursier  implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @return Collection<int, LivraisonHistory>
-     */
-    public function getLivraisonHistories(): Collection
-    {
-        return $this->livraisonHistories;
-    }
+   
 
-    public function addLivraisonHistory(LivraisonHistory $livraisonHistory): static
-    {
-        if (!$this->livraisonHistories->contains($livraisonHistory)) {
-            $this->livraisonHistories->add($livraisonHistory);
-            $livraisonHistory->setCoursier($this);
-        }
-
-        return $this;
-    }
-
-    public function removeLivraisonHistory(LivraisonHistory $livraisonHistory): static
-    {
-        if ($this->livraisonHistories->removeElement($livraisonHistory)) {
-            // set the owning side to null (unless already changed)
-            if ($livraisonHistory->getCoursier() === $this) {
-                $livraisonHistory->setCoursier(null);
-            }
-        }
-
-        return $this;
-    }
+    
 
     
 }
