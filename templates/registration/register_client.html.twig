@@ -1,0 +1,179 @@
+
+
+{% block body %}
+    {% for flash_error in app.flashes('verify_email_error') %}
+        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+    {% endfor %}   
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+
+
+    
+ <div class="w-full flex flex-wrap">
+
+        <!-- Register Section -->
+        <div class="form-group">
+            <div class="flex flex-col justify-center md:justify-start my-auto pt-8 md:pt-0 px-8 md:px-24 lg:px-32">
+                <p class="text-center text-3xl">Join Us</p>
+
+              {{ form_errors(registrationForm) }}
+                
+                {{ form_start(registrationForm) }}
+                    <div class="flex">
+                        <div class="flex flex-col pt-4 mr-4">
+                            <label for="nom" class="form-label">Nom</label>
+                           {{ form_row(registrationForm.nom, {'attr': {'class': 'form-input'}}) }}
+                        </div>
+
+                        <div class="flex flex-col pt-4 mr-4">
+                            <label for="prenom" class="form-label">Prenom</label>
+                            {{ form_row(registrationForm.prenom, {'attr': {'class': 'form-input'}}) }}
+                        </div>
+
+                        <div class="flex flex-col pt-4">
+                            <label for="telephone" class="form-label">Numero telephone</label>
+                            {{ form_row(registrationForm.phone, {'attr': {'class': 'form-input'}}) }}
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col pt-4">
+                            <label for="Username" class="form-label">Username</label>
+                            {{ form_row(registrationForm.username, {'attr': {'class': 'form-input'}}) }}
+                        </div>
+                    
+                    <div class="flex flex-col pt-4">
+                            <label for="Email" class="form-label">Email</label>
+                            {{ form_row(registrationForm.email, {'attr': {'class': 'form-input'}}) }}
+                        </div>
+
+                    <div class="flex flex-col pt-4">
+                            <label for="telephone" class="form-label">Password</label>
+                            {{ form_row(registrationForm.plainPassword, {'attr': {'class': 'form-input'}}) }}
+                    </div>
+                    <div class="flex items-center pt-4">
+                        <label for="agreeterms" class="agree-label ml-2">Agree to our terms of services</label>
+                        {{ form_row(registrationForm.agreeTerms) }}
+                    </div>
+                   
+                            
+            {# {{ form_errors(adresseForm) }}           
+                {{ form_start(adresseForm) }}
+
+                        <div class="flex flex-col pt-4">
+                            <label for="adresse" class="form-label">Adresse</label>
+                           {{ form_row(adresseForm.formattedAddress, {'attr': {'class': 'form-input'}}) }}
+                        </div>
+
+                    <div class="flex">                       
+                        <div class="flex flex-col pt-4 mr-3">
+                            <label for="zipCode" class="form-label">Zip Code</label>
+                            {{ form_row(adresseForm.zipCode, {'attr': {'class': 'form-input'}}) }}
+                        </div>
+
+                        <div class="flex flex-col pt-4 mr-3">
+                            <label for="ville" class="form-label">Ville</label>
+                           {{ form_row(adresseForm.ville, {'attr': {'class': 'form-input'}}) }}
+                        </div>
+
+                        <div class="flex flex-col pt-4 mr-3">
+                            <label for="region" class="form-label">Region</label>
+                            {{ form_row(adresseForm.region, {'attr': {'class': 'form-input'}}) }}
+                        </div>
+                    </div> #}
+
+                    
+
+                    
+
+                    <button type="submit" class="bg-blue-500 text-white font-bold text-lg hover:bg-blue-700 p-2 mt-8 rounded-md">Register</button>
+
+                {# {{ form_end(adresseForm) }}  #}
+                 {{ form_end(registrationForm) }}
+
+
+
+
+                <div class="text-center pt-12 pb-12">
+                    <p>Already have an account? <a href={{path('app_login')}} class="underline font-semibold">Log in here.</a></p>
+                </div>
+            </div>
+
+        </div>
+
+       
+        <div class="w-1/1 ">
+            <img class="object-cover w-full h-screen hidden md:block" src="{{ asset('images/box.jpg') }}" alt="Background" />
+        </div>
+    </div>
+
+    
+
+    <style>
+            /* Add this style to your existing styles or create a new CSS file */
+        /* Adjustments for the registration form */
+
+        /* General styling for form elements */
+        .agree-label {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            margin-right: 0.5rem; /* Adjust the value as needed for spacing */
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+            margin-top: 1%;
+        }
+
+        /* Style for form labels */
+        .form-label {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        /* Style for form inputs */
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 0.25rem;
+        }
+
+        /* Style for the Register button */
+        .register-button {
+            background-color: #3490dc;
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 1.25rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.25rem;
+            cursor: pointer;
+        }
+
+        .register-button:hover {
+            background-color: #2779bd;
+        }
+
+        /* Style for the "Already have an account" link */
+        .login-link {
+            text-decoration: underline;
+            font-weight: bold;
+            color: #3490dc;
+        }
+
+        .login-link:hover {
+            color: #2779bd;
+        }
+
+    </style>
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Karla:400,700&display=swap');
+
+        .font-family-karla {
+            font-family: karla;
+        }
+
+        
+    </style>
+
+{% endblock %}

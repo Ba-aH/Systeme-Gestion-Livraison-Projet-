@@ -1,0 +1,90 @@
+#a { grid-area: a; }
+#b { grid-area: b; }
+#c { grid-area: c; }
+#d { grid-area: d; }
+
+#grid {
+  display: grid;
+  grid-template-areas:
+    "a a a"
+    "b c d";
+  grid-row-gap: 2rem;
+  grid-column-gap: 10rem 10rem 10rem 10rem;
+  text-align: center;
+  margin: 40px auto 125px auto;
+  width: 500px;
+  overflow: hidden;  
+  position: relative;
+}
+
+@media (max-width: 768px) {
+  #grid {
+    width: 300px;
+    grid-column-gap: 1rem 1rem ;
+  }    
+  #grid #b {
+    padding-left: 2px;
+    padding-right: 2px;
+  }
+  #gridc #c {
+    padding-left: 2px;
+    padding-right: 2px;
+  }
+  #grid #d {
+    padding-left: 2px;
+    padding-right: 2px;
+  }
+}
+
+#gridcontact {
+  display: grid;
+  grid-template-areas:
+    "a b"
+    "c d";
+  grid-row-gap: rem;
+  text-align: center;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+#gridcontact #a {
+  padding-top: 15px;
+  padding-bottom: 8px;
+}
+#gridcontact #b {
+  border-left: 1px solid white;
+  padding-top: 15px;
+  padding-bottom: 8px;
+}
+#gridcontact #d {
+  border-left: 1px solid white;
+}
+
+@media (max-width: 768px) {
+  #gridcontact {  
+    grid-column-gap: 1rem 1rem ;
+    grid-template-areas:
+    "a"
+    "c"
+    "b"
+    "d";
+  }
+  #gridcontact #d {
+  border-left: 0px solid white;
+  }
+  #gridcontact #c {
+  padding-bottom: 20px;
+  }
+  #gridcontact #b {
+  padding-top: 20px;
+  border-left: 0px solid white;
+  border-top: 1px solid white;
+  } 
+  #map {
+    padding: 100px;
+  }
+  #map-placeholder {
+    padding: 100px;
+  }
+}
