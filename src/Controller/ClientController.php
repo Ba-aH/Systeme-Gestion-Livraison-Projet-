@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Colis;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use App\Entity\Coursier;
+use App\Entity\Client;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use App\Repository\LivraisonRepository;
 use App\Repository\StatutLivraisonRepository;
@@ -27,10 +28,25 @@ use App\Repository\ClientRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Serializer\SerializerInterface;
+
+
 #[Route('/client')]
 class ClientController extends AbstractController
 {
 
+    private $tokenStorage;
+    private $serializer;
+    
+
+    public function __construct(TokenStorageInterface $tokenStorage,SerializerInterface $serializer,StatutCoursierRepository $statutCoursierRepository)
+    {
+        $this->tokenStorage = $tokenStorage;
+        $this->serializer = $serializer;
+        
+    }
+    
 
     #[Route('/client', name: 'app_client')]
     public function index(): Response
@@ -60,9 +76,18 @@ class ClientController extends AbstractController
     
     #[Route('/afficher_livraisons', name: 'afficher_livraisons', methods: ['GET'])]
     public function afficher_livraisons(Request $request ,EntityManagerInterface $entityManager,TournerRepository $tournerRepository,LivraisonRepository $livraisonRepository): Response
-    {
- 
-    $tablivraison=$livraisonRepository->findBy(['client' => 12]);
+    {     
+        $token = $this->tokenStorage->getToken();
+        $currentUser = $token->getUser();
+        if ($currentUser instanceof Client) {
+            $identifier = $currentUser->getUserIdentifier();
+            $id = $currentUser->getId();
+            $username = $currentUser->getUsername();
+            $nom = $currentUser->getNom();
+            $prenom = $currentUser->getPrenom();
+            $phone = $currentUser->getPhone();
+        }
+    $tablivraison=$livraisonRepository->findBy(['client' => $id]);
     
 
 

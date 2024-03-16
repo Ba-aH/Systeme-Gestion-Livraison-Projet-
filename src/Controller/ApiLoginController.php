@@ -81,7 +81,7 @@ class ApiLoginController extends AbstractController
             'username' => $username,
             'nom' => $nom,
             'prenom' => $prenom,
-            'phone' => $phone,        
+            'phone' => $phone,       
         ]);
     }
 }
