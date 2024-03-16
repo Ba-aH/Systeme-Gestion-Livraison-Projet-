@@ -198,7 +198,7 @@ class CoursierController extends AbstractController
     {
         $livraisonId = $request->get('id');
         $status = $statutCoursierRepository->findBy(['coursier' => 1,'titre_statut' => 'disponible']);
-       $error=0;
+        $error = $request->query->get('error', 0);
        
         return $this->render('coursier/disponibilité.html.twig', [
             'status' =>   $status,'error'=>   $error
@@ -233,10 +233,10 @@ class CoursierController extends AbstractController
         $statut->setTitreStatut('disponible');
         $cour= $entityManager->getRepository(Coursier::class)->findOneBy(['id' => 1]);
         $statut->setCoursier($cour);
-
+        $error=4 ;
         $entityManager->persist( $statut);
         $entityManager->flush();
-        return $this->redirectToRoute('disponibilté');
+        return $this->redirectToRoute('disponibilté',['error' => $error]);
 
         }else{
             $error=1;
