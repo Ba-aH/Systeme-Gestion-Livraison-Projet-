@@ -44,6 +44,7 @@ security:
                 login_path: app_login
                 check_path: app_login
                 enable_csrf: true
+                
             json_login:
                 # api_login is a route we will create below
                 username_path: email
@@ -51,6 +52,7 @@ security:
                 check_path: /api/login_check
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
+            
             logout:
                 path: app_logout
 
