@@ -10,6 +10,8 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Doctrine\DBAL\Types\Types;
+
 
 #[ORM\Entity(repositoryClass: CoursierRepository::class)]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
@@ -44,6 +46,8 @@ class Coursier  implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $phone = null;
 
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $date_ajout = null;
    
     
     #[ORM\OneToMany(targetEntity: CoursierPositionHistory::class, mappedBy: 'coursier')]
@@ -191,7 +195,18 @@ class Coursier  implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+    
+    public function getDateAjout(): ?\DateTimeInterface
+    {
+        return $this->date_ajout;
+    }
 
+    public function setDateAjout(\DateTimeInterface $date_ajout): static
+    {
+        $this->date_ajout = $date_ajout;
+
+        return $this;
+    }
    
 
     /**

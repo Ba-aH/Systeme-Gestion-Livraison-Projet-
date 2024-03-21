@@ -72,6 +72,7 @@ security:
     access_control:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/home, roles: ROLE_USER }
+        - { path: ^/coursier, roles: ROLE_USER }
 
 when@test:
     security:

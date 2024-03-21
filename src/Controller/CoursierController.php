@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Client;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use App\Entity\Coursier;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -23,10 +24,21 @@ use App\Entity\Tourner;
 use App\Entity\StatutCoursier;
 use App\Entity\StatutLivraison;
 use App\Entity\Livraison;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 use DateTime; 
 #[Route('/coursier')]
 class CoursierController extends AbstractController
 {
+    private $tokenStorage;
+    private $serializer;
+
+    public function __construct(TokenStorageInterface $tokenStorage,SerializerInterface $serializer,StatutCoursierRepository $statutCoursierRepository)
+    {
+        $this->tokenStorage = $tokenStorage;
+        $this->serializer = $serializer;
+        
+    }
     #[Route('/test', name: 'test', methods: ['GET'])]
     public function index(LivraisonRepository $livraisonRepository): Response
     {
@@ -262,5 +274,41 @@ class CoursierController extends AbstractController
         return $this->redirectToRoute('disponibilté');
 
     }
-  
+
+        #[Route('/profile', name: 'coursierProfile')]
+        public function profile(): Response
+        {
+            $token = $this->tokenStorage->getToken();
+            $currentUser = $token->getUser();
+            if ($currentUser instanceof Coursier) {
+                $dateAjout = $currentUser->getDateAjout()->format('Y-m-d');
+            }
+
+            return $this->render('coursier/profile.html.twig', [
+                'user' =>  $currentUser,
+                'dateAjout' =>  $dateAjout,
+            ]);
+        }
+
+        #[Route('/update-profile', name: 'update_profile')]
+        public function updateProfile(Request $request, EntityManagerInterface $entityManager, CoursierRepository $coursierRepository): Response
+        {
+            $token = $this->tokenStorage->getToken();
+            $currentUser = $token->getUser();
+            
+            if ($currentUser instanceof Coursier) {
+                $dateAjout = $currentUser->getDateAjout()->format('Y-m-d');
+                $id = $currentUser->getId();
+                $user =$coursierRepository->findOneBy(['id' => $id]);
+                $user->setPrenom($request->get('prenom'));
+                $user->setUsername($request->get('username'));
+                $user->setNom($request->get('nom'));
+                $user->setPhone($request->get('phone'));
+                $entityManager->persist($user);
+                $entityManager->flush();
+            }   
+            
+            
+            return $this->redirectToRoute('coursierProfile');
+        }
 }
