@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Client;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use App\Entity\Coursier;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -23,10 +24,21 @@ use App\Entity\Tourner;
 use App\Entity\StatutCoursier;
 use App\Entity\StatutLivraison;
 use App\Entity\Livraison;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 use DateTime; 
 #[Route('/coursier')]
 class CoursierController extends AbstractController
 {
+    private $tokenStorage;
+    private $serializer;
+
+    public function __construct(TokenStorageInterface $tokenStorage,SerializerInterface $serializer,StatutCoursierRepository $statutCoursierRepository)
+    {
+        $this->tokenStorage = $tokenStorage;
+        $this->serializer = $serializer;
+        
+    }
     #[Route('/test', name: 'test', methods: ['GET'])]
     public function index(LivraisonRepository $livraisonRepository): Response
     {
@@ -312,6 +324,5 @@ class CoursierController extends AbstractController
         return $this->redirectToRoute('disponibilté');
 
     }
-    
   
 }

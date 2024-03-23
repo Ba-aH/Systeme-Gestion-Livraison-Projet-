@@ -54,7 +54,7 @@ class RegistrationController extends AbstractController
                 )
             );
             $user->setRoles(['ROLE_USER']);
-
+            $user->setDateAjout(new \DateTime());
             $entityManager->persist($user);
             $entityManager->flush();
 

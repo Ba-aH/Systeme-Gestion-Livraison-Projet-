@@ -1,0 +1,215 @@
+{% block body %}
+
+<head>
+<meta charset="utf-8">
+<title>Profile</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.1/dist/css/bootstrap.min.css" rel="stylesheet">
+<style type="text/css">
+    body {
+        margin-top:20px;
+        background:#f8f8f8
+    }
+</style>
+</head>
+<body>
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+<div class="container">
+    <div class="row flex-lg-nowrap">
+        <div class="col-12 col-lg-auto mb-3" style="width: 200px;"></div>
+        <div class="col">
+            <div class="row">
+                <div class="col mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="e-profile">
+                                <div class="row">
+                                    <div class="col-12 col-sm-auto mb-3">
+                                        <div class="mx-auto" style="width: 140px;">
+                                            <div class="d-flex justify-content-center align-items-center rounded" style="height: 140px; background-color: rgb(233, 236, 239);">
+                                            <img src="{{ asset('images/user.jpg') }}" alt="Admin" width="140">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col d-flex flex-column flex-sm-row justify-content-between mb-3">
+                                        <div class="text-center text-sm-left mb-2 mb-sm-0">
+                                            <h4 class="pt-sm-2 pb-1 mb-0 text-nowrap">{{user.nom}} {{user.prenom}}</h4>
+                                            <p class="mb-0">@{{user.username}}</p>
+                                            <div class="text-muted"><small>Last seen 2 hours ago</small></div>
+                                            <div class="mt-2">
+                                                <button class="btn btn-primary" type="button">
+                                                    <i class="fa fa-fw fa-camera"></i>
+                                                    <span>Change Photo</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="text-center text-sm-right">
+                                            <span class="badge badge-secondary">Coursier</span>
+                                            <div class="text-muted"><small>Joined {{dateAjout}}</small></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-content pt-3">
+                                    <div class="tab-pane active">
+                                        <form id="myForm" class="form" method="POST" action="{{ path('update_coursier_profile', {'nom': 'default', 'prenom': 'default', 'username':'default', 'phone':'default'}) }}" onsubmit="updateFormAction()">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="form-group">
+                                                                <label>Username</label>
+                                                                <div class="input-group">
+                                                                    <input id="usernameInput" class="form-control" type="text" value="{{ user.username }}" readonly>
+                                                                    <div class="input-group-append">
+                                                                        <button class="btn btn-outline-secondary" type="button" id="editUsernameBtn">Edit</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div> 
+                                                        <div class="col">
+                                                            <div class="form-group">
+                                                                <label>Telephone</label>
+                                                                <div class="input-group">
+                                                                    <input id="phoneInput" class="form-control" type="text"  value="{{user.phone}}" readonly>
+                                                                    <div class="input-group-append">
+                                                                        <button class="btn btn-outline-secondary" type="button" id="editPhoneBtn">Edit</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>  
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="form-group">
+                                                                <label>Nom</label>
+                                                                <div class="input-group">
+                                                                    <input id="nomInput" class="form-control" type="text" name="nomInput"  value="{{user.nom}}" readonly>
+                                                                    <div class="input-group-append">
+                                                                        <button class="btn btn-outline-secondary" type="button" id="editNomBtn">Edit</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="form-group">
+                                                                <label>Prenom</label>
+                                                                <div class="input-group">
+                                                                    <input id="prenomInput" class="form-control" type="text"   value="{{user.prenom}}" readonly>
+                                                                    <div class="input-group-append">
+                                                                        <button class="btn btn-outline-secondary" type="button" id="editPrenomBtn">Edit</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="form-group">
+                                                                <label>Email</label>
+                                                                <div class="input-group">
+                                                                    <input id="emailInput" class="form-control" type="text"  value="{{user.email}}" readonly>
+                                    
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mb-2"><b>Change Password</b></div>
+                                            <div class="row">
+                                                <div class="col">
+                                                    <div class="row">
+                                                    
+                                                        <div class="col">
+                                                            <div class="form-group">
+                                                                <label>New Password</label>
+                                                                <input class="form-control" type="password" placeholder="•••••••••">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="form-group">
+                                                                <div class="form-group">
+                                                                <label>Confirm <span class="d-none d-xl-inline">Password</span></label>
+                                                                <input class="form-control" type="password" placeholder="•••••••••">
+                                                            </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col d-flex justify-content-end">
+                                                    <button class="btn btn-primary" type="submit">Save Changes</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-3 mb-3">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="px-xl-3">
+                                <a class="btn btn-block btn-secondary" href="{{ path('app_logout') }}">
+                                    <i class="fa fa-sign-out"></i>
+                                    <span>Logout</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+   document.addEventListener("DOMContentLoaded", function() {
+    // JavaScript code to toggle edit mode
+    document.getElementById('editUsernameBtn').addEventListener('click', function() {
+        toggleEditMode('usernameInput');
+    });
+
+    document.getElementById('editNomBtn').addEventListener('click', function() {
+        toggleEditMode('nomInput');
+    });
+
+    document.getElementById('editPrenomBtn').addEventListener('click', function() {
+        toggleEditMode('prenomInput');
+    });
+
+    document.getElementById('editPhoneBtn').addEventListener('click', function() {
+        toggleEditMode('phoneInput');
+    });
+
+    // Function to toggle edit mode for a specific input field
+    function toggleEditMode(inputId) {
+        var inputField = document.getElementById(inputId);
+        var editButton = document.getElementById('edit' + inputId.charAt(0).toUpperCase() + inputId.slice(1) + 'Btn');
+
+        if (inputField.readOnly) {
+            inputField.readOnly = false;
+            editButton.textContent = 'Save';
+        } else {
+            // Save changes or perform other actions here
+            inputField.readOnly = true;
+            editButton.textContent = 'Edit';
+        }
+    }
+});
+    function updateFormAction() {
+        var username = document.getElementById('usernameInput').value;
+        var nom = document.getElementById('nomInput').value;
+        var prenom = document.getElementById('prenomInput').value;
+        var phone = document.getElementById('phoneInput').value;
+        document.getElementById('myForm').action = "{{ path('update_coursier_profile', {'nom': ''}) }}" + nom + "&prenom=" + prenom+"&username=" +username+"&phone=" +phone;
+    return true; 
+    }    
+</script>
+<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.1/dist/js/bootstrap.bundle.min.js"></script>
+<script type="text/javascript"></script>
+</body>
+{% endblock %}

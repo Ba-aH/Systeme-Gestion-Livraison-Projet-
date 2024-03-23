@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Adresse;
 use App\Entity\Colis;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use App\Entity\Coursier;
@@ -260,5 +261,93 @@ public function history(Request $request,EntityManagerInterface $entityManager,L
 
     }
 
+    #[Route('/profile', name: 'clientProfile')]
+        public function profile(AdresseRepository $adresseRepository): Response
+        {
+            $token = $this->tokenStorage->getToken();
+            $currentUser = $token->getUser();
+            if ($currentUser instanceof Client) {
+                $dateAjout = $currentUser->getDateAjout()->format('Y-m-d');
+                $adresses=$adresseRepository->findBy(['client'=>$currentUser->getId()]);
+            }
+            
+
+            return $this->render('client/profile.html.twig', [
+                'user' =>  $currentUser,
+                'dateAjout' =>  $dateAjout,
+                'adresses' => $adresses,
+            ]);
+        }
+
+        #[Route('/update-profile', name: 'update_client_profile')]
+        public function updateProfile(Request $request, EntityManagerInterface $entityManager, ClientRepository $clientRepository): Response
+        {
+            $token = $this->tokenStorage->getToken();
+            $currentUser = $token->getUser();
+            
+            if ($currentUser instanceof Client) {
+                $dateAjout = $currentUser->getDateAjout()->format('Y-m-d');
+                $id = $currentUser->getId();
+                $user =$clientRepository->findOneBy(['id' => $id]);
+                $prenom = $request->get('prenom');
+                if ($prenom !== null) {
+                    $prenom = is_string($prenom) ? $prenom : '';
+                    $user->setPrenom($prenom);
+                }
+                $username = $request->get('username');
+                if ($username !== null) {
+                    $username = is_string($username) ? $username : '';
+                    $user->setUsername($username);
+                }
+                $user->setNom($request->get('nom'));
+
+                $phone = $request->get('phone');
+                if ($phone !== null) {
+                    $phone = is_string($phone) ? $phone : '';
+                    $user->setPhone($phone);
+                }
+                $entityManager->persist($user);
+                $entityManager->flush();
+            }   
+            
+            
+            return $this->redirectToRoute('clientProfile');
+        }
+
+        #[Route('/ajout-adresse', name: 'ajout-adresse')]
+        public function ajoutAdr(Request $request, EntityManagerInterface $entityManager, AdresseRepository $adresseRepository): Response
+        {
+            $token = $this->tokenStorage->getToken();
+            $currentUser = $token->getUser();
+            $address = $request->request->get('address');
+            $ville = $request->request->get('ville');
+            $region = $request->request->get('region');
+
+            if (!empty($address)) {
+                $adr = new Adresse();
+                $adr->setVille($ville);
+                $adr->setRegion($region);
+                $adr->setFormattedAddress($address);
+                if ($currentUser instanceof Client) {
+                    $adr->setClient($currentUser);
+                    $entityManager->persist($adr);
+                    $entityManager->flush();
+                }
+            }
+            return $this->redirectToRoute('clientProfile');
+        }
+
+        #[Route('/delete-adresse', name: 'delete-adresse')]
+        public function deleteAdr(Request $request, EntityManagerInterface $entityManager, AdresseRepository $adresseRepository): Response
+        {
+            $token = $this->tokenStorage->getToken();
+            $currentUser = $token->getUser();
+            $id = $request->get('id');
+            $adr=$adresseRepository->findOneBy(['id'=>$id]);
+            $entityManager->remove($adr);
+            $entityManager->flush();
+ 
+            return $this->redirectToRoute('clientProfile');
+        }
 
 }
