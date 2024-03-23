@@ -102,11 +102,17 @@ class CoursierController extends AbstractController
     #[Route('/afficher_tourneesAU', name: 'afficher_tourneesAU', methods: ['GET'])]
     public function afficher_tourneesAU(EntityManagerInterface $entityManager,TournerRepository $tournerRepository,LivraisonRepository $livraisonRepository): Response
     {
-    $idcoursier=9;
+  
+    $token = $this->tokenStorage->getToken();
+            $currentUser = $token->getUser();
+            if ($currentUser instanceof Coursier) {
+                $idcoursier = $currentUser->getId();
+            }
+
     $now = new \DateTimeImmutable();
     
-    $tabtourner=$tournerRepository->findOneBy(['coursier' => 9,'statut_tourner'=>'en cours']);
-    $tourneé = $entityManager->getRepository(Tourner::class)->findOneBy(['coursier' => 9,'statut_tourner'=>'en cours']);
+    $tabtourner=$tournerRepository->findOneBy(['coursier' =>  $idcoursier,'statut_tourner'=>'en cours']);
+    $tourneé = $entityManager->getRepository(Tourner::class)->findOneBy(['coursier' =>  $idcoursier,'statut_tourner'=>'en cours']);
 
 
     
@@ -257,9 +263,13 @@ class CoursierController extends AbstractController
 
     #[Route('/disponibilté', name: 'disponibilté', methods: ['GET'])]
     public function disponibilté(Request $request,StatutCoursierRepository $statutCoursierRepository): Response
-    {
-        $livraisonId = $request->get('id');
-        $status = $statutCoursierRepository->findBy(['coursier' => 9,'titre_statut' => 'disponible']);
+    {      $token = $this->tokenStorage->getToken();
+        $currentUser = $token->getUser();
+        if ($currentUser instanceof Coursier) {
+            $idcoursier = $currentUser->getId();
+        }
+       
+        $status = $statutCoursierRepository->findBy(['coursier' =>  $idcoursier,'titre_statut' => 'disponible']);
         $error = $request->query->get('error', 0);
        
         return $this->render('coursierV2/disponibilté.html.twig', [
@@ -270,17 +280,23 @@ class CoursierController extends AbstractController
 
     #[Route('/ajout_disponibilté', name: 'ajout_disponibilté', methods: ['post'])]
     public function ajout_disponibilté(StatutCoursierRepository $statutCoursierRepository,Request $request, EntityManagerInterface $entityManager,SessionInterface $session ): Response
-    {   $error=0;
+    {  
+        $token = $this->tokenStorage->getToken();
+        $currentUser = $token->getUser();
+        if ($currentUser instanceof Coursier) {
+            $idcoursier = $currentUser->getId();
+        }
+        $error=0;
         $region = $request->get('region');
         $date = $request->get('date');
         $datedate = DateTime::createFromFormat('Y-m-d', $date);
         $currentDate = new DateTime();
 
-        $existingStatut = $entityManager->getRepository(StatutCoursier::class)->findOneBy(['debut_tourner' => $datedate,'coursier'=> 9]);
+        $existingStatut = $entityManager->getRepository(StatutCoursier::class)->findOneBy(['debut_tourner' => $datedate,'coursier'=> $idcoursier]);
         if($datedate <= $currentDate){
             $error=2;
             $livraisonId = $request->get('id');
-            $status = $statutCoursierRepository->findBy(['coursier' => 9,'titre_statut' => 'disponible']);
+            $status = $statutCoursierRepository->findBy(['coursier' => $idcoursier,'titre_statut' => 'disponible']);
            
            
             return $this->render('coursierV2/disponibilté.html.twig', [
@@ -293,7 +309,7 @@ class CoursierController extends AbstractController
         $statut->setDebutTourner($datedate);
         $statut->setRegion($region);
         $statut->setTitreStatut('disponible');
-        $cour= $entityManager->getRepository(Coursier::class)->findOneBy(['id' => 9]);
+        $cour= $entityManager->getRepository(Coursier::class)->findOneBy(['id' => $idcoursier]);
         $statut->setCoursier($cour);
         $error=4 ;
         $entityManager->persist( $statut);
@@ -303,7 +319,7 @@ class CoursierController extends AbstractController
         }else{
             $error=1;
             $livraisonId = $request->get('id');
-            $status = $statutCoursierRepository->findBy(['coursier' => 9,'titre_statut' => 'disponible']);
+            $status = $statutCoursierRepository->findBy(['coursier' => $idcoursier,'titre_statut' => 'disponible']);
            
            
             return $this->render('coursierV2/disponibilté.html.twig', [
@@ -324,5 +340,41 @@ class CoursierController extends AbstractController
         return $this->redirectToRoute('disponibilté');
 
     }
+    #[Route('/profile', name: 'coursierProfile')]
+        public function profile(): Response
+        {
+            $token = $this->tokenStorage->getToken();
+            $currentUser = $token->getUser();
+            if ($currentUser instanceof Coursier) {
+                $dateAjout = $currentUser->getDateAjout()->format('Y-m-d');
+            }
+
+            return $this->render('coursier/profile.html.twig', [
+                'user' =>  $currentUser,
+                'dateAjout' =>  $dateAjout,
+            ]);
+        }
+
+        #[Route('/update-profile', name: 'update_coursier_profile')]
+        public function updateProfile(Request $request, EntityManagerInterface $entityManager, CoursierRepository $coursierRepository): Response
+        {
+            $token = $this->tokenStorage->getToken();
+            $currentUser = $token->getUser();
+
+            if ($currentUser instanceof Coursier) {
+                $dateAjout = $currentUser->getDateAjout()->format('Y-m-d');
+                $id = $currentUser->getId();
+                $user =$coursierRepository->findOneBy(['id' => $id]);
+                $user->setPrenom($request->get('prenom'));
+                $user->setUsername($request->get('username'));
+                $user->setNom($request->get('nom'));
+                $user->setPhone($request->get('phone'));
+                $entityManager->persist($user);
+                $entityManager->flush();
+            }
+
+
+            return $this->redirectToRoute('coursierProfile');
+        }
   
 }

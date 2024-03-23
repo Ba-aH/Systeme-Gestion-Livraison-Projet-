@@ -46,13 +46,29 @@
 
                     <div class="flex flex-col pt-4">
                             <label for="telephone" class="form-label">Password</label>
-                            {{ form_row(registrationForm.plainPassword, {'attr': {'class': 'form-input'}}) }}
+                            {{ form_row(registrationForm.plainPassword, {'attr': {'class': 'form-input', 'id': 'password'}}) }}
                     </div>
                     <div class="flex items-center pt-4">
                         <label for="agreeterms" class="agree-label ml-2">Acceptez nos conditions de services</label>
                         {{ form_row(registrationForm.agreeTerms) }}
                     </div>
-                   
+                   {% if error == 1  %}
+  <div class="alert alert-success" role="alert">
+     <p class="pepe">user already exist .</p>
+   </div>
+{% endif %}
+<style>.pepe {
+  padding: 15px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+.pepe {
+  color: #721c24;
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+}</style>
                             
             {# {{ form_errors(adresseForm) }}           
                 {{ form_start(adresseForm) }}

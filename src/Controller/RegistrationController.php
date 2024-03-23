@@ -19,8 +19,8 @@ use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mime\Address;
 use App\Security\EmailVerifier;
-
-
+use App\Repository\CoursierRepository;
+use App\Repository\ClientRepository;
 
 class RegistrationController extends AbstractController
 {
@@ -38,13 +38,19 @@ class RegistrationController extends AbstractController
     }
 
     #[Route('/register/coursier', name: 'app_register_coursier',methods: ['GET', 'POST'])]
-    public function registerCoursier(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
-    {
+    public function registerCoursier(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager,CoursierRepository $coursierRepository): Response
+    {   $error=0;
         $user = new Coursier();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
-       
-        
+        $email= $form->get('email')->getData() ;     
+        $finduser =$coursierRepository->findOneBy(['email' => $email]);
+        if($finduser){
+            $error=1;
+            return $this->render('registration/register_coursier.html.twig', [
+                'registrationForm' => $form->createView(), 'error' => $error
+            ]);
+        }else{
         if ($form->isSubmitted() && $form->isValid()) {
             // encode the plain password
             $user->setPassword(
@@ -70,23 +76,29 @@ class RegistrationController extends AbstractController
 
             return $this->redirectToRoute('app_login');
         }
-
-        return $this->render('registration/register_coursier.html.twig', [
-            'registrationForm' => $form->createView(),
-        ]);
+}
+return $this->render('registration/register_coursier.html.twig', [
+    'registrationForm' => $form->createView(), 'error' => $error
+]);
     }
 
     #[Route('/register/client', name: 'app_register_client',methods: ['GET', 'POST'])]
-    public function registerClient(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
-    {
+    public function registerClient(ClientRepository $clientRepository, Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
+    { $error=0;
         $user = new Client();
         $form = $this->createForm(RegostrationClientFormType::class, $user);
         $form->handleRequest($request);
-
+        $email= $form->get('email')->getData() ;     
+        $finduser =$clientRepository->findOneBy(['email' => $email]);
         $adresse = new Adresse();
         $formAdr = $this->createForm(AdresseFormType::class, $adresse);
         $formAdr->handleRequest($request);
-        
+        if($finduser){
+            $error=1;
+            return $this->render('registration/register_client.html.twig', [
+                'registrationForm' => $form->createView(),
+                'adresseForm' => $formAdr->createView(),'error' => $error
+            ]);}else{
         if ($form->isSubmitted() && $form->isValid()) {
             // encode the plain password
             $user->setPassword(
@@ -112,11 +124,11 @@ class RegistrationController extends AbstractController
             $entityManager->flush();
 
             return $this->redirectToRoute('app_login');
-        }
+        }}
 
         return $this->render('registration/register_client.html.twig', [
             'registrationForm' => $form->createView(),
-            'adresseForm' => $formAdr->createView(),
+            'adresseForm' => $formAdr->createView(),'error' => $error
         ]);
     }
     

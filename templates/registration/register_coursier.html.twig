@@ -48,6 +48,7 @@
                     <div class="flex flex-col pt-4">
                             <label for="telephone" class="form-label">Password</label>
                             {{ form_row(registrationForm.plainPassword, {'attr': {'class': 'form-input'}}) }}
+                             <small id="password-error" class="text-red-500"></small>
                     </div>
 
                     
@@ -57,15 +58,31 @@
                         <label for="agreeterms" class="agree-label ml-2">Acceptez nos conditions de services</label>
                         {{ form_row(registrationForm.agreeTerms) }}
                     </div>
+{% if error == 1  %}
+  <div class="alert alert-success" role="alert">
+     <p class="pepe">user already exist .</p>
+   </div>
+{% endif %}
+<style>.pepe {
+  padding: 15px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
 
+.pepe {
+  color: #721c24;
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+}</style>
                     {# <div class="flex flex-col pt-4">
                         {{ form_row(registrationForm.confirmPassword, {'label': 'Confirm Password'}) }}
                     </div> #} 
-                    <button type="submit" class="bg-blue-500 text-white font-bold text-lg hover:bg-blue-700 p-2 mt-8 rounded-md">Register</button>
+                    <button   type="submit" class="bg-blue-500 text-white font-bold text-lg hover:bg-blue-700 p-2 mt-8 rounded-md">Register</button>
 
+       
                 {{ form_end(registrationForm) }}  
-                
-
+          
 
 
                 <div class="text-center pt-12 pb-12">
@@ -75,7 +92,6 @@
 
         </div>
 
-       
         <div class="w-1/1 ">
             <img class="object-cover w-full h-screen hidden md:block" src="{{ asset('images/courier-box-workman-fragile-man.jpg') }}" alt="Background" />
         </div>
