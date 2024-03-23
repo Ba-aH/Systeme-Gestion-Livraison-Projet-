@@ -41,8 +41,11 @@ class CoursierController extends AbstractController
         $address=$adresseRepository->findOneBy(['id' => $liv->getAddressId()]);
         $latitude=$address->getLatitude();
         $longtitude=$address->getLongitude();
+        // return $this->render('coursier/details.html.twig', [
+        //     'liv' =>  $liv,'client' =>$client,'address' =>$address,'lat'=>$latitude, 'long'=>$longtitude,
+        // ]);
 
-        return $this->render('coursier/details.html.twig', [
+        return $this->render('coursierV2/details.html.twig', [
             'liv' =>  $liv,'client' =>$client,'address' =>$address,'lat'=>$latitude, 'long'=>$longtitude,
         ]);
     }
@@ -51,8 +54,8 @@ class CoursierController extends AbstractController
     #[Route('/afficher_tournees', name: 'afficher_tournees', methods: ['GET'])]
     public function afficher_tournees(EntityManagerInterface $entityManager,TournerRepository $tournerRepository,LivraisonRepository $livraisonRepository): Response
     {
-    $idcoursier=1;
-    $tabtourner=$tournerRepository->findBy(['coursier' => 1,'statut_tourner'=>'en cours']);
+    $idcoursier=9;
+    $tabtourner=$tournerRepository->findBy(['coursier' => 9,'statut_tourner'=>'en cours']);
     
 
 
@@ -80,6 +83,53 @@ class CoursierController extends AbstractController
     }
        
 
+
+
+
+
+    #[Route('/afficher_tourneesAU', name: 'afficher_tourneesAU', methods: ['GET'])]
+    public function afficher_tourneesAU(EntityManagerInterface $entityManager,TournerRepository $tournerRepository,LivraisonRepository $livraisonRepository): Response
+    {
+    $idcoursier=9;
+    $now = new \DateTimeImmutable();
+    
+    $tabtourner=$tournerRepository->findOneBy(['coursier' => 9,'statut_tourner'=>'en cours']);
+    $tourneé = $entityManager->getRepository(Tourner::class)->findOneBy(['coursier' => 9,'statut_tourner'=>'en cours']);
+
+
+    
+   
+        $livraisons= $livraisonRepository->findBy(['tourner' => $tourneé->getId()]);
+    
+
+    $status=[];
+    foreach ($livraisons as $livraisonTable) {
+        // Iterate over the items inside each table
+        foreach ($livraisonTable as $livraison) {
+            $livraisonId = $livraison->getId();
+            $livstat= $entityManager->getRepository(StatutLivraison::class)->findOneBy(['livraison' => $livraisonId]);
+            $status[]=  $livstat->getStatusTitle();
+            // Access more properties as needed
+        }
+    }
+
+
+        return $this->render('coursierV2/home.html.twig', [
+            'livraisons' =>  $livraisons,   'status' =>  $status , 'date' =>  $now 
+        ]);
+        
+    }
+
+
+
+
+
+
+
+
+
+
+
     #[Route('/echecc/{id}', name: 'echecc', methods: ['GET'])]
     public function echecc(Request $request,RaisonsEchecRepository $raisonsEchecRepository ,LivraisonRepository $livraisonRepository,EntityManagerInterface $entityManager,AdresseRepository $adresseRepository): Response
     {
@@ -87,7 +137,7 @@ class CoursierController extends AbstractController
 
         $listraisons=$raisonsEchecRepository->findAll();
        
-        return $this->render('coursier/echec.html.twig', [
+        return $this->render('coursierV2/echec.html.twig', [
             'livraisonId' =>  $livraisonId,  'list' =>  $listraisons,
         ]);
     }
@@ -98,7 +148,7 @@ class CoursierController extends AbstractController
        $error=0;
        
        
-        return $this->render('coursier/confrm.html.twig', [
+        return $this->render('coursierV2/confirm.html.twig', [
             'livraisonId' =>  $livraisonId,'error' =>  $error
         ]);
     }
@@ -133,7 +183,7 @@ class CoursierController extends AbstractController
 
 
             $entityManager->flush();
-            return $this->redirectToRoute('afficher_tournees');
+            return $this->redirectToRoute('afficher_tourneesAU');
     }
 
 
@@ -158,7 +208,7 @@ class CoursierController extends AbstractController
 
 
             $entityManager->flush();
-            return $this->redirectToRoute('afficher_tournees');
+            return $this->redirectToRoute('afficher_tourneesAU');
     }
 
     #[Route('/coursier_annulation/{id}', name: 'coursier_annulation', methods: ['GET'])]
@@ -197,10 +247,10 @@ class CoursierController extends AbstractController
     public function disponibilté(Request $request,StatutCoursierRepository $statutCoursierRepository): Response
     {
         $livraisonId = $request->get('id');
-        $status = $statutCoursierRepository->findBy(['coursier' => 1,'titre_statut' => 'disponible']);
+        $status = $statutCoursierRepository->findBy(['coursier' => 9,'titre_statut' => 'disponible']);
         $error = $request->query->get('error', 0);
        
-        return $this->render('coursier/disponibilité.html.twig', [
+        return $this->render('coursierV2/disponibilté.html.twig', [
             'status' =>   $status,'error'=>   $error
         ]);
     }
@@ -214,14 +264,14 @@ class CoursierController extends AbstractController
         $datedate = DateTime::createFromFormat('Y-m-d', $date);
         $currentDate = new DateTime();
 
-        $existingStatut = $entityManager->getRepository(StatutCoursier::class)->findOneBy(['debut_tourner' => $datedate]);
+        $existingStatut = $entityManager->getRepository(StatutCoursier::class)->findOneBy(['debut_tourner' => $datedate,'coursier'=> 9]);
         if($datedate <= $currentDate){
             $error=2;
             $livraisonId = $request->get('id');
-            $status = $statutCoursierRepository->findBy(['coursier' => 1,'titre_statut' => 'disponible']);
+            $status = $statutCoursierRepository->findBy(['coursier' => 9,'titre_statut' => 'disponible']);
            
            
-            return $this->render('coursier/disponibilité.html.twig', [
+            return $this->render('coursierV2/disponibilté.html.twig', [
                 'status' =>   $status,'error'=>   $error
             ]);
 
@@ -231,7 +281,7 @@ class CoursierController extends AbstractController
         $statut->setDebutTourner($datedate);
         $statut->setRegion($region);
         $statut->setTitreStatut('disponible');
-        $cour= $entityManager->getRepository(Coursier::class)->findOneBy(['id' => 1]);
+        $cour= $entityManager->getRepository(Coursier::class)->findOneBy(['id' => 9]);
         $statut->setCoursier($cour);
         $error=4 ;
         $entityManager->persist( $statut);
@@ -241,10 +291,10 @@ class CoursierController extends AbstractController
         }else{
             $error=1;
             $livraisonId = $request->get('id');
-            $status = $statutCoursierRepository->findBy(['coursier' => 1,'titre_statut' => 'disponible']);
+            $status = $statutCoursierRepository->findBy(['coursier' => 9,'titre_statut' => 'disponible']);
            
            
-            return $this->render('coursier/disponibilité.html.twig', [
+            return $this->render('coursierV2/disponibilté.html.twig', [
                 'status' =>   $status,'error'=>   $error
             ]);
         }}
@@ -262,5 +312,6 @@ class CoursierController extends AbstractController
         return $this->redirectToRoute('disponibilté');
 
     }
+    
   
 }

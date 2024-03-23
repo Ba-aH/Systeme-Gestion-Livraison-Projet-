@@ -1,0 +1,234 @@
+{% extends 'admin.html.twig' %}
+
+{% block title %}Hello CoursierController!{% endblock %}
+
+
+
+{% block body %}
+
+
+
+ 
+
+  
+   <section id="topbar" class="d-flex align-items-center">
+    <!-- <div class="container d-flex justify-content-center justify-content-md-between">
+      <div class="contact-info d-flex align-items-center">
+        <i class="bi bi-envelope d-flex align-items-center"><a href="mailto:contact@example.com">contact@example.com</a></i>
+        <i class="bi bi-phone d-flex align-items-center ms-4"><span>+1 5589 55488 55</span></i>
+      </div>
+      <div class="social-links d-none d-md-flex align-items-center">
+        <a href="#" class="twitter"><i class="bi bi-twitter"></i></a>
+        <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
+        <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
+        <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></i></a>
+      </div> -->
+    </div>
+  </section>
+
+  <!-- ======= Header ======= -->
+  <header id="header" class="d-flex align-items-center">
+    <div class="container d-flex justify-content-between align-items-center">
+
+      <div class="logo">
+        <h1><a href="index.html">Eterna</a></h1>
+
+      </div>
+
+      <nav id="navbar" class="navbar">
+        <ul>
+          <li><a class="active" href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="services.html">Services</a></li>
+          <li><a href="portfolio.html">Portfolio</a></li>
+          <li><a href="team.html">Team</a></li>
+          <li><a href="pricing.html">Pricing</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li class="dropdown"><a href="#"><span>Drop Down</span> <i class="bi bi-chevron-down"></i></a>
+            <ul>
+              <li><a href="#">Drop Down 1</a></li>
+              <li class="dropdown"><a href="#"><span>Deep Drop Down</span> <i class="bi bi-chevron-right"></i></a>
+                <ul>
+                  <li><a href="#">Deep Drop Down 1</a></li>
+                  <li><a href="#">Deep Drop Down 2</a></li>
+                  <li><a href="#">Deep Drop Down 3</a></li>
+                  <li><a href="#">Deep Drop Down 4</a></li>
+                  <li><a href="#">Deep Drop Down 5</a></li>
+                </ul>
+              </li>
+              <li><a href="#">Drop Down 2</a></li>
+              <li><a href="#">Drop Down 3</a></li>
+              <li><a href="#">Drop Down 4</a></li>
+            </ul>
+          </li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+        <i class="bi bi-list mobile-nav-toggle"></i>
+      </nav>
+
+    </div>
+  </header>
+   <!-- ======= Breadcrumbs ======= -->
+   <section id="breadcrumbs" class="breadcrumbs">
+    <div class="container">
+
+      <ol>
+        <li><a href="index.html">Home</a></li>
+        <li>deliver</li>
+      </ol>
+      <h2>gérer mes tournées</h2>
+
+    </div>
+  </section>
+  
+
+
+
+    <!-- ======= Featured Services Section ======= -->
+    <section id="featured-services" class="featured-services">
+      <div class="container">
+
+       
+            
+    </section><!-- End Featured Services Section -->
+
+</head>
+<body>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+    }
+
+    .containerm {
+        max-width: 600px;
+        margin: 50px auto;
+       height: 400px; /* Increased height of the container */
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+    .button-container {
+        display: flex;
+        justify-content: space-between; 
+        /* Space buttons evenly */
+        margin-bottom: 20px; /* Added margin at bottom */
+    }
+
+    .button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    .confirm-normal {
+        background-color: #4caf50;
+        color: #fff;
+    }
+
+    .confirm-with-pin {
+        background-color: #007bff;
+        color: #fff;
+    }
+
+    input[type="text"] {
+        width: 200px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+        margin: 0 auto; /* Center input horizontally */
+        display: block; /* Display input as block element */
+    }
+
+    .divider {
+        border-right: 1px solid #ccc; /* Vertical line between buttons and input */
+        height: 60px; /* Adjust height as needed */
+        margin: 0 20px; /* Added margin around divider */
+    }
+    .button-container{
+       display:flex;
+       justify-content: center;
+       align-items: center;
+       justify-content: space-between;
+    
+
+    }.containerm{
+       display:flex;
+       justify-content: center;
+       align-items: center;
+       
+
+    }
+  .containerm {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+}
+
+.content {
+    text-align: center;
+    margin: 50px; /* Optional: Add margin for spacing between content */
+}
+.containerm.ff {
+ 
+    height: 10vh; /* Optional: Set the height to fill the viewport */
+}
+</style>
+</head>
+<body>
+   <form id="myForm" method="post" action="{{ path('confirmsubmit') }}" >
+    <div class="containerm ff">  <h1>choisir un type de confirmation </h1>  </div>
+   <div class="containerm">
+   
+   
+        
+     <div  class="content">
+            <button  value="normal" name="submit_button" type="submit" class="button confirm-normal">Confirm</button>
+ </div>
+        <div  class="content">
+            <button value="pin" name="submit_button" type="submit"  class="button confirm-with-pin">Confirm with PIN</button></br></br>
+            <input type="text" name="pin" id="pin" placeholder="Enter PIN">
+           <input type="hidden" name="livraisonId" id="livraisonId" value="{{ livraisonId }}"><br />
+    </div>
+
+    
+   
+    </div> </form>
+   {% if error == 1 %}
+    <div class="alert alert-danger" role="alert">
+       <p>code incorrecte</p>
+   {% elseif error == 2  %}
+<div class="alert alert-success" role="alert">
+       <p>operation terminé avec succés</p>
+    </div>
+    {% endif %}
+</div>
+{# <i class="confirmed-icon fas fa-check"></i> Confirmed #}
+ 
+
+<!-- Alternatively, you can use text and CSS to create a simple checkmark -->
+
+
+<!-- Make sure to include Font Awesome CSS if you're using it -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <a  class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <div id="preloader"></div>
+
+  <!-- Vendor JS Files -->
+
+
+
+
+{% endblock %}

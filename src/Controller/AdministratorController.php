@@ -34,7 +34,7 @@ class AdministratorController extends AbstractController
     #[Route('/', name: 'app_administrator')]
     public function index(): Response
     {
-        return $this->render('administrator/index.html.twig', [
+        return $this->render('coursierV2/home.html.twig', [
             'controller_name' => 'AdministratorController',
         ]);
     }

@@ -9,6 +9,8 @@
     </style>
 <!-- Favicons -->
 
+
+
  
 <!-- ======= Hero Section ======= -->
   <section id="hero" class="hero d-flex align-items-center">
@@ -99,33 +101,59 @@
         height: 60px; /* Adjust height as needed */
         margin: 0 20px; /* Added margin around divider */
     }
+    .button-container{
+       display:flex;
+       justify-content: center;
+       align-items: center;
+       justify-content: space-between;
+    
+
+    }.containerm{
+       display:flex;
+       justify-content: center;
+       align-items: center;
+       
+
+    }
+  .containerm {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+}
+
+.content {
+    text-align: center;
+    margin: 50px; /* Optional: Add margin for spacing between content */
+}
+.containerm.ff {
+ 
+    height: 10vh; /* Optional: Set the height to fill the viewport */
+}
 </style>
 </head>
 <body>
-
-<div class="containerm">
-    <div class="top-container">
-        <h1>Order Confirmation</h1>
+   <form id="myForm" method="post" action="{{ path('confirmsubmit') }}" >
+    <div class="containerm ff">  <h1>choisir un type de confirmation </h1>  </div>
+   <div class="containerm">
+   
+   
         
-    </div>
-       <form method="post" action="{{ path('confirmsubmit') }}" >
-    <div class="button-container">
-        <div class="left-container">
+     <div  class="content">
             <button  value="normal" name="submit_button" type="submit" class="button confirm-normal">Confirm</button>
-        </div>
-        <div class="divider"></div> <!-- Vertical line between buttons -->
-        <div class="right-container">
+ </div>
+        <div  class="content">
             <button value="pin" name="submit_button" type="submit"  class="button confirm-with-pin">Confirm with PIN</button></br></br>
             <input type="text" name="pin" id="pin" placeholder="Enter PIN">
-           <input type="text" name="livraisonId" id="livraisonId" value="{{ livraisonId }}"><br />
-        </div>
+           <input type="hidden" name="livraisonId" id="livraisonId" value="{{ livraisonId }}"><br />
     </div>
-     </form>
-     {% if error == 1 %}
+
+    
+   
+    </div> </form>
+   {% if error == 1 %}
     <div class="alert alert-danger" role="alert">
        <p>code incorrecte</p>
-    </div>
- 
    {% elseif error == 2  %}
 <div class="alert alert-success" role="alert">
        <p>operation terminé avec succés</p>
@@ -133,6 +161,7 @@
     {% endif %}
 </div>
 {# <i class="confirmed-icon fas fa-check"></i> Confirmed #}
+ 
 
 <!-- Alternatively, you can use text and CSS to create a simple checkmark -->
 

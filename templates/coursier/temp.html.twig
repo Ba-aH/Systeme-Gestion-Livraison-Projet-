@@ -133,7 +133,7 @@
        {% set myVariable = 0 %}
       {% set  Variable = 0 %}
       {% for livraisonArray in livraisons %}
-        <div class="containerr">
+        <div class="containerfr">
             {# <h2>Tourner Number: {{ loop.index }}</h2> #}
            <h2>Tourner de : {{ livraisonArray[0].getLivraisonDate()|date('Y-m-d ') }}</h2> 
             <div class="rowr">
@@ -158,7 +158,8 @@
                             <a href="{{ path('details', {'id': livraison.id}) }}" class="edit-buttonr">détails</a>
                             <a href="{{ path('echecc', {'id': livraison.id}) }}" class="delete-buttonr">echec</a>
                             <a href="{{ path('confirmer', {'id': livraison.id}) }}"class="view-buttonr">confirmer </a>
-                            <a href="{{ path('coursier_annulation', {'id': livraison.id}) }}"class="complete-buttonr">annuler </a>
+                            <a id="link" href="{{ path('coursier_annulation', {'id': livraison.id}) }}"class="complete-buttonr" onclick="return openConfirmation()" value="{{ path('coursier_annulation', {'id': livraison.id}) }}">annuler </a>
+                            
                         </div>
                     </div><!-- /.card -->
                     {% if loop.index % 2 == 0 and not loop.last %}
@@ -171,6 +172,107 @@
     {% endfor %}
   </div>
    </section>
+<style>
+  /* Styles for the custom dialog */
+  .dialog-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .dialog-box {
+    background-color: #fff;
+    border-radius: 5px;
+    padding: 20px;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  }
+
+  .dialog-buttons {
+    margin-top: 20px;
+  }
+
+  /* Styling for buttons */
+  #confirmButton {
+    background-color: green;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  #confirmButton:hover {
+    background-color: darkgreen;
+  }
+
+  #cancelButton {
+    background-color: red;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  #cancelButton:hover {
+    background-color: darkred;
+  }
+</style><div class="dialog-overlay" id="confirmationDialog">
+  <div class="dialog-box">
+    <p>confirmer la suppression de livraison de votre tournée</p>
+    <div class="dialog-buttons">
+      <button id="confirmButton">Confirm</button>
+      <button id="cancelButton" onclick="cancelAction()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var linkHref; // Variable to store the link's href
+
+function openConfirmation(event) {
+  document.getElementById('confirmationDialog').style.display = 'flex';
+  linkHref = document.getElementById('link').getAttribute('href');
+  // document.getElementById('link').value ;
+  return false; // Prevent the default link action
+}
+
+document.getElementById('confirmButton').addEventListener('click', function() {
+  confirmAction();
+});
+
+function confirmAction() {
+  // Add your action here, for example:
+ 
+  closeConfirmation();
+
+  // Redirect to the stored link's href after confirmation
+  if (linkHref) {
+     window.location.href = linkHref;
+  }
+}
+
+function cancelAction() {
+  // Add any action for canceling here, for example:
+  
+  closeConfirmation();
+}
+
+function closeConfirmation() {
+  document.getElementById('confirmationDialog').style.display = 'none';
+}
+</script>
 
 
   <a  class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>

@@ -1,0 +1,77 @@
+
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}Welcome!{% endblock %}</title>
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
+        {# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
+        {% block stylesheets %}
+  <link href={{asset('coursier/img/favicon.png')}} rel="stylesheet">
+  
+  <link href={{asset('coursier/img/apple-touch-icon.png')}} rel="stylesheet">
+  
+  <link href={{asset('coursier/vendor/animate.css/animate.min.css')}} rel="stylesheet">
+  
+  <link href={{asset('coursier/vendor/bootstrap/css/bootstrap.min.css')}} rel="stylesheet">
+
+  <link href={{asset('coursier/vendor/bootstrap-icons/bootstrap-icons.css')}} rel="stylesheet">
+  <link href={{asset('coursier/vendor/boxicons/css/boxicons.min.css')}} rel="stylesheet">
+  <link href={{asset('coursier/vendor/glightbox/css/glightbox.min.css')}} rel="stylesheet">
+  <link href={{asset('coursier/vendor/glightbox/css/glightbox.min.css')}} rel="stylesheet">
+  <link href={{asset('coursier/vendor/swiper/swiper-bundle.min.css')}} rel="stylesheet">
+  <link href={{asset('coursier/css/style.css')}} rel="stylesheet">
+
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  
+
+
+
+            {{ encore_entry_link_tags('app') }}
+    {% endblock %}
+
+        {% block javascripts %}
+          <script src={{ asset('coursier/vendor/purecounter/purecounter_vanilla.js')}}></script>
+            <script src={{ asset('coursier/vendor/bootstrap/js/bootstrap.bundle.min.js')}}></script>
+              <script src={{ asset('coursier/vendor/glightbox/js/glightbox.min.js')}}></script>
+                <script src={{ asset('coursier/vendor/isotope-layout/isotope.pkgd.min.js')}}></script>
+                  <script src={{ asset('coursier/vendor/swiper/swiper-bundle.min.js')}}></script>
+                    <script src={{ asset('coursier/vendor/waypoints/noframework.waypoints.js')}}></script>
+                      <script src={{ asset('coursier/vendor/php-email-form/validate.js')}}></script>
+                        <script src={{ asset('assets/js/main.js')}}></script>
+
+
+            {{ encore_entry_script_tags('app') }}
+        {% endblock %}
+    </head>
+    <body>
+        {% block body %}{% endblock %}
+          {% block footer %}
+          
+            <!-- ======= Footer ======= -->
+  <footer id="footer">
+
+    <div class="footer-newsletter">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-6">
+            <h4>Our Newsletter</h4>
+            <p>Tamen quem nulla quae legam multos aute sint culpa legam noster magna</p>
+          </div>
+          <div class="col-lg-6">
+            <form action="" method="post">
+              <input type="email" name="email"><input type="submit" value="Subscribe">
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+  </footer><!-- End Footer -->
+          
+          
+           {% endblock %}
+    </body>
+</html>
