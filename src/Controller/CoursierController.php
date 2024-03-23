@@ -290,7 +290,7 @@ class CoursierController extends AbstractController
             ]);
         }
 
-        #[Route('/update-profile', name: 'update_profile')]
+        #[Route('/update-profile', name: 'update_coursier_profile')]
         public function updateProfile(Request $request, EntityManagerInterface $entityManager, CoursierRepository $coursierRepository): Response
         {
             $token = $this->tokenStorage->getToken();

@@ -51,7 +51,7 @@
                                 </div>
                                 <div class="tab-content pt-3">
                                     <div class="tab-pane active">
-                                        <form id="myForm" class="form" method="POST" action="{{ path('update_coursier_profile', {'nom': 'default', 'prenom': 'default', 'username':'default', 'phone':'default'}) }}" onsubmit="updateFormAction()">
+                                        <form id="myForm" class="form" method="POST" action="{{ path('update_client_profile', {'nom': 'default', 'prenom': 'default', 'username':'default', 'phone':'default'}) }}" onsubmit="updateFormAction()">
                                             <div class="row">
                                                 <div class="col">
                                                     <div class="row">
@@ -105,16 +105,72 @@
                                                     <div class="row">
                                                         <div class="col">
                                                             <div class="form-group">
-                                                                <label>Email</label>
+                                                                <div class="mb-2"><b>Adresse Email</b></div>
                                                                 <div class="input-group">
                                                                     <input id="emailInput" class="form-control" type="text"  value="{{user.email}}" readonly>
-                                    
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
+
+                                                    <div class="mb-2"><b>Vos Adresses</b></div>
+                                                    {% for adresse in adresses %}
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="form-group">
+                                                                <label>Adresse</label>
+                                                                <div class="input-group">
+                                                                    {# <input id="idInput{{ loop.index }}" class="form-control d-none" type="text"  value="{{adresse.id}}" readonly> #}
+                                                                    <input id="adresseInput{{ loop.index }}" class="form-control" type="text" name="adresseInput"  value="{{adresse.formattedAddress}}" readonly>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="form-group">
+                                                                <label>Ville</label>
+                                                                <div class="input-group">
+                                                                    <input id="villeInput{{ loop.index }}" class="form-control" type="text"   value="{{adresse.ville}}" readonly>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="form-group">
+                                                                <label>Region</label>
+                                                                <div class="input-group">
+                                                                    <input id="regionInput{{ loop.index }}" class="form-control" type="text"   value="{{adresse.region}}" readonly>                      
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <a class="btn-btn-danger" href="{{ path('delete-adresse', {'id': adresse.id}) }}">
+                                                            <i class="fa fa-delete"></i>
+                                                            <span>Delete</span>
+                                                        </a>      
+                                                    </div>
+                                                    {% endfor %}
+
+                                                    <div class="row">
+                                                        <div class="col d-flex justify-content-end">
+                                                            <button class="btn btn-primary" id="addAddressBtn" type="button">Add Address</button>
+                                                        </div>
+                                                    </div>
+                                                    <div id="addAddressForm" style="display: none;">
+                                                        <div class="form-group">
+                                                            <label>Address</label>
+                                                            <input id="newAddressInput" class="form-control" type="text" placeholder="Enter address">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>Ville</label>
+                                                            <input id="newVilleInput" class="form-control" type="text" placeholder="Enter city">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>Region</label>
+                                                            <input id="newRegionInput" class="form-control" type="text" placeholder="Enter region">
+                                                        </div>
+                                                        <button class="btn btn-primary" type="button" id="saveAddressBtn" action="{{ path('ajout-adresse', {'adresse': 'default', 'ville': 'default', 'region':'default'}) }}">Save Address</button>
+                                                    </div>
                                                 </div>
                                             </div>
+                                            
                                             <div class="mb-2"><b>Change Password</b></div>
                                             <div class="row">
                                                 <div class="col">
@@ -165,26 +221,86 @@
         </div>
     </div>
 </div>
+<style>
+.d-none {
+    display: none !important;
+}
+
+.btn-btn-danger {
+    margin-top: 30.5px; 
+    height: 40px;
+    width: 80px; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: red;
+    color: white; 
+    border: none;
+    border-radius: 5px; 
+    cursor: pointer; 
+    text-decoration: none; /* Remove underline */
+}
+
+.btn-btn-danger:hover {
+    background-color: darkred; 
+    color: white; 
+    text-decoration: none;
+}
+
+.btn-btn-danger:focus {
+    outline: none; 
+}
+</style>
 <script>
    document.addEventListener("DOMContentLoaded", function() {
-    // JavaScript code to toggle edit mode
+
     document.getElementById('editUsernameBtn').addEventListener('click', function() {
-        toggleEditMode('usernameInput');
+            toggleEditMode('usernameInput');
+        });
+
+        document.getElementById('editNomBtn').addEventListener('click', function() {
+            toggleEditMode('nomInput');
+        });
+
+        document.getElementById('editPrenomBtn').addEventListener('click', function() {
+            toggleEditMode('prenomInput');
+        });
+        document.getElementById('editPhoneBtn').addEventListener('click', function() {
+            toggleEditMode('phoneInput');
+        });
+
+       /* document.getElementById('editAdresseBtn').addEventListener('click', function() {
+            toggleEditMode('adresseInput');
+        });*/
+         function toggleEditMode(inputId) {
+        var input = document.getElementById(inputId);
+        input.readOnly = !input.readOnly;
+    }
+ 
+    var editButtons = document.querySelectorAll('.editAdresseBtn');
+    editButtons.forEach(function(button) {
+        button.addEventListener('click', function() {
+            var index = button.getAttribute('data-index');
+            toggleEditMode('adresseInput' + index);
+        });
     });
 
-    document.getElementById('editNomBtn').addEventListener('click', function() {
-        toggleEditMode('nomInput');
+    var editButtons = document.querySelectorAll('.editVilleBtn');
+    editButtons.forEach(function(button) {
+        button.addEventListener('click', function() {
+            var index = button.getAttribute('data-index');
+            toggleEditMode('villeInput' + index);
+        });
     });
 
-    document.getElementById('editPrenomBtn').addEventListener('click', function() {
-        toggleEditMode('prenomInput');
+    var editButtons = document.querySelectorAll('.editRegionBtn');
+    editButtons.forEach(function(button) {
+        button.addEventListener('click', function() {
+            var index = button.getAttribute('data-index');
+            toggleEditMode('regionInput' + index);
+        });
     });
 
-    document.getElementById('editPhoneBtn').addEventListener('click', function() {
-        toggleEditMode('phoneInput');
-    });
-
-    // Function to toggle edit mode for a specific input field
     function toggleEditMode(inputId) {
         var inputField = document.getElementById(inputId);
         var editButton = document.getElementById('edit' + inputId.charAt(0).toUpperCase() + inputId.slice(1) + 'Btn');
@@ -193,7 +309,7 @@
             inputField.readOnly = false;
             editButton.textContent = 'Save';
         } else {
-            // Save changes or perform other actions here
+            // save changes or perform other actions here
             inputField.readOnly = true;
             editButton.textContent = 'Edit';
         }
@@ -204,9 +320,69 @@
         var nom = document.getElementById('nomInput').value;
         var prenom = document.getElementById('prenomInput').value;
         var phone = document.getElementById('phoneInput').value;
-        document.getElementById('myForm').action = "{{ path('update_coursier_profile', {'nom': ''}) }}" + nom + "&prenom=" + prenom+"&username=" +username+"&phone=" +phone;
+
+        var addresses = [];
+        var addressInputs = document.querySelectorAll('[id^="adresseInput"]');
+        addressInputs.forEach(function(input) {
+            addresses.push(input.value);
+        });
+
+        var ids = [];
+        var idsInputs = document.querySelectorAll('[id^="idInput"]');
+        idsInputs.forEach(function(input) {
+            ids.push(input.value);
+        });
+
+        var adrs = "";
+        addresses.forEach(function(address, index) {
+            // concatenate each address with its corresponding ID
+            adrs += "&adresse&id=" + ids[index] + "=" + address;
+        });
+
+        console.log(adrs);
+        
+        document.getElementById('myForm').action = "{{ path('update_client_profile', {'nom': ''}) }}" + nom + "&prenom=" + prenom+"&username=" +username+"&phone=" +phone;
     return true; 
     }    
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById('addAddressBtn').addEventListener('click', function() {
+            // toggle visibility of the form
+            document.getElementById('addAddressForm').style.display = 'block';
+        });
+
+        document.getElementById('saveAddressBtn').addEventListener('click', function() {
+            // get values from the form
+            var address = document.getElementById('newAddressInput').value;
+            var ville = document.getElementById('newVilleInput').value;
+            var region = document.getElementById('newRegionInput').value;
+            var data = {
+                address: address,
+                ville: ville,
+                region: region
+            };  
+
+            $.ajax({
+                type: 'POST',
+                url: '{{ path('ajout-adresse') }}',
+                data: data,
+                success: function(response) {
+                    console.log('Address added successfully.');
+                    location.reload();
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error adding address:', error);
+                }
+            });
+           
+            document.getElementById('newAddressInput').value = '';
+            document.getElementById('newVilleInput').value = '';
+            document.getElementById('newRegionInput').value = '';
+
+            // hide the form after saving
+            document.getElementById('addAddressForm').style.display = 'none';
+        });
+    });
+    
 </script>
 <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.1/dist/js/bootstrap.bundle.min.js"></script>
