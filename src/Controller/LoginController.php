@@ -1,6 +1,9 @@
 <?php
 
 namespace App\Controller;
+
+use App\Entity\Client;
+use App\Entity\Coursier;
 use App\Entity\ResetPassword;
 use App\Form\ResetPasswordFormType;
 use App\Repository\ClientRepository;
@@ -15,10 +18,21 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\ResetPasswordRepository;
-
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class LoginController extends AbstractController
 {
+    private $tokenStorage;
+    private $serializer;
+    
+
+    public function __construct(TokenStorageInterface $tokenStorage,SerializerInterface $serializer)
+    {
+        $this->tokenStorage = $tokenStorage;
+        $this->serializer = $serializer;
+        
+    }
     #[Route('/login', name: 'app_login')]
      public function index(AuthenticationUtils $authenticationUtils): Response
       {         // get the login error if there is one
@@ -26,6 +40,7 @@ class LoginController extends AbstractController
 
         // last username entered by the user
          $lastUsername = $authenticationUtils->getLastUsername();
+         
 
           return $this->render('login/index.html.twig', [
              'controller_name' => 'LoginController',
@@ -33,6 +48,21 @@ class LoginController extends AbstractController
              'error'         => $error,
           ]);
       }
+
+    #[Route('/after', name: 'after_login_app')]
+    public function afterLogin(AuthenticationUtils $authenticationUtils): Response
+    {   
+        $token = $this->tokenStorage->getToken();
+        $currentUser = $token->getUser();
+        $error = $authenticationUtils->getLastAuthenticationError();
+        
+        if ($currentUser instanceof Client) {
+            return $this->redirectToRoute('clientProfile');
+        }
+        if ($currentUser instanceof Coursier) {
+            return $this->redirectToRoute('coursierProfile');
+        }        
+    }
 
     #[Route('/logout', name: 'app_logout', methods: ['GET'])]
     public function logout()
@@ -99,8 +129,11 @@ class LoginController extends AbstractController
     }
 
     #[Route('/change-password', name: 'change-password')]
-    public function ChangePassword(Request $request, EntityManagerInterface $entityManager,ResetPasswordRepository $resetPassword, ClientRepository $clientRepository, UserPasswordHasherInterface $userPasswordHasher,CoursierRepository $coursierRepository)
+    public function ChangePassword(Request $request, AuthenticationUtils $authenticationUtils, EntityManagerInterface $entityManager,ResetPasswordRepository $resetPassword, ClientRepository $clientRepository, UserPasswordHasherInterface $userPasswordHasher,CoursierRepository $coursierRepository)
     {
+        $error = $authenticationUtils->getLastAuthenticationError();
+
+        $lastUsername = $authenticationUtils->getLastUsername();
         $codePIN = $request->query->get('pin');
         $resetPasswordRequest = $resetPassword->findOneBy(['codePIN' => $codePIN]);
         $email= $resetPasswordRequest->getEmail();
@@ -111,16 +144,33 @@ class LoginController extends AbstractController
         $form = $this->createForm(ResetPasswordFormType::class);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $user->setPassword(
-                $userPasswordHasher->hashPassword(
-                    $user,
-                    $form->get('password')->getData()
-                )
-            );
-            $entityManager->persist($user);
-            $entityManager->flush();
-        
-        return $this->render('login/index.html.twig');
+            $password=$form->get('password')->getData();
+            $cpassword=$form->get('confirmPassword')->getData();
+            if ($password==$cpassword){
+                $user->setPassword(
+                    $userPasswordHasher->hashPassword(
+                        $user,
+                        $form->get('password')->getData()
+                    )
+                );
+                $entityManager->persist($user);
+                $entityManager->flush();
+            
+                return $this->render('login/index.html.twig', [
+                    'controller_name' => 'LoginController',
+                    'last_username' => $lastUsername,
+                    'error'         => $error,
+                ]);
+            }
+            else{
+                $codePIN = $request->query->get('pin');
+                $form = $this->createForm(ResetPasswordFormType::class);
+                return $this->render('login/reset_password.html.twig', [
+                    'ResetPasswordForm' => $form->createView(),
+                    'pin' => $codePIN,
+                    'error' =>'le mot de passe et la confirmation du mot de passe ne correspondent pas',
+                ]);
+            }
         }
         return $this->render('login/reset_password_not_found.html.twig');
     }
@@ -146,4 +196,12 @@ class LoginController extends AbstractController
             return new Response("No expired reset requests found to delete.");
         }
     }
+
+    #[Route('', name: 'app_index')]
+     public function Appindex(AuthenticationUtils $authenticationUtils): Response
+      {         
+      return $this->render('client/index.html.twig', [
+            'controller_name' => 'ClientController',
+        ]);
+      }
 }
