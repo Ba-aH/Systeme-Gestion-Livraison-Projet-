@@ -52,7 +52,31 @@ class RegistrationController extends AbstractController
             ]);
         }else{
         if ($form->isSubmitted() && $form->isValid()) {
-            // encode the plain password
+            $nom=$form->get('nom')->getData();
+            $prenom=$form->get('prenom')->getData();
+            $phone=$form->get('phone')->getData();
+            for ($i = 0; $i < strlen($nom); $i++) {
+                if (!ctype_alpha($nom[$i])) {
+                    $error=2;
+                    return $this->render('registration/register_coursier.html.twig', [
+                        'registrationForm' => $form->createView(), 'error' => $error
+                    ]);
+                }
+            }
+            for ($i = 0; $i < strlen($prenom); $i++) {
+                if (!ctype_alpha($prenom[$i])) {
+                    $error=3;
+                    return $this->render('registration/register_coursier.html.twig', [
+                        'registrationForm' => $form->createView(), 'error' => $error
+                    ]);
+                }
+            }
+            if (!is_numeric($phone) || strlen($phone) !== 8) {
+                $error=4;
+                    return $this->render('registration/register_coursier.html.twig', [
+                        'registrationForm' => $form->createView(), 'error' => $error
+                    ]);
+            }
             $user->setPassword(
                 $userPasswordHasher->hashPassword(
                     $user,
@@ -76,10 +100,10 @@ class RegistrationController extends AbstractController
 
             return $this->redirectToRoute('app_login');
         }
-}
-return $this->render('registration/register_coursier.html.twig', [
-    'registrationForm' => $form->createView(), 'error' => $error
-]);
+        }
+        return $this->render('registration/register_coursier.html.twig', [
+            'registrationForm' => $form->createView(), 'error' => $error
+        ]);
     }
 
     #[Route('/register/client', name: 'app_register_client',methods: ['GET', 'POST'])]
@@ -100,7 +124,31 @@ return $this->render('registration/register_coursier.html.twig', [
                 'adresseForm' => $formAdr->createView(),'error' => $error
             ]);}else{
         if ($form->isSubmitted() && $form->isValid()) {
-            // encode the plain password
+            $nom=$form->get('nom')->getData();
+            $prenom=$form->get('prenom')->getData();
+            $phone=$form->get('phone')->getData();
+            for ($i = 0; $i < strlen($nom); $i++) {
+                if (!ctype_alpha($nom[$i])) {
+                    $error=2;
+                    return $this->render('registration/register_coursier.html.twig', [
+                        'registrationForm' => $form->createView(), 'error' => $error
+                    ]);
+                }
+            }
+            for ($i = 0; $i < strlen($prenom); $i++) {
+                if (!ctype_alpha($prenom[$i])) {
+                    $error=3;
+                    return $this->render('registration/register_coursier.html.twig', [
+                        'registrationForm' => $form->createView(), 'error' => $error
+                    ]);
+                }
+            }
+            if (!is_numeric($phone) || strlen($phone) !== 8) {
+                $error=4;
+                    return $this->render('registration/register_coursier.html.twig', [
+                        'registrationForm' => $form->createView(), 'error' => $error
+                    ]);
+            }
             $user->setPassword(
                 $userPasswordHasher->hashPassword(
                     $user,

@@ -53,10 +53,25 @@
                         {{ form_row(registrationForm.agreeTerms) }}
                     </div>
                    {% if error == 1  %}
-  <div class="alert alert-success" role="alert">
-     <p class="pepe">user already exist .</p>
-   </div>
-{% endif %}
+                        <div class="alert alert-success" role="alert">
+                            <p class="pepe">user already exist.</p>
+                        </div>
+                    {% endif %}
+                    {% if error == 2  %}
+                        <div class="alert alert-success" role="alert">
+                            <p class="pepe">Le nom doit étre alphabetique.</p>
+                        </div>
+                    {% endif %}
+                    {% if error == 3  %}
+                        <div class="alert alert-success" role="alert">
+                            <p class="pepe">Le prenom doit étre alphabetique.</p>
+                        </div>
+                    {% endif %}
+                    {% if error == 4  %}
+                        <div class="alert alert-success" role="alert">
+                            <p class="pepe">Le numero de telephone doit étre en forme de 8 chiffres.</p>
+                        </div>
+                    {% endif %}
 <style>.pepe {
   padding: 15px;
   border: 1px solid transparent;
@@ -94,10 +109,6 @@
                             {{ form_row(adresseForm.region, {'attr': {'class': 'form-input'}}) }}
                         </div>
                     </div> #}
-
-                    
-
-                    
 
                     <button type="submit" class="bg-blue-500 text-white font-bold text-lg hover:bg-blue-700 p-2 mt-8 rounded-md">Register</button>
 
