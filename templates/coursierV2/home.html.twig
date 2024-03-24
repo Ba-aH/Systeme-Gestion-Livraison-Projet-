@@ -29,7 +29,7 @@
         <ul>
           <li><a class="active" href="{{ path('afficher_tourneesAU') }}">Home</a></li>
           <li><a href="{{ path('disponibilté') }}">disponibilité</a></li>
-          <li><a href="">gérer compte</a></li>
+          <li><a href="{{ path('coursierProfile') }}">gérer compte</a></li>
           <li><a href="{{ path('app_logout') }}">logout</a></li>
          
           </ul>
@@ -70,7 +70,7 @@
             <div class="icon-box" >
               <i class="bi bi-card-checklist"></i>
               <h3><a href="">livraisons en cours</a></h3>
-              <p>livraisons de 22/22/2022</p>
+              <p>livraisons de {{ date|date('Y-m-d ') }}</p>
             </div>
           </div>
           <div class="col-lg-4 mt-4 mt-lg-0">
@@ -452,6 +452,11 @@
      <div class="container">
      <h1> tourner de :  {{ date|date('Y-m-d ') }}  </h1>
          <div class="containerr">
+         {% if error == 1  %}
+  
+<h2 class="mb-0">pas de livraison pour aujourd'hui .</h2>
+   
+{% else %}
        {% set myVariable = 0 %}
       {% set  Variable = 0 %}
     
@@ -510,7 +515,7 @@
 
 
 
-</div></div></div>
+</div></div></div>{% endif %}
 <style>
   /* Styles for the custom dialog */
   .dialog-overlay {

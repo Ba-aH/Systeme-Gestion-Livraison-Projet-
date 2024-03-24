@@ -102,7 +102,7 @@ class CoursierController extends AbstractController
     #[Route('/afficher_tourneesAU', name: 'afficher_tourneesAU', methods: ['GET'])]
     public function afficher_tourneesAU(EntityManagerInterface $entityManager,TournerRepository $tournerRepository,LivraisonRepository $livraisonRepository): Response
     {
-  
+  $error=0;
     $token = $this->tokenStorage->getToken();
             $currentUser = $token->getUser();
             if ($currentUser instanceof Coursier) {
@@ -110,31 +110,20 @@ class CoursierController extends AbstractController
             }
 
     $now = new \DateTimeImmutable();
-    
-    $tabtourner=$tournerRepository->findOneBy(['coursier' =>  $idcoursier,'statut_tourner'=>'en cours']);
-    $tourneé = $entityManager->getRepository(Tourner::class)->findOneBy(['coursier' =>  $idcoursier,'statut_tourner'=>'en cours']);
-
-
-    
-   
+    $tourneé = $entityManager->getRepository(Tourner::class)->findOneBy(['coursier' =>  $idcoursier,'statut_tourner'=>'en cours','date' => $now]);
+  
+  
+    if($tourneé){
         $livraisons= $livraisonRepository->findBy(['tourner' => $tourneé->getId()]);
-    
-
-    $status=[];
-    foreach ($livraisons as $livraisonTable) {
-        // Iterate over the items inside each table
-        foreach ($livraisonTable as $livraison) {
-            $livraisonId = $livraison->getId();
-            $livstat= $entityManager->getRepository(StatutLivraison::class)->findOneBy(['livraison' => $livraisonId]);
-            $status[]=  $livstat->getStatusTitle();
-            // Access more properties as needed
-        }
-    }
-
-
         return $this->render('coursierV2/home.html.twig', [
-            'livraisons' =>  $livraisons,   'status' =>  $status , 'date' =>  $now 
+            'livraisons' =>  $livraisons,    'date' =>  $now ,'error' =>  $error
         ]);
+        
+    }else{
+        $error=1;
+    return $this->render('coursierV2/home.html.twig', [
+              'date' =>  $now , 'error' =>  $error
+        ]);}
         
     }
 
@@ -349,7 +338,7 @@ class CoursierController extends AbstractController
                 $dateAjout = $currentUser->getDateAjout()->format('Y-m-d');
             }
 
-            return $this->render('coursier/profile.html.twig', [
+            return $this->render('coursierV2/profile.html.twig', [
                 'user' =>  $currentUser,
                 'dateAjout' =>  $dateAjout,
             ]);
