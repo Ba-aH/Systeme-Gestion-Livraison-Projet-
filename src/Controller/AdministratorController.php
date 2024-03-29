@@ -34,15 +34,28 @@ class AdministratorController extends AbstractController
     #[Route('/', name: 'app_administrator')]
     public function index(): Response
     {
-        return $this->render('coursierV2/home.html.twig', [
+        return $this->render('administrator/index.html.twig', [
             'controller_name' => 'AdministratorController',
         ]);
     }
 
-    #[Route('/clients', name: 'app_colis_index', methods: ['GET'])]
+
+    #[Route('/adv', name: 'adv')]
+    public function adv(): Response
+    {
+        return $this->render('adminv2/index.html.twig');
+    }
+    
+    #[Route('/profile', name: 'profile')]
+    public function profile(): Response
+    {
+        return $this->render('adminv2/profile.html.twig');
+    }
+
+    #[Route('/clients', name: 'clientss', methods: ['GET'])]
     public function index1(ClientRepository $clientRepository): Response
     {
-        return $this->render('administrator/coursier_list.html.twig', [
+        return $this->render('adminv2/clients.html.twig', [
             'clients' => $clientRepository->findAll(),
         ]);
         
@@ -51,10 +64,12 @@ class AdministratorController extends AbstractController
     #[Route('/coursiers', name: 'coursiers', methods: ['GET'])]
     public function coursiers(CoursierRepository $coursierRepository): Response
     {
-        return $this->render('administrator/coursier.html.twig', [
+        // return $this->render('administrator/coursier.html.twig', [
+        //     'coursiers' => $coursierRepository->findAll(),
+        // ]);
+        return $this->render('adminv2/coursier.html.twig', [
             'coursiers' => $coursierRepository->findAll(),
         ]);
-        
     }
 
 
@@ -76,10 +91,10 @@ class AdministratorController extends AbstractController
             $entityManager->flush();
             $entityManager->flush();
       
-            return $this->redirectToRoute('app_colis_index');
+            return $this->redirectToRoute('clientss');
 
            } else {
-            return $this->redirectToRoute('app_colis_index');
+            return $this->redirectToRoute('clientss');
            }
     }
 
@@ -105,7 +120,7 @@ class AdministratorController extends AbstractController
             return $this->redirectToRoute('coursiers');
 
            } else {
-            return $this->redirectToRoute('app_colis_index');
+            return $this->redirectToRoute('coursiers');
            }
     }
     #[Route('/echec', name: 'echec', methods: ['get'])]
@@ -122,7 +137,7 @@ class AdministratorController extends AbstractController
         $livraisons = $entityManager->getRepository(Livraison::class)->findBy(['id' => $resultArray]);
 
 
-        return $this->render('administrator/echec.html.twig', [
+        return $this->render('adminv2/liv_ech.html.twig', [
            
             'livraisonsEchec'=> $livraisons,
         ]);
@@ -145,7 +160,7 @@ class AdministratorController extends AbstractController
                  $dateLivraisonString = $request->request->get('date'); // Assuming 'date_livraison' is the name of your form field
              
                  // Convert the string to a DateTime object
-                 $dateLivraison = DateTime::createFromFormat('Y-m-d\TH:i', $dateLivraisonString);
+                 $dateLivraison = DateTime::createFromFormat('Y-m-d', $dateLivraisonString);
                  // Check if the Livraison entity exists
                  if ($livraison) {
                      // Update the Livraison entity with the provided data
@@ -158,15 +173,14 @@ class AdministratorController extends AbstractController
                         $livraison->setTourner(null);
                        }
 
-                     // Persist the changes to the database
+                    
                      $entityManager->flush();
                      $clients=$clientRepository->findAll();
-                     // Redirect or render a response as needed
+              
                    
                      return $this->redirectToRoute('echec');
                  } else {
-                     // Handle the case where the Livraison entity is not found
-                     // You can return an error response or handle it based on your application logic
+                    
                      return $this->redirectToRoute('echec');
                  }
              

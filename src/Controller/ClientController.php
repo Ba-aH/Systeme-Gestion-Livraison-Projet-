@@ -49,23 +49,7 @@ class ClientController extends AbstractController
     }
     
 
-    #[Route('/client', name: 'app_client')]
-    public function index(): Response
-    {
-        return $this->render('client/index.html.twig', [
-            'controller_name' => 'ClientController',
-        ]);
-    }
-
-
-    #[Route('/contact', name: 'contact')]
-    public function contact(): Response
-    {
-        return $this->render('client/cotact.html.twig', [
-            'controller_name' => 'ClientController',
-        ]);
-    }
-
+   
 
 
 
@@ -322,12 +306,14 @@ public function history(Request $request,EntityManagerInterface $entityManager,L
             $address = $request->request->get('address');
             $ville = $request->request->get('ville');
             $region = $request->request->get('region');
+            $zip = $request->request->get('zipcode');
 
             if (!empty($address)) {
                 $adr = new Adresse();
                 $adr->setVille($ville);
                 $adr->setRegion($region);
                 $adr->setFormattedAddress($address);
+                $adr->setZipCode($zip);
                 if ($currentUser instanceof Client) {
                     $adr->setClient($currentUser);
                     $entityManager->persist($adr);

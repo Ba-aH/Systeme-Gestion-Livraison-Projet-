@@ -1,0 +1,175 @@
+{% extends 'adminv2.html.twig' %}
+ {% block body %}
+
+<body>
+
+ 
+
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>Dashboard</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+          <li class="breadcrumb-item active"> historique</li>
+         
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+   
+    <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Browser Default</h5>
+              <p>Browser default validation with using the <code>required</code> keyword. Try submitting the form below. Depending on your browser and OS, you’ll see a slightly different style of feedback.</p>
+
+
+
+
+
+
+
+
+
+
+              <!-- Browser Default Validation -->
+              <form class="row g-3">
+                <div class="col-md-4">
+                  <label for="validationDefault01" class="form-label">First name</label>
+                  <input type="text" class="form-control" id="coursier" name="coursier" >
+                </div>
+                <div class="col-md-4">
+                  <label for="validationDefault02" class="form-label">Last name</label>
+                  <input type="date" id="date" name="date" class="form-control" >
+                </div>
+                <div class="col-md-4">
+                  <label for="validationDefaultUsername" class="form-label">Username</label>
+                  <div class="input-group">
+                    <select id="region" name="region" class="form-control">
+                            <option value="" disabled selected>Select a region</option>
+                            <option value="Grand Tunis">Grand Tunis</option>
+                            <option value="Nord-Est">Nord-Est</option>
+                            <option value="Nord-Ouest">Nord-Ouest</option>
+                            <option value="Centre-Est">Centre-Est</option>
+                            <option value="Centre-Ouest">Centre-Ouest</option>
+                            <option value="Sud-Est">Sud-Est</option>
+                            <option value="Sud-Ouest">Sud-Ouest</option>
+                        </select>
+                  </div>
+                </div>
+              
+                <div class="col-12">
+                 <input type="submit" value="Lister"class="btn btn-primary">
+                 
+                </div>
+              </form>
+              <!-- End Browser Default Validation -->
+
+            </div>
+          </div>
+           <script>
+                        function updateFormAction() {
+                            var selectedRegion = document.getElementById('region').value;
+                            var selectedCoursier = document.getElementById('coursier').value;
+                            var selectedDate = document.getElementById('date').value;
+                            document.getElementById('myForm').action = "{{ path('history', {'region': ''}) }}" + selectedRegion + "&coursier=" + selectedCoursier+"&date=" +selectedDate;
+                            return true; 
+                        }
+                    </script>
+     <section class="section">
+      <div class="row">
+        <div class="col-lg-6">
+ <div class="card">
+  
+            <div class="card-body">
+              <h5 class="card-title">{{display}}</h5>
+
+              <!-- Table with stripped rows -->
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                 
+                    <th scope="col">Reference </th>
+                    <th scope="col"> Email</th>
+                    <th scope="col">Frais </th>
+                    <th scope="col">Poid  </th>
+                  
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for history in livraisons %}
+                        <tr> 
+                            <td>{{ history.livraison.reference }}</td>
+                            <td>{{ history.livraison.client.email  }}</td>
+                            <td>${{ history.livraison.prixTotaleLivraison }}</td>
+                            <td>{{ history.livraison.poidLivraison  }} kg</td>                           
+                        </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="8">no records found</td>
+                                </tr>
+                            {% endfor %}
+                 
+                </tbody>
+              </table>
+              <!-- End Table with stripped rows -->
+
+            </div>
+
+       
+          </div>         </div>    <div class="col-lg-6">
+
+   
+   <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">coursiers</h5>
+
+              <!-- List group with custom content -->
+              <ol class="list-group list-group-numbered">
+                {% for coursier in coursiers %}
+                    
+                               
+                          
+                           <li class="list-group-item d-flex justify-content-between align-items-start">
+                  <div class="ms-2 me-auto">
+                    <div class="fw-bold">{{ coursier.username }}</div>
+                 {{ coursier.nom }} , {{ coursier.prenom }}
+                  </div>
+                  <span class="badge bg-primary rounded-pill">14</span>
+                </li>
+                        {% else %}
+                        
+                           <li class="list-group-item d-flex justify-content-between align-items-start">
+                  <div class="ms-2 me-auto">
+                    <div class="fw-bold">No records found</div>
+
+                  </div>
+                  <span class="badge bg-primary rounded-pill">14</span>
+                </li>
+                       
+                        {% endfor %}
+            
+               
+              </ol><!-- End with custom content -->
+
+            </div>
+
+
+          </div> </div> 
+          </div> </div></section>
+  </main><!-- End #main -->
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer" class="footer">
+    
+ 
+    
+    </div>
+
+  </footer><!-- End Footer -->
+
+
+
+
+  {% endblock %}

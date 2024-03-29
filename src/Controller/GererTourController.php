@@ -298,14 +298,21 @@ public function show(Request $request,LivraisonRepository $livraisonRepository, 
 
             }
 
-            return $this->render('gerer_tour/history.html.twig', [
+            // return $this->render('gerer_tour/history.html.twig', [
+            //     'livraisons' => $livDeRegion, 
+            //     'display'=> $Display,
+            //     'coursiers'=> $coursierRepository->findAll(),
+            //     'prix'=>$prix,
+            //     'nb'=>$nb,
+            // ]);}
+          
+            return $this->render('adminv2/historique.html.twig', [
                 'livraisons' => $livDeRegion, 
                 'display'=> $Display,
                 'coursiers'=> $coursierRepository->findAll(),
                 'prix'=>$prix,
                 'nb'=>$nb,
             ]);}
-
 
     
 }

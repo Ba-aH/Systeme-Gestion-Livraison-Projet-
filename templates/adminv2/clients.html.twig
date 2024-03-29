@@ -1,0 +1,172 @@
+{% extends 'adminv2.html.twig' %}
+ {% block body %}
+
+<body>
+
+ 
+
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>Dashboard</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+          <li class="breadcrumb-item active">Gestion des utilisateurs</li>
+          <li class="breadcrumb-item active">clients</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+   <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Table des coursiers</h5>
+
+              <!-- Table with hoverable rows -->
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                  
+                    <th scope="col">nom</th>
+                    <th scope="col">prenom</th>
+                  
+                    <th scope="col">numero de téléphone</th>
+                      <th scope="col">email</th>
+                  <th scope="col">modifier</th> 
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for client in clients %}
+                  <tr>
+                         <td>{{ client.nom }}</td>
+                                <td>{{ client.prenom }}</td>
+                                <td>{{ client.email }}</td>
+                                <td>{{ client.phone}}</td>
+                   
+                    <td><a  onclick="saveAndPopulateSecondFormm('{{client.id}}','{{client.nom}}', '{{client.prenom }}', '{{client.email}}', '{{client.phone}}','{{client.password}}' ,'{{client.username}}','repmlir_form')"          class ="modifier" >edit coursier</a></td>
+                  </tr>
+                 
+                      {% endfor %}
+                </tbody>
+              </table>
+              <!-- End Table with hoverable rows -->
+<style> 
+
+.modifier {
+    display: inline-block;
+    padding: 10px 20px;
+    text-decoration: none;
+    color: white;
+    background-color: blue;
+    border: 1px solid blue;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s; /* Add transition for smooth effect */
+}
+
+.modifier:hover {
+    background-color: white;
+    color: blue;
+}
+</style>
+            </div>
+          </div>
+   <div class="card">
+            <div id="repmlir_form"class="card-body">
+              <h5 class="card-title">Floating labels Form</h5>
+
+              <!-- Floating Labels Form -->
+              <form action="submit_form" method="post" class="row g-3">
+                  <input type="hidden"  id="id" name="id" >
+                <div class="col-md-12">
+                  <div class="form-floating">
+                    <input type="text" class="form-control" id="username"name="username" placeholder="Your Name">
+                    <label for="floatingName">Username</label>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-floating">
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Your Email">
+                    <label for="floatingEmail">Your Email</label>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-floating">
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Password" readonly>
+                    <label for="floatingPassword">Password</label>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <div class="form-floating">
+                      <input type="text" class="form-control"  id="nom" name="nom"  placeholder="Your Name">
+                    <label for="floatingName">nom</label>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="col-md-12">
+                    <div class="form-floating">
+                       <input type="text" class="form-control" id="prenom" name="prenom"  placeholder="Your Name">
+                    <label for="floatingName">prenom</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-floating mb-3">
+                     <input type="text" class="form-control" id="phone" name="phone" placeholder="Your Name">
+                    <label for="floatingName">numéro de téléphone</label>
+                  
+                  </div>
+                </div>
+              
+                <div class="text-center">
+                  <button type="submit" class="btn btn-primary">Submit</button>
+                  <button type="reset" class="btn btn-secondary">Reset</button>
+                </div>
+              </form><!-- End floating Labels Form -->
+
+            </div>
+          </div>
+
+    
+  </main><!-- End #main -->
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer" class="footer">
+    
+ 
+    
+    </div>
+      <script>
+  
+function saveAndPopulateSecondFormm(id, nom, prenom, email, phone,password,username,divId) {
+    // Save the data to local storage (optional)
+   localStorage.setItem('id', id);
+    localStorage.setItem('nom', nom);
+    localStorage.setItem('prenom', prenom);
+    localStorage.setItem('email', email);
+     localStorage.setItem('phone', phone);
+    localStorage.setItem('password', password);
+       localStorage.setItem('username', username);
+    // Populate the hidden input fields in the second form
+     document.getElementById('id').value = id;
+    document.getElementById('nom').value = nom;
+    document.getElementById('prenom').value = prenom;
+    document.getElementById('email').value = email;
+    document.getElementById('phone').value = phone;
+    document.getElementById('password').value = password;
+     document.getElementById('username').value = username;
+        const element = document.getElementById(divId);
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+            event.preventDefault(); // Prevent the default anchor behavior
+        }
+}
+
+
+</script>
+  </footer><!-- End Footer -->
+
+
+
+
+  {% endblock %}

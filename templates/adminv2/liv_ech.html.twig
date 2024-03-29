@@ -1,0 +1,208 @@
+{% extends 'adminv2.html.twig' %}
+ {% block body %}
+
+<body>
+
+ 
+
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>Dashboard</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+          <li class="breadcrumb-item active"> Livraisons échouées  </li>
+         
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+ <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Dark Table</h5>
+
+              <!-- Dark Table -->
+              <table class="table table-dark">
+                <thead>
+                  <tr>
+                  
+                    <th scope="col">Reference</th>             
+                    <th scope="col">Id</th>
+                    <th scope="col">CodePin</th>
+                    <th scope="col">FraisLivraison</th>
+                    <th scope="col">PrixTotaleLivraison </th>
+                       <th scope="col">PoidLivraison </th>
+                          <th scope="col">LivraisonDate </th>
+                             <th scope="col">action </th>
+                  </tr>
+                </thead>
+                <tbody>
+                {% for statutLivraison in livraisonsEchec %}
+                  <tr>
+                   <td> <p> {{ statutLivraison.getReference() }}</p></td>
+      <td> <p> {{ statutLivraison.getId() }}</p></td>
+      <td> <p> {{ statutLivraison.getCodePin() }}</p></td>
+      <td><p>{{ statutLivraison.getFraisLivraison() }}</p></td>
+      <td> <p> {{ statutLivraison.getPrixTotaleLivraison() }}</p></td>
+      <td> <p>{{ statutLivraison.getPoidLivraison() }}</p></td>
+      <td> <p> {{ statutLivraison.getLivraisonDate()|date('Y-m-d ') }}</p>
+
+   <td>  <a class="modifier"   onclick="populateForm('{{ statutLivraison.getReference() }}', '{{ statutLivraison.getId() }}', '{{ statutLivraison.getCodePin() }}', '{{ statutLivraison.getFraisLivraison() }}', '{{ statutLivraison.getPrixTotaleLivraison() }}', '{{ statutLivraison.getPoidLivraison() }}','remplir' ,'{{ statutLivraison.getLivraisonDate()|date('Y-m-d H:i:s') }}', {% if statutLivraison.getTourner() is not null %}'{{ statutLivraison.getTourner().getId() }}'{% endif %})"     >edit </a></td>
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+              <!-- End Dark Table -->
+
+            </div>
+          </div>
+  <style> 
+
+.modifier {
+    display: inline-block;
+    padding: 10px 20px;
+    text-decoration: none;
+    color: blue;
+    background-color: white;
+    border: 1px solid blue;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s; /* Add transition for smooth effect */
+}
+
+.modifier:hover {
+    background-color:  blue;
+    color: white;
+}
+</style>
+   <div id="remplir" class="card">
+            <div id="repmlir_form"class="card-body">
+              <h5 class="card-title">Floating labels Form</h5>
+
+              <!-- Floating Labels Form -->
+              <form action="edit_byadmin" method="post" class="row g-3">
+                  <input type="hidden"  id="id" name="id" >
+                <div class="col-md-12">
+                  <div class="form-floating">
+                    <input type="text" class="form-control"  id="reference" name="reference" placeholder="Your Name" readonly>
+                    <label for="floatingName">référence</label>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-floating">
+                     <input type="text" class="form-control"  id="ids" name="ids" placeholder="Your Name" readonly>
+                    <label for="floatingEmail">id </label>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-floating">
+                  <input type="text" class="form-control" id="codepin" name="codepin" placeholder="Your Name" readonly>
+                    <label for="floatingPassword">code pin</label>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <div class="form-floating">
+                     <input  type="date" class="form-control"  id="date" name="date" placeholder="Your Name" required>
+                    <label for="floatingName">date de livraison</label>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="col-md-12">
+                    <div class="form-floating">
+                       <input type="text" class="form-control"id="fraix" name="fraix" placeholder="Your Name"readonly>
+                    <label for="floatingName">fraix de livraison</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-floating mb-3">
+                 <input type="text" class="form-control" id="prix" name="prix"  placeholder="Your Name"readonly>
+                    <label for="floatingName">prix de livraison</label>
+                  
+                  </div>
+                </div>
+              
+                <div class="col-md-6">
+                  <div class="col-md-12">
+                    <div class="form-floating">
+                          <input type="text" class="form-control" id="poid" name="poid"  placeholder="Your Name"readonly>
+                    <label for="floatingName">poid</label>
+                    </div>
+                  </div>
+                </div>
+                 
+                <div class="text-center">
+                  <button type="submit" class="btn btn-primary">Submit</button>
+                  <button type="reset" class="btn btn-secondary">Reset</button>
+                </div>
+                   <div id="dateValidationMessage" style="color: red; display: none;">Veuillez sélectionner une date postérieure à aujourd'hui</div>
+              </form><!-- End floating Labels Form -->
+
+            </div>
+          </div>
+
+    
+  </main><!-- End #main -->
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer" class="footer">
+    
+ 
+    
+    </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const dateInput = document.getElementById('date');
+        const dateValidationMessage = document.getElementById('dateValidationMessage');
+
+        document.querySelector('form').addEventListener('submit', function (event) {
+            const today = new Date();
+            const selectedDate = new Date(dateInput.value);
+
+            if (selectedDate <= today) {
+                event.preventDefault();
+                dateValidationMessage.style.display = 'block';
+            } else {
+                dateValidationMessage.style.display = 'none';
+            }
+        });
+    });
+</script>
+<script>
+    function populateForm(reference, id, codePin, fraisLivraison, prixTotaleLivraison, poidLivraison,divId, livraisonDate, tournerId) {
+        localStorage.setItem('reference', reference);
+        localStorage.setItem('id', id);
+        localStorage.setItem('codepin', codePin);
+        localStorage.setItem('fraisLivraison', fraisLivraison);
+        localStorage.setItem('prixTotaleLivraison', prixTotaleLivraison);
+        localStorage.setItem('poidLivraison', poidLivraison);
+        localStorage.setItem('livraisonDate', livraisonDate);
+    
+       
+       
+
+           document.getElementById('reference').value = reference;
+        document.getElementById('ids').value = id;
+        document.getElementById('codepin').value = codePin;
+        document.getElementById('fraix').value = fraisLivraison;
+        document.getElementById('prix').value = prixTotaleLivraison;
+        document.getElementById('poid').value = poidLivraison;
+       
+        
+            
+     const element = document.getElementById(divId);
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+            event.preventDefault(); // Prevent the default anchor behavior
+        }
+        
+    }
+</script>
+  </footer><!-- End Footer -->
+
+
+
+
+  {% endblock %}
+
+  

@@ -197,11 +197,6 @@ class LoginController extends AbstractController
         }
     }
 
-    #[Route('', name: 'app_index')]
-     public function Appindex(AuthenticationUtils $authenticationUtils): Response
-      {         
-      return $this->render('client/index.html.twig', [
-            'controller_name' => 'ClientController',
-        ]);
-      }
+  
+
 }
