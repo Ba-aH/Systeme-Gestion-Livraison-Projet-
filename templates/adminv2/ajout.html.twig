@@ -1,0 +1,138 @@
+{% extends 'adminv2.html.twig' %}
+ {% block body %}
+
+<body>
+
+ 
+
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>Dashboard</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+          <li class="breadcrumb-item active">ajouter admin</li>
+         
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+
+        <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">ajouter un nouveau administrateur</h5>
+
+              <!-- General Form Elements -->
+           <form id="registrationForm">
+    <div class="row mb-3">
+      <label for="inputText" class="col-sm-2 col-form-label">username</label>
+      <div class="col-sm-10">
+        <input type="text" id="username" class="form-control">
+      </div>
+    </div>
+    <div class="row mb-3">
+      <label for="inputEmail" class="col-sm-2 col-form-label">Email</label>
+      <div class="col-sm-10">
+        <input type="email" id="email" class="form-control">
+      </div>
+    </div>
+    <div class="row mb-3">
+      <label for="inputPassword" class="col-sm-2 col-form-label">Mot de passe</label>
+      <div class="col-sm-10">
+        <input type="password" id="password" class="form-control">
+      </div>
+    </div>
+    <div class="row mb-3">
+      <label for="inputNumber" class="col-sm-2 col-form-label">nom</label>
+      <div class="col-sm-10">
+        <input type="text" id="nom" class="form-control">
+      </div>
+    </div>
+    <div class="row mb-3">
+      <label for="inputDate" class="col-sm-2 col-form-label">prenom</label>
+      <div class="col-sm-10">
+        <input type="text" id="prenom" class="form-control">
+      </div>
+    </div>
+    <div class="row mb-3">
+      <label for="inputTime" class="col-sm-2 col-form-label">numéro de téléphone</label>
+      <div class="col-sm-10">
+        <input type="text" id="phoneNumber" class="form-control">
+      </div>
+    </div>
+      <div class="row mb-3">
+      <div id="errorMessage" class="col-sm-12 text-danger"></div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-sm-10">
+        <button type="submit" class="btn btn-primary">Submit Form</button>
+      </div>
+    </div>
+  </form><!-- End General Form Elements -->
+
+            </div>
+          </div>
+
+        </div>
+    
+  </main><!-- End #main -->
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer" class="footer">
+    
+ 
+    
+    </div>
+      
+  </footer><!-- End Footer -->
+
+
+ <script>
+    document.getElementById('registrationForm').addEventListener('submit', function(event) {
+      // Prevent the form from submitting
+      event.preventDefault();
+
+      // Perform validation
+      let username = document.getElementById('username').value.trim();
+      let nom = document.getElementById('nom').value.trim();
+      let prenom = document.getElementById('prenom').value.trim();
+      let password = document.getElementById('password').value.trim();
+      let phoneNumber = document.getElementById('phoneNumber').value.trim();
+
+      let isValid = true;
+      let errorMessage = '';
+
+      // Username, nom, and prenom should be only text
+      if (!/^[A-Za-zÀ-ÿ\s]+$/.test(username) || !/^[A-Za-zÀ-ÿ\s]+$/.test(nom) || !/^[A-Za-zÀ-ÿ\s]+$/.test(prenom)) {
+        errorMessage += 'Le nom d utilisateur, nom et prenom ne doivent contenir que des lettres et des espaces.\n';
+        isValid = false;
+      }
+
+      // Password should be at least 6 digits length and have letters and numbers
+      if (password.length < 6 || !/\d/.test(password) || !/[a-zA-Z]/.test(password)) {
+        errorMessage += 'Le mot de passe doit comporter au moins 6 caractères et contenir des lettres et des chiffres.\n';
+        isValid = false;
+      }
+
+      // Phone number should be exactly 8 digit length and only numbers
+      if (phoneNumber.length !== 8 || !/^\d+$/.test(phoneNumber)) {
+        errorMessage += 'Le numéro de téléphone doit comporter exactement 8 chiffres et contenir uniquement des chiffres.\n';
+        isValid = false;
+      }
+
+      // Display error message if validation fails
+      let errorElement = document.getElementById('errorMessage');
+      if (!isValid) {
+        errorElement.textContent = errorMessage;
+      } else {
+        errorElement.textContent = ''; // Clear any previous error messages
+        // Form is valid, you can proceed with form submission or other actions
+        // For example, submit the form programmatically:
+       document.getElementById('registrationForm').submit();
+     
+      }
+    });
+  </script>
+
+  {% endblock %}

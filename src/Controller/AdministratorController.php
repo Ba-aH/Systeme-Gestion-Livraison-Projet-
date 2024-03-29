@@ -45,6 +45,16 @@ class AdministratorController extends AbstractController
     {
         return $this->render('adminv2/index.html.twig');
     }
+    #[Route('/addadmin', name: 'addadmin')]
+    public function ajout_admin(): Response
+    {
+        return $this->render('adminv2/ajout.html.twig');
+    }
+    #[Route('/dashboard', name: 'dashboard')]
+    public function dashboard(): Response
+    {
+        return $this->render('adminv2/dashboard.html.twig');
+    }
     
     #[Route('/profile', name: 'profile')]
     public function profile(): Response
