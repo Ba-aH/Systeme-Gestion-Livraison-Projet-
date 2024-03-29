@@ -50,7 +50,8 @@
     </head>
     <body>
     
-        {% block nav %}    <header id="header" class="header d-flex align-items-center fixed-top">
+        {% block nav %}    
+      <header id="header" class="header d-flex align-items-center fixed-top">
     <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
 
       <a href="index.html" class="logo d-flex align-items-center">
@@ -92,10 +93,30 @@
     </div>
   </header><!-- End Header -->
   <!-- End Header -->
+    <style>
+      #header {
+        background-color: #0e1d34; /* Set your desired background color here */
+        transition: background-color 0.3s ease; /* Add a smooth transition effect */
+      }
+
+      #header.header-scrolled {
+        background-color: #0e1d34; /* Set the same background color when scrolled */
+      }
+    </style> 
+    <script>
+      window.addEventListener('scroll', function() {
+      const header = document.getElementById('header');
+      if (window.scrollY > 0) {
+        header.classList.add('header-scrolled');
+      } else {
+        header.classList.remove('header-scrolled');
+      }
+    });
+    </script>
 
      {% endblock %}
         {% block body %}{% endblock %}
-          {% block footer %}  <!-- ======= Footer ======= -->
+          {% block footer %}  
   <footer id="footer" class="footer">
 
     <div class="container">

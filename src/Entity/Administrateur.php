@@ -6,6 +6,7 @@ use App\Repository\AdministrateurRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Doctrine\DBAL\Types\Types;
 
 #[ORM\Entity(repositoryClass: AdministrateurRepository::class)]
 class Administrateur implements UserInterface, PasswordAuthenticatedUserInterface
@@ -38,6 +39,12 @@ class Administrateur implements UserInterface, PasswordAuthenticatedUserInterfac
 
     #[ORM\Column(length: 255)]
     private ?string $phone = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $date_ajout = null;
+
+    #[ORM\Column(type: 'boolean')]
+    private $isVerified = false;
 
     public function getId(): ?int
     {
@@ -76,6 +83,18 @@ class Administrateur implements UserInterface, PasswordAuthenticatedUserInterfac
     public function setNom(string $nom): static
     {
         $this->nom = $nom;
+
+        return $this;
+    }
+
+    public function getDateAjout(): ?\DateTimeInterface
+    {
+        return $this->date_ajout;
+    }
+
+    public function setDateAjout(\DateTimeInterface $date_ajout): static
+    {
+        $this->date_ajout = $date_ajout;
 
         return $this;
     }
@@ -153,6 +172,17 @@ class Administrateur implements UserInterface, PasswordAuthenticatedUserInterfac
     public function setPhone(string $phone): static
     {
         $this->phone = $phone;
+
+        return $this;
+    }
+    public function isVerified(): bool
+    {
+        return $this->isVerified;
+    }
+
+    public function setIsVerified(bool $isVerified): static
+    {
+        $this->isVerified = $isVerified;
 
         return $this;
     }

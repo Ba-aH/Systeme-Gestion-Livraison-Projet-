@@ -1,0 +1,71 @@
+{% extends 'adminv2.html.twig' %}
+ {% block body %}
+
+<body>
+
+ 
+
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>Dashboard</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+          <li class="breadcrumb-item active">Livraisons en attente  </li>
+         
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+ <table class="table table-hover">
+                <thead>
+                  <tr>
+                  
+                    <th scope="col">Reference</th>
+                    <th scope="col">Date</th>
+                  
+                    <th scope="col">prix</th>
+                      <th scope="col">Poid</th>
+                    <th scope="col">Action</th> 
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for livraison in livraisons  %}
+                  <tr>
+                    <td>{{ livraison.reference }}</td>
+                    <td>{{ livraison.livraisonDate ? livraison.livraisonDate|date('Y-m-d') : '' }}</td>
+                    <td>{{ livraison.prixTotaleLivraison }}</td>
+                    <td>{{ livraison.poidLivraison}}</td>
+
+                    <td><a class ="modifier" href="{{ path('app_couriers', {'id': livraison.Client.id, 'livraisonId': livraison.id}) }}">Verifier les coursier disponible</a></td>
+                  </tr>
+                 
+                      {% endfor %}
+                </tbody>
+              </table>
+  </main><!-- End #main -->
+
+
+<style> 
+
+.modifier {
+    display: inline-block;
+    padding: 10px 20px;
+    text-decoration: none;
+    color: white;
+    background-color: blue;
+    border: 1px solid blue;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s; /* Add transition for smooth effect */
+}
+
+.modifier:hover {
+    background-color: white;
+    color: blue;
+}
+</style>
+
+  {% endblock %}
+
+  

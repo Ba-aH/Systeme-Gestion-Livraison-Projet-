@@ -53,7 +53,12 @@ class ClientController extends AbstractController
 
 
 
-
+    #[Route('', name: 'ClinetIndex')]
+    public function index(): Response
+    {     
+        return $this->render('client/home.html.twig');
+        
+    }
 
 
 

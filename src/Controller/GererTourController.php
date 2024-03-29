@@ -52,7 +52,7 @@ class GererTourController extends AbstractController
         }
         
     
-        return $this->render('gerer_tour/index.html.twig', [
+        return $this->render('adminv2/livraisonAttente.html.twig', [
             'livraisons' => $livraisons, 
             'prixTotale' => $prixTotale,
             'nbLivraisons' => $nb,
@@ -114,7 +114,7 @@ public function show(Request $request,LivraisonRepository $livraisonRepository, 
     
     $coursierDispo = $statutCoursierRepository->findBy(['region' => $regionAdr,'titre_statut' => 'disponible','debut_tourner'=>$dateLivraison]);
     
-    return $this->render('gerer_tour/couriers.html.twig', [
+    return $this->render('adminv2/coursierDisponible.html.twig', [
         'couriers' => $coursierDispo,
         'regionAdr' => $regionAdr,
         'dateLivraison' =>$dateLivrFormatted,

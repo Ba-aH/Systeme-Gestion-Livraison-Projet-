@@ -13,6 +13,26 @@
         margin-top:20px;
        
     }
+    .form-group {
+    margin-bottom: 15px; /* Adjust vertical spacing between form elements */
+}
+
+.form-group label {
+    margin-bottom: 5px; /* Adjust vertical spacing between label and input */
+}
+
+.align-self-end {
+    align-self: flex-end; /* Align the column contents at the bottom */
+}
+
+.text-right {
+    text-align: right; /* Right-align the button */
+}
+
+.invisible {
+    visibility: hidden; /* Hide the invisible label */
+}
+ 
 </style>
 </head>
 <body>
@@ -166,31 +186,40 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div class="row">
+                                                <div class="col d-flex justify-content-end">
+                                                    <button class="btn btn-primary" type="submit">Save Changes</button>
+                                                </div>
+                                            </div>
                                             <div class="mb-2"><b>Change Password</b></div>
                                             <div class="row">
                                                 <div class="col">
                                                     <div class="row">
-                                                    
+
                                                         <div class="col">
                                                             <div class="form-group">
-                                                                <label>New Password</label>
-                                                                <input class="form-control" type="password" placeholder="•••••••••">
+                                                                <label for="new-password">New Password</label>
+                                                                <input id="new-password" class="form-control" type="password" placeholder="•••••••••">
                                                             </div>
                                                         </div>
+
                                                         <div class="col">
                                                             <div class="form-group">
-                                                                <div class="form-group">
-                                                                <label>Confirm <span class="d-none d-xl-inline">Password</span></label>
-                                                                <input class="form-control" type="password" placeholder="•••••••••">
+                                                                <label for="confirm-password">Confirm <span class="d-none d-xl-inline">Password</span></label>
+                                                                <input id="confirm-password" class="form-control" type="password" placeholder="•••••••••">
                                                             </div>
+                                                        </div>
+
+                                                        <div class="align-self-end"> 
+                                                            <div class="form-group text-right"> 
+                                                                <label class="invisible">Change Password</label> 
+                                                                <a class="btn btn-primary" href="#">
+                                                                    <i class="fa fa-delete"></i>
+                                                                    <span>Reset</span>
+                                                                </a> 
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col d-flex justify-content-end">
-                                                    <button class="btn btn-primary" type="submit">Save Changes</button>
                                                 </div>
                                             </div>
                                         </form>

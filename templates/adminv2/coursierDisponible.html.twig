@@ -1,0 +1,68 @@
+{% extends 'adminv2.html.twig' %}
+ {% block body %}
+
+<body>
+
+ 
+
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>Dashboard</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+          <li class="breadcrumb-item active">Livraisons en attente </li>
+          <li class="breadcrumb-item active">Coursier disponible </li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+     <h2>Liste des courier disponible a {{regionAdr}} en {{dateLivraison}}</h2>
+      <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th scope="col">Email</th>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Prenom</th>
+                    <th scope="col">Action</th> 
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for courier in couriers  %}
+                  <tr>
+                    <td>{{ courier.coursier.email }}</td>
+                    <td>{{ courier.coursier.nom }}</td>
+                    <td>{{ courier.coursier.prenom }}</td>
+                    {% set livraisonId = app.request.query.get('livraisonId') %}
+                    <td><a href="{{ path('affectRoute', {'id': courier.coursier.id, 'livraisonId': livraisonId}) }}" class ="modifier" >Add to his tour</a></td>
+                  </tr>
+                 
+                      {% endfor %}
+                </tbody>
+              </table>
+  </main><!-- End #main -->
+
+
+<style> 
+
+.modifier {
+    display: inline-block;
+    padding: 10px 20px;
+    text-decoration: none;
+    color: white;
+    background-color: blue;
+    border: 1px solid blue;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s; /* Add transition for smooth effect */
+}
+
+.modifier:hover {
+    background-color: white;
+    color: blue;
+}
+</style>
+
+  {% endblock %}
+
+  

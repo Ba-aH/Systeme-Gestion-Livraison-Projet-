@@ -2,12 +2,16 @@
 
 namespace App\Controller;
 
+use App\Entity\Administrateur;
 use App\Entity\Adresse;
 use App\Entity\Client;
 use App\Entity\Coursier;
 use App\Form\RegistrationFormType;
 use App\Form\AdresseFormType;
+use App\Form\RegistrationAdminFormType;
 use App\Form\RegostrationClientFormType;
+use App\Form\RegostrationAdminFormType;
+use App\Repository\AdministrateurRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -179,6 +183,77 @@ class RegistrationController extends AbstractController
             'adresseForm' => $formAdr->createView(),'error' => $error
         ]);
     }
+
+    #[Route('/administrator/add-admin', name: 'app_register_administrator',methods: ['GET', 'POST'])]
+    public function registerAdmin(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager,AdministrateurRepository $administrateurRepository): Response
+    {   $error=0;
+        $user = new Administrateur();
+        $form = $this->createForm(RegistrationAdminFormType::class, $user);
+        $form->handleRequest($request);
+        $email= $form->get('email')->getData() ;     
+        $finduser =$administrateurRepository->findOneBy(['email' => $email]);
+        if($finduser){
+            $error=1;
+            return $this->render('adminv2/ajout.html.twig', [
+                'registrationForm' => $form->createView(), 'error' => $error
+            ]);
+        }else{
+        if ($form->isSubmitted() && $form->isValid()) {
+            $nom=$form->get('nom')->getData();
+            $prenom=$form->get('prenom')->getData();
+            $phone=$form->get('phone')->getData();
+            for ($i = 0; $i < strlen($nom); $i++) {
+                if (!ctype_alpha($nom[$i])) {
+                    $error=2;
+                    return $this->render('adminv2/ajout.html.twig', [
+                        'registrationForm' => $form->createView(), 'error' => $error
+                    ]);
+                }
+            }
+            for ($i = 0; $i < strlen($prenom); $i++) {
+                if (!ctype_alpha($prenom[$i])) {
+                    $error=3;
+                    return $this->render('adminv2/ajout.html.twig', [
+                        'registrationForm' => $form->createView(), 'error' => $error
+                    ]);
+                }
+            }
+            if (!is_numeric($phone) || strlen($phone) !== 8) {
+                $error=4;
+                    return $this->render('adminv2/ajout.html.twig', [
+                        'registrationForm' => $form->createView(), 'error' => $error
+                    ]);
+            }
+            $user->setPassword(
+                $userPasswordHasher->hashPassword(
+                    $user,
+                    $form->get('plainPassword')->getData()
+                )
+            );
+            $user->setRoles(['ROLE_ADMIN']);
+            $user->setDateAjout(new \DateTime());
+            $entityManager->persist($user);
+            $entityManager->flush();
+
+            //generate a signed url and email it to the user
+            $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
+                (new TemplatedEmail())
+                    ->from(new Address('behantous@gmail.com', 'Baha'))
+                    ->to($user->getEmail())
+                    ->subject('Please Confirm your Email')
+                    ->htmlTemplate('registration/confirmation_email.html.twig')
+            );
+            //do anything else you need here, like send an email
+
+            return $this->redirectToRoute('app_login');
+        }
+        }
+        return $this->render('adminv2/ajout.html.twig', [
+            'registrationForm' => $form->createView(), 'error' => $error
+        ]);
+    }
+
+   
     
     #[Route('/verify/email', name: 'app_verify_email')]
     public function verifyUserEmail(Request $request, TranslatorInterface $translator): Response
