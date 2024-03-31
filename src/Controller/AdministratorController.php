@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Controller;
+
+use App\Entity\Administrateur;
 use DateTime; 
 
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -45,11 +47,7 @@ class AdministratorController extends AbstractController
     {
         return $this->render('adminv2/index.html.twig');
     }
-    #[Route('/addadmin', name: 'addadmin')]
-    public function ajout_admin(): Response
-    {
-        return $this->render('adminv2/ajout.html.twig');
-    }
+   
     #[Route('/dashboard', name: 'dashboard')]
     public function dashboard(): Response
     {
@@ -57,9 +55,18 @@ class AdministratorController extends AbstractController
     }
     
     #[Route('/profile', name: 'profile')]
-    public function profile(): Response
+    public function profile(EntityManagerInterface $entityManager): Response
     {
-        return $this->render('adminv2/profile.html.twig');
+          
+         $admin = $entityManager->getRepository(Administrateur::class)->findOneBy(['id' => 1]);
+       
+  
+
+
+        return $this->render('adminv2/profile.html.twig',[
+           
+            'admin'=> $admin,
+        ]);
     }
 
     #[Route('/clients', name: 'clientss', methods: ['GET'])]
@@ -217,6 +224,37 @@ class AdministratorController extends AbstractController
 
         return $this->redirectToRoute('coursiers');
 
+    }
+
+
+
+    #[Route('/updateadamin', name: 'updateadamin',methods: ['POST'])]
+    public function updateProfileadmin(Request $request, EntityManagerInterface $entityManager, CoursierRepository $coursierRepository): Response
+    {
+        // $token = $this->tokenStorage->getToken();
+        // $currentUser = $token->getUser();
+
+       
+            // $dateAjout = $currentUser->getDateAjout()->format('Y-m-d');
+            // $id = $currentUser->getId();
+            $prenom = $request->get('prenom');
+            $nom = $request->get('nom');
+        
+            $username = $request->get('username');
+            $phone = $request->get('phone');
+
+            $user =$coursierRepository->findOneBy(['id' => 1]);
+            $user->setPrenom($prenom);
+            $user->setUsername($nom);
+         
+            $user->setPhone($username );
+            $user->setEmail($phone);
+            $entityManager->persist($user);
+            $entityManager->flush();
+        
+
+
+        return $this->redirectToRoute('profile');
     }
 
 
