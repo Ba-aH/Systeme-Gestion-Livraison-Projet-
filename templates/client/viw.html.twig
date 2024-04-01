@@ -6,6 +6,12 @@
 
 {% block body %}
 
+	<link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,700' rel='stylesheet' type='text/css'>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	
+	<link rel="stylesheet" href={{ asset('assetss/css/style.css')}}>
  <section id="hero" class="hero d-flex align-items-center">
     <div class="container">
     <div class="container position-relative">
@@ -222,6 +228,63 @@ h2 {
 
   {% endif %}
 </div>
+<section class="ftco-section">
+		<div class="container">
+			<div class="row justify-content-center">
+				<div class="col-md-6 text-center mb-5">
+					<h2 class="heading-section">Mes livraison en attente</h2>
+				</div>
+			</div>
+      
+			<div class="row">
+				<div class="col-md-12">
+					<div class="table-wrap">
+						<table class="table">
+						  <thead class="thead-dark">
+						    <tr>
+						      <th>Reference</th>
+						      <th>Prix totale</th>
+						      <th>Sera livré en</th>
+                  <th>Actions</th>
+                  <th>&nbsp;</th>
+						    </tr>
+						  </thead>
+						  <tbody>
+						    <tr class="alert" role="alert">
+                {% for livraison in livraisons %}
+						      <th scope="row">{{ livraison.getReference() }}</th>
+						      <td>{{ livraison.getPrixTotaleLivraison() }}</td>
+						      <td>{{ livraison.getLivraisonDate()|date('Y-m-d ') }}</td>
+						      <td>
+                    <a href="{{ path('editbyclient',{'id': livraison.id}) }}" class="card-link"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Editer la livraison</a>
+                  </td>
+						      <td>	
+                    <a href="{{ path('client_annulation',{'id': livraison.id}) }}" class="card-link" style="color: red;"><i class="fa fa-ban" aria-hidden="true"></i> Annuler la livraison</a>
+				        	</td>
+						    </tr>
+                {% endfor %}
+						  </tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+       
+      </ul>
+        {% if error == 1 %}
+                          
+        <div class="alert alert-danger" role="alert">
+          <p>cette livraison et déja en cours {{error}} </p>
+        </div>
+
+        {% elseif error == 2 %}
+    <div class="alert alert-success" role="alert">
+      <p>operation terminé avec succès .</p>
+      </div>
+
+      {% endif %}
+    </div> 
+		</div>
+	</section>
 <footer class="page-footer">
   <span>made by </span>
   <a href="https://georgemartsoukos.com/" target="_blank">
