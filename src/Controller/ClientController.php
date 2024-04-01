@@ -146,10 +146,16 @@ class ClientController extends AbstractController
     #[Route('/editbyclient/{id}', name: 'editbyclient', methods: ['GET'])]
     public function editbyclient(Request $request ,LivraisonRepository $livraisonRepository,EntityManagerInterface $entityManager,AdresseRepository $adresseRepository): Response
     {
+        $token = $this->tokenStorage->getToken();
+        $currentUser = $token->getUser();
+        if ($currentUser instanceof Client) {
+            $identifier = $currentUser->getUserIdentifier();
+            $id = $currentUser->getId();
+        }
         $livraisonId = $request->get('id');
         $liv = $entityManager->getRepository(Livraison::class)->findOneBy(['id' =>  $livraisonId]);
         $address=$adresseRepository->findOneBy(['id' => $liv->getAddressId()]);
-       $items=$adresseRepository->findBy(['client' => 12]);
+       $items=$adresseRepository->findBy(['client' => $id]);
        $error = $request->query->get('error', 0);
         return $this->render('client/confirm.html.twig', [
             'liv' =>  $liv,'address' =>$address , 'items'=>$items,'error'=>$error
@@ -206,7 +212,7 @@ class ClientController extends AbstractController
 #[Route('/historyclient', name: 'historyclient')]
 public function history(Request $request,EntityManagerInterface $entityManager,LivraisonHistoryRepository $livraisonHistoryRepository,LivraisonRepository $livraisonRepository,AdresseRepository $adresseRepository,ClientRepository $clientRepository,CoursierRepository $coursierRepository): Response
 {   
-    $iduser=12;
+    $iduser=2;
     $livraisons = $livraisonHistoryRepository->findAll();
     $livtab= [];
  

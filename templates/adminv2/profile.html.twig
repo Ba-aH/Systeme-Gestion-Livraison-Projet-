@@ -100,50 +100,52 @@
                 <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
 
                   <!-- Profile Edit Form -->
-                  <form method="POST"id="profileForm"  action="{{ path('updateadamin', {'nom': 'default', 'prenom': 'default', 'username':'default', 'phone':'default'}) }}" onsubmit="updateFormAction()"   >
-                  
-
+                    <form id="myForm" class="form" method="POST" action="{{ path('updateadamin', {'nom': 'default', 'prenom': 'default', 'username':'default', 'phone':'default'}) }}" onsubmit="updateFormAction()">
                     <div class="row mb-3">
-                      <label for="fullName" class="col-md-4 col-lg-3 col-form-label">nom d'utilisateur</label>
-                      <div class="col-md-8 col-lg-9">
-                        <input name="fullName" type="text" class="form-control" id="fullName" value="{{ admin.username }}">
-                      </div>
+                        <label for="fullName" class="col-md-4 col-lg-3 col-form-label">nom d'utilisateur</label>
+                        <div class="col-md-8 col-lg-9 position-relative">
+                            <input type="text" class="form-control" id="usernameInput" value="{{ admin.username }}" readonly>
+                            <button class="btn btn-outline-secondary position-absolute end-0 translate-middle-y" type="button" id="editUsernameBtn">Edit</button>
+                        </div>
                     </div>
 
                   
 
                     <div class="row mb-3">
                       <label for="company" class="col-md-4 col-lg-3 col-form-label">nom</label>
-                      <div class="col-md-8 col-lg-9">
-                        <input name="nom" type="text" class="form-control" id="nom" value="{{ admin.nom }} ">
+                      <div class="col-md-8 col-lg-9 position-relative">
+                        <input type="text" class="form-control" id="nomInput" value="{{ admin.nom }} " readonly>
+                          <button class="btn btn-outline-secondary position-absolute end-0 translate-middle-y" type="button" id="editNomBtn">Edit</button>
                       </div>
                     </div>
 
                     <div class="row mb-3">
                       <label for="Job" class="col-md-4 col-lg-3 col-form-label">prenom</label>
-                      <div class="col-md-8 col-lg-9">
-                        <input name="prenom" type="text" class="form-control" id="prenom" value="{{ admin.prenom }}">
+                      <div class="col-md-8 col-lg-9 position-relative">
+                        <input type="text" class="form-control" id="prenomInput" value="{{ admin.prenom }}"readonly>
+                          <button class="btn btn-outline-secondary position-absolute end-0 translate-middle-y" type="button" id="editPrenomBtn">Edit</button>
                       </div>
                     </div>
 
                     <div class="row mb-3">
                       <label for="Country" class="col-md-4 col-lg-3 col-form-label">email</label>
                       <div class="col-md-8 col-lg-9">
-                        <input name="email" type="email" class="form-control" id="email" value="{{ admin.email }}">
+                        <input type="email" class="form-control" id="emailInput" value="{{ admin.email }}" readonly>
                       </div>
                     </div>
 
                
                     <div class="row mb-3">
                       <label for="Phone" class="col-md-4 col-lg-3 col-form-label">Phone</label>
-                      <div class="col-md-8 col-lg-9">
-                        <input name="phone" type="text" class="form-control" id="Phone" value="{{ admin.phone }}">
+                      <div class="col-md-8 col-lg-9 position-relative">
+                        <input type="text" class="form-control" id="phoneInput" value="{{ admin.phone }}" readonly>
+                        <button class="btn btn-outline-secondary position-absolute end-0 translate-middle-y" type="button" id="editPhoneBtn">Edit</button>
                       </div>
                     </div>
 
                     <div class="row mb-3">
-      <div id="errorMessage" class="col-sm-12 text-danger"></div>
-    </div>
+                      <div id="errorMessage" class="col-sm-12 text-danger"></div>
+                    </div>
 
                     <div class="text-center">
                       <button type="submit" class="btn btn-primary">Save Changes</button>
@@ -154,76 +156,91 @@
 
                 <div class="tab-pane fade pt-3" id="profile-settings">
  <script>
+ document.addEventListener("DOMContentLoaded", function() {
+
+      document.getElementById('editUsernameBtn').addEventListener('click', function() {
+              toggleEditMode('usernameInput');
+          });
+
+          document.getElementById('editNomBtn').addEventListener('click', function() {
+              toggleEditMode('nomInput');
+          });
+
+          document.getElementById('editPrenomBtn').addEventListener('click', function() {
+              toggleEditMode('prenomInput');
+          });
+          document.getElementById('editPhoneBtn').addEventListener('click', function() {
+              toggleEditMode('phoneInput');
+          });
+          
+          function toggleEditMode(inputId) {
+          var input = document.getElementById(inputId);
+          input.readOnly = !input.readOnly;
+          if (input.readOnly) {
+            input.classList.remove('edited');
+        } else {
+            input.classList.add('edited');
+        }
+      }
+      function toggleEditMode(inputId) {
+          var inputField = document.getElementById(inputId);
+          var editButton = document.getElementById('edit' + inputId.charAt(0).toUpperCase() + inputId.slice(1) + 'Btn');
+
+          if (inputField.readOnly) {
+              inputField.readOnly = false;
+              editButton.textContent = 'Save';
+          } else {
+              // save changes or perform other actions here
+              inputField.readOnly = true;
+              editButton.textContent = 'Edit';
+          }
+      }
+  });
  function updateFormAction() {
-    var username = document.getElementById('fullName').value;
-    var nom = document.getElementById('nom').value;
-    var prenom = document.getElementById('prenom').value;
-    var phone = document.getElementById('phone').value;
-   
-    document.getElementById('profileForm').action = "{{ path('updateadamin', {'nom': ''}) }}" + nom + "&prenom=" + prenom + "&username=" + username + "&phone=" + phone;
-    return true;
-}
+        var username = document.getElementById('usernameInput').value;
+        var nom = document.getElementById('nomInput').value;
+        var prenom = document.getElementById('prenomInput').value;
+        var phone = document.getElementById('phoneInput').value;
 
-    document.getElementById('profileForm').addEventListener('submit', function(event) {
-      // Prevent the form from submitting
-      event.preventDefault();
+        var addresses = [];
+        var addressInputs = document.querySelectorAll('[id^="adresseInput"]');
+        addressInputs.forEach(function(input) {
+            addresses.push(input.value);
+        });
 
-      // Perform validation
-      
-      let nom = document.getElementById('nom').value.trim();
-      let prenom = document.getElementById('prenom').value.trim();
-      let phone = document.getElementById('Phone').value.trim();
-   
-      let errorElement = document.getElementById('errorMessage');
-      let isValid = true;
-      let errorMessage = '';
+        var ids = [];
+        var idsInputs = document.querySelectorAll('[id^="idInput"]');
+        idsInputs.forEach(function(input) {
+            ids.push(input.value);
+        });
 
-      // Validate nom and prenom should contain only text
-      if (!/^[a-zA-ZÀ-ÿ\s]+$/.test(nom) || !/^[a-zA-ZÀ-ÿ\s]+$/.test(prenom)) {
-        errorMessage += 'Nom and prenom must contain only text.\n';
-        isValid = false;
-      }
+        var adrs = "";
+        addresses.forEach(function(address, index) {
+            // concatenate each address with its corresponding ID
+            adrs += "&adresse&id=" + ids[index] + "=" + address;
+        });
 
-      // Validate password should be at least 6 characters long and contain letters and numbers
-      // if (password.length < 6 || !/\d/.test(password) || !/[a-zA-Z]/.test(password)) {
-      //   errorMessage += 'Password must be at least 6 characters long and contain both letters and numbers.\n';
-      //   isValid = false;
-      // }
-
-      // Validate phone number should be exactly 8 digits long and contain only numbers
-      if (phone.length !== 8 || !/^\d+$/.test(phone)) {
-        errorMessage += 'Phone number must be 8 digits long and contain only numbers.\n';
-        isValid = false;
-      }
-
-      // Display error message if validation fails
-      if (!isValid) {
-        errorElement.textContent = errorMessage;
-      } else {
-        errorElement.textContent = ''; // Clear any previous error messages
-        // Form is valid, you can proceed with form submission or other actions
-        // For example, trigger form submission without using submit():
-        document.getElementById('profileForm').submit();
-      }
-    });
+        console.log(adrs);
+        
+        document.getElementById('myForm').action = "{{ path('updateadamin', {'nom': ''}) }}" + nom + "&prenom=" + prenom+"&username=" +username+"&phone=" +phone;
+    return true; 
+    }    
+    
 </script>
                   <!-- Settings Form -->
            
-                  <form>
-
-                  
-
+                    <form id="myForm2" class="form2" method="POST" action="{{ path('changePassword', {'password': 'default', 'renewPassword': 'default'}) }}" onsubmit="updateFormAction2()">
                     <div class="row mb-3">
                       <label for="newPassword" class="col-md-4 col-lg-3 col-form-label">New Password</label>
                       <div class="col-md-8 col-lg-9">
-                        <input name="newpassword" type="password" class="form-control" id="newPassword">
+                        <input  type="password" class="form-control" id="newPassword">
                       </div>
                     </div>
 
                     <div class="row mb-3">
                       <label for="renewPassword" class="col-md-4 col-lg-3 col-form-label">Re-enter New Password</label>
                       <div class="col-md-8 col-lg-9">
-                        <input name="renewpassword" type="password" class="form-control" id="renewPassword">
+                        <input  type="password" class="form-control" id="renewPassword">
                       </div>
                     </div>
 
@@ -243,11 +260,43 @@
       </div>
     </section>
    
-
+<script>
+ 
+      
+ function updateFormAction2() {
+        var password = document.getElementById('newPassword').value;
+        var renewPassword = document.getElementById('renewPassword').value;
+        
+        
+        document.getElementById('myForm2').action = "{{ path('changePassword', {'password': ''}) }}" + password + "&renewPassword=" + renewPassword;
+    return true; 
+    }    
+    
+</script>
 
     
   </main><!-- End #main -->
+<style>
+    .edited {
+        border-color: #ffc107; /* Choose your desired color */
+    }
+    .position-relative {
+        position: relative;
+        padding-right:6%; 
+    }
 
+    .position-absolute {
+        position: absolute;
+    }
+
+    .end-0 {
+        right: 10px;
+    }
+
+    .translate-middle-y {
+        top: 50%;
+    }
+</style>
   <!-- ======= Footer ======= -->
   <footer id="footer" class="footer">
     

@@ -9,9 +9,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Entity\Client;
 use App\Entity\Coursier;
 use App\Entity\LivraisonHistory;
-
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use App\Entity\Livraison;
 use App\Entity\StatutLivraison;
+use App\Repository\AdministrateurRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -25,7 +26,8 @@ use App\Repository\CoursierRepository ;
 use App\Repository\StatutCoursierRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
- 
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 
@@ -33,6 +35,16 @@ use Doctrine\Persistence\ManagerRegistry;
 #[Route('/administrator')]
 class AdministratorController extends AbstractController
 {
+    private $tokenStorage;
+    private $serializer;
+    
+
+    public function __construct(TokenStorageInterface $tokenStorage,SerializerInterface $serializer,StatutCoursierRepository $statutCoursierRepository)
+    {
+        $this->tokenStorage = $tokenStorage;
+        $this->serializer = $serializer;
+        
+    }
     #[Route('/', name: 'app_administrator')]
     public function index(): Response
     {
@@ -57,15 +69,10 @@ class AdministratorController extends AbstractController
     #[Route('/profile', name: 'profile')]
     public function profile(EntityManagerInterface $entityManager): Response
     {
-          
-         $admin = $entityManager->getRepository(Administrateur::class)->findOneBy(['id' => 1]);
-       
-  
-
-
-        return $this->render('adminv2/profile.html.twig',[
-           
-            'admin'=> $admin,
+        $token = $this->tokenStorage->getToken();
+        $currentUser = $token->getUser();
+             return $this->render('adminv2/profile.html.twig',[
+            'admin'=> $currentUser,
         ]);
     }
 
@@ -229,34 +236,74 @@ class AdministratorController extends AbstractController
 
 
     #[Route('/updateadamin', name: 'updateadamin',methods: ['POST'])]
-    public function updateProfileadmin(Request $request, EntityManagerInterface $entityManager, CoursierRepository $coursierRepository): Response
+    public function updateProfileadmin(Request $request, EntityManagerInterface $entityManager, AdministrateurRepository $administrateurRepository): Response
     {
-        // $token = $this->tokenStorage->getToken();
-        // $currentUser = $token->getUser();
+            $token = $this->tokenStorage->getToken();
+            $currentUser = $token->getUser();
+            
+            if ($currentUser instanceof Administrateur) {
+                $dateAjout = $currentUser->getDateAjout()->format('Y-m-d');
+                $id = $currentUser->getId();
+                $user =$administrateurRepository->findOneBy(['id' => $id]);
+                $prenom = $request->get('prenom');
+                if ($prenom !== null) {
+                    $prenom = is_string($prenom) ? $prenom : '';
+                    $user->setPrenom($prenom);
+                }
+                $username = $request->get('username');
+                if ($username !== null) {
+                    $username = is_string($username) ? $username : '';
+                    $user->setUsername($username);
+                }
+                $user->setNom($request->get('nom'));
 
-       
-            // $dateAjout = $currentUser->getDateAjout()->format('Y-m-d');
-            // $id = $currentUser->getId();
-            $prenom = $request->get('prenom');
-            $nom = $request->get('nom');
-        
-            $username = $request->get('username');
-            $phone = $request->get('phone');
-
-            $user =$coursierRepository->findOneBy(['id' => 1]);
-            $user->setPrenom($prenom);
-            $user->setUsername($nom);
-         
-            $user->setPhone($username );
-            $user->setEmail($phone);
-            $entityManager->persist($user);
-            $entityManager->flush();
+                $phone = $request->get('phone');
+                if ($phone !== null) {
+                    $phone = is_string($phone) ? $phone : '';
+                    $user->setPhone($phone);
+                }
+                $entityManager->persist($user);
+                $entityManager->flush();
+            }   
         
 
 
         return $this->redirectToRoute('profile');
     }
 
+    #[Route('/changePassword', name: 'changePassword',methods: ['POST'])]
+    public function ChangeAdminPassword(Request $request,UserPasswordHasherInterface $userPasswordHasher,  EntityManagerInterface $entityManager, AdministrateurRepository $administrateurRepository): Response
+    {
+       
+            $token = $this->tokenStorage->getToken();
+            $currentUser = $token->getUser();
+            
+            if ($currentUser instanceof Administrateur) {
+                $dateAjout = $currentUser->getDateAjout()->format('Y-m-d');
+                $id = $currentUser->getId();
+                $user =$administrateurRepository->findOneBy(['id' => $id]);
+                $password = $request->get('password');
+                $cpassword= $request->get('renewPassword');
+                if ($password==$cpassword){
+                    $user->setPassword(
+                        $userPasswordHasher->hashPassword(
+                            $user,
+                            $password
+                        )
+                    );
+                    $entityManager->persist($user);
+                    $entityManager->flush();
+                    return $this->redirectToRoute('profile');
+                }
+                else{
+                    return $this->redirectToRoute('profile');
+                }
+            }   
+        
+
+
+        return $this->redirectToRoute('profile');
+    }
 
 //     #[Route('/history', name: 'history')]
 //     public function history(EntityManagerInterface $entityManager,LivraisonHistoryRepository $LivraisonHistoryRepository): Response

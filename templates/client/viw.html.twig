@@ -22,7 +22,9 @@
 <style>
 
 :root {
-  --orange: #fd9940;
+  --color-default: #0a0d13;
+  --color-primary: #0d42ff;
+  --color-secondary: #0e1d34;
   --darkorange: #dd7d25;
   --platinum: #e5e5e5;
   --black: #2b2d42;
@@ -72,7 +74,7 @@ h2 {
 
 .card:hover {
   color: var(--white);
-  background: var(--orange);
+  background: var(--color-default);
 }
 
 .card .card-title {
@@ -92,14 +94,14 @@ h2 {
   display: inline-block;
   text-decoration: none;
   color: white;
-  background: var(--orange);
+  background: var(--color-default);
   padding: 6px 12px;
   border-radius: 8px;
   transition: background 0.2s;
 }
 
 .card:hover .card-link {
-  background: var(--darkorange);
+  background: var(--color-primary);
 }
 
 .cards::-webkit-scrollbar {
@@ -112,7 +114,7 @@ h2 {
 }
 
 .cards::-webkit-scrollbar-thumb {
-  background: var(--darkorange);
+  background: var(--color-primary);
 }
 
 .cards::-webkit-scrollbar-track {
@@ -174,7 +176,7 @@ h2 {
 </style>
 
    <div class="container">
-  <h2>mes livraisons :</h2>
+  <h2>Mes livraisons :</h2>
   <ul class="cards">
     {% for livraison in livraisons %}
     <li class="card">
