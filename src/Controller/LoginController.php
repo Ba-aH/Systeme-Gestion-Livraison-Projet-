@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Administrateur;
 use App\Entity\Client;
 use App\Entity\Coursier;
 use App\Entity\ResetPassword;
@@ -61,7 +62,10 @@ class LoginController extends AbstractController
         }
         if ($currentUser instanceof Coursier) {
             return $this->redirectToRoute('coursierProfile');
-        }        
+        }   
+        if ($currentUser instanceof Administrateur) {
+            return $this->redirectToRoute('dashboard');
+        }          
     }
 
     #[Route('/logout', name: 'app_logout', methods: ['GET'])]

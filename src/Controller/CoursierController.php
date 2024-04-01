@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Controller;
-
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use App\Entity\Client;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use App\Entity\Coursier;
@@ -330,17 +330,17 @@ class CoursierController extends AbstractController
 
     }
     #[Route('/profile', name: 'coursierProfile')]
-        public function profile(): Response
+        public function profile(Request $request): Response
         {
             $token = $this->tokenStorage->getToken();
             $currentUser = $token->getUser();
             if ($currentUser instanceof Coursier) {
                 $dateAjout = $currentUser->getDateAjout()->format('Y-m-d');
             }
-
+            $error = $request->query->get('error', 0);
             return $this->render('coursierV2/profile.html.twig', [
                 'user' =>  $currentUser,
-                'dateAjout' =>  $dateAjout,
+                'dateAjout' =>  $dateAjout,'error'=> $error
             ]);
         }
 
@@ -366,4 +366,40 @@ class CoursierController extends AbstractController
             return $this->redirectToRoute('coursierProfile');
         }
   
+
+
+        #[Route('/changePassword_coursier', name: 'changePassword_coursier',methods: ['POST'])]
+        public function ChangeAdminPassword(Request $request,UserPasswordHasherInterface $userPasswordHasher,  EntityManagerInterface $entityManager, CoursierRepository $administrateurRepository): Response
+        {
+           
+                $token = $this->tokenStorage->getToken();
+                $currentUser = $token->getUser();
+                
+                if ($currentUser instanceof Coursier) {
+                    $dateAjout = $currentUser->getDateAjout()->format('Y-m-d');
+                    $id = $currentUser->getId();
+                    $user =$administrateurRepository->findOneBy(['id' => $id]);
+                    $password = $request->get('password');
+                    $cpassword= $request->get('renewPassword');
+                    if ($password==$cpassword){
+                        $user->setPassword(
+                            $userPasswordHasher->hashPassword(
+                                $user,
+                                $password
+                            )
+                        );
+                        $entityManager->persist($user);
+                        $entityManager->flush();
+                        return $this->redirectToRoute('coursierProfile');
+                    }
+                    else{
+                        return $this->redirectToRoute('coursierProfile', ['error' => 1]);
+                    }
+                }   
+            
+    
+    
+            return $this->redirectToRoute('profile');
+        }
+    
 }
