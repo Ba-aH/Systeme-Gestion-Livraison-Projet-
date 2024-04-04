@@ -212,6 +212,7 @@ public function show(Request $request,LivraisonRepository $livraisonRepository, 
         public function history(Request $request,EntityManagerInterface $entityManager,LivraisonHistoryRepository $livraisonHistoryRepository,LivraisonRepository $livraisonRepository,AdresseRepository $adresseRepository,ClientRepository $clientRepository,CoursierRepository $coursierRepository): Response
         {   
             $Display='';
+            // $livraisons = $livraisonHistoryRepository->findBy(['event' =>'livrée avec succès']);
             $livraisons = $livraisonHistoryRepository->findAll();
             $livDeRegion = [];
             $prix=0;

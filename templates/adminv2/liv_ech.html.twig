@@ -27,27 +27,27 @@
                   <tr>
                   
                     <th scope="col">Reference</th>             
-                    <th scope="col">Id</th>
-                    <th scope="col">CodePin</th>
-                    <th scope="col">FraisLivraison</th>
-                    <th scope="col">PrixTotaleLivraison </th>
-                       <th scope="col">PoidLivraison </th>
-                          <th scope="col">LivraisonDate </th>
-                             <th scope="col">action </th>
+                    <th scope="col">Client</th>
+                    <th scope="col">Tele Client</th>
+                    <th scope="col">Coursier</th>
+                    <th scope="col">Tele Coursier</th>
+                    <th scope="col">Raison d'echec</th>
+                    <th scope="col">LivraisonDate</th>
+                    <th scope="col">action </th>
                   </tr>
                 </thead>
                 <tbody>
                 {% for statutLivraison in livraisonsEchec %}
                   <tr>
-                   <td> <p> {{ statutLivraison.getReference() }}</p></td>
-      <td> <p> {{ statutLivraison.getId() }}</p></td>
-      <td> <p> {{ statutLivraison.getCodePin() }}</p></td>
-      <td><p>{{ statutLivraison.getFraisLivraison() }}</p></td>
-      <td> <p> {{ statutLivraison.getPrixTotaleLivraison() }}</p></td>
-      <td> <p>{{ statutLivraison.getPoidLivraison() }}</p></td>
-      <td> <p> {{ statutLivraison.getLivraisonDate()|date('Y-m-d ') }}</p>
+                    <td> <p> {{ statutLivraison.reference }}</p></td>
+                    <td> <p> {{ statutLivraison.client.nom }} {{ statutLivraison.client.prenom }}</p></td>
+                    <td> <p> {{ statutLivraison.client.phone }}</p></td>
+                    <td><p>{{ statutLivraison.tourner.coursier.nom  }} {{ statutLivraison.tourner.coursier.prenom  }}</p></td>
+                    <td> <p> {{ statutLivraison.tourner.coursier.phone  }}</p></td>
+                    <td> <p>{{ statutLivraison.statutLivraison.note }}</p></td>
+                    <td> <p> {{ statutLivraison.getLivraisonDate()|date('Y-m-d ') }}</p>
 
-   <td>  <a class="modifier"   onclick="populateForm('{{ statutLivraison.getReference() }}', '{{ statutLivraison.getId() }}', '{{ statutLivraison.getCodePin() }}', '{{ statutLivraison.getFraisLivraison() }}', '{{ statutLivraison.getPrixTotaleLivraison() }}', '{{ statutLivraison.getPoidLivraison() }}','remplir' ,'{{ statutLivraison.getLivraisonDate()|date('Y-m-d H:i:s') }}', {% if statutLivraison.getTourner() is not null %}'{{ statutLivraison.getTourner().getId() }}'{% endif %})"     >edit </a></td>
+                    <td>  <a class="modifier"   onclick="populateForm('{{ statutLivraison.getReference() }}', '{{ statutLivraison.getId() }}', '{{ statutLivraison.getCodePin() }}', '{{ statutLivraison.getFraisLivraison() }}', '{{ statutLivraison.getPrixTotaleLivraison() }}', '{{ statutLivraison.getPoidLivraison() }}','remplir' ,'{{ statutLivraison.getLivraisonDate()|date('Y-m-d H:i:s') }}', {% if statutLivraison.getTourner() is not null %}'{{ statutLivraison.getTourner().getId() }}'{% endif %})"     >edit </a></td>
                   </tr>
                 {% endfor %}
                 </tbody>

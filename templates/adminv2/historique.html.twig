@@ -91,9 +91,9 @@
                   <tr>
                  
                     <th scope="col">Reference </th>
-                    <th scope="col"> Email</th>
-                    <th scope="col">Frais </th>
-                    <th scope="col">Poid  </th>
+                    <th scope="col">Coursier</th>
+                    <th scope="col">Frais</th>
+                    <th scope="col">Poid </th>
                   
                   </tr>
                 </thead>
@@ -101,7 +101,7 @@
                   {% for history in livraisons %}
                         <tr> 
                             <td>{{ history.livraison.reference }}</td>
-                            <td>{{ history.livraison.client.email  }}</td>
+                            <td>{{ history.livraison.tourner.coursier.nom }} {{ history.livraison.tourner.coursier.prenom }}</td>
                             <td>${{ history.livraison.prixTotaleLivraison }}</td>
                             <td>{{ history.livraison.poidLivraison  }} kg</td>                           
                         </tr>
