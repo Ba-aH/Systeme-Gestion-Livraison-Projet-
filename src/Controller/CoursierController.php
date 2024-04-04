@@ -3,6 +3,7 @@
 namespace App\Controller;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use App\Entity\Client;
+use App\Entity\RaisonsEchec;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use App\Entity\Coursier;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -10,6 +11,7 @@ use App\Repository\LivraisonRepository;
 use App\Repository\StatutLivraisonRepository;
 use App\Repository\CoursierRepository;
 use App\Repository\TournerRepository;
+use App\Repository\RegionRepository;
 use App\Repository\ClientRepository;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,6 +26,7 @@ use App\Entity\Tourner;
 use App\Entity\StatutCoursier;
 use App\Entity\StatutLivraison;
 use App\Entity\Livraison;
+use App\Entity\Region;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use DateTime; 
@@ -260,15 +263,22 @@ class CoursierController extends AbstractController
         $livraisonId = $request->get('livraisonId');
         $livraison= $entityManager->getRepository(Livraison::class)->findOneBy(['id' =>  $livraisonId]);
         $livstat= $entityManager->getRepository(StatutLivraison::class)->findOneBy(['livraison' => $livraisonId]);
+        $idreason=$request->get('selectedItem');
+        $res=$request->get('selectedres');
+        
         if ($livstat) {
        
             $livstat->setStatusTitle('echec');
 
 
             if ($newraison=='') {
-            $livstat->setNote($request->request->get('selectedItem'));}
+                $reason= $entityManager->getRepository(RaisonsEchec::class)->findOneBy(['id' => $idreason]);
+            $livstat->setRaisonEchec($reason);}
             else{
-           $livstat->setNote( $newraison);
+           $reason= new RaisonsEchec();
+           $reason->setRaison($newraison);
+           $entityManager->persist($reason);
+           $livstat->setRaisonEchec($reason);
             }
             $livraison->setTourner(null);
         }
@@ -311,7 +321,7 @@ class CoursierController extends AbstractController
 
 
     #[Route('/disponibilté', name: 'disponibilté', methods: ['GET'])]
-    public function disponibilté(Request $request,StatutCoursierRepository $statutCoursierRepository): Response
+    public function disponibilté(RegionRepository $regionRepository,Request $request,StatutCoursierRepository $statutCoursierRepository): Response
     {      $token = $this->tokenStorage->getToken();
         $currentUser = $token->getUser();
         if ($currentUser instanceof Coursier) {
@@ -320,15 +330,15 @@ class CoursierController extends AbstractController
        
         $status = $statutCoursierRepository->findBy(['coursier' =>  $idcoursier,'titre_statut' => 'disponible']);
         $error = $request->query->get('error', 0);
-       
+        $regions=$regionRepository->findAll();
         return $this->render('coursierV2/disponibilté.html.twig', [
-            'status' =>   $status,'error'=>   $error
+            'status' =>   $status,'error'=>   $error,'regions'=> $regions
         ]);
     }
 
 
     #[Route('/ajout_disponibilté', name: 'ajout_disponibilté', methods: ['post'])]
-    public function ajout_disponibilté(StatutCoursierRepository $statutCoursierRepository,Request $request, EntityManagerInterface $entityManager,SessionInterface $session ): Response
+    public function ajout_disponibilté(RegionRepository $regionRepository,StatutCoursierRepository $statutCoursierRepository,Request $request, EntityManagerInterface $entityManager,SessionInterface $session ): Response
     {  
         $token = $this->tokenStorage->getToken();
         $currentUser = $token->getUser();
@@ -337,6 +347,7 @@ class CoursierController extends AbstractController
         }
         $error=0;
         $region = $request->get('region');
+        $reg= $entityManager->getRepository(Region::class)->findOneBy(['id' =>  $region]);
         $date = $request->get('date');
         $datedate = DateTime::createFromFormat('Y-m-d', $date);
         $currentDate = new DateTime();
@@ -356,7 +367,7 @@ class CoursierController extends AbstractController
         if (!$existingStatut) {
         $statut = new StatutCoursier();  
         $statut->setDebutTourner($datedate);
-        // $statut->setRegion($region);
+        $statut->setRegion($reg);
         $statut->setTitreStatut('disponible');
         $cour= $entityManager->getRepository(Coursier::class)->findOneBy(['id' => $idcoursier]);
         $statut->setCoursier($cour);
@@ -365,8 +376,7 @@ class CoursierController extends AbstractController
         $entityManager->flush();
         return $this->redirectToRoute('disponibilté',['error' => $error]);
 
-        }else{
-            $error=1;
+       
             $livraisonId = $request->get('id');
             $status = $statutCoursierRepository->findBy(['coursier' => $idcoursier,'titre_statut' => 'disponible']);
            

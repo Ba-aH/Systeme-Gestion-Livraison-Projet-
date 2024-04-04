@@ -239,9 +239,9 @@
             <!-- List -->
             <ul class="listp">
                  {% for li in list %}
-                        <li class="list-itemp"> 
+                        <li class="list-itemp" data-id="{{ li.id }}"> 
                             
-                             {{ li.raison }}
+                           {{ li.id }} -  {{ li.raison }}
                              
                               </li>
                         {% endfor %}
@@ -253,8 +253,8 @@
             <form method="post" action="{{ path('echecsubmit') }}" >
             <label for="newItem">donner votre propre raison:</label><br /><br />
                 <input type="text" name="newItem" placeholder="Add new reason..."style="width: 560px; height: 40px;"><br />
-              
-                <input type="hidden" name="selectedItem" id="selectedItem">
+              <input type="text" name="selectedres" id="selectedres">
+                <input type="text" name="selectedItem" id="selectedItem">
                 <input type="hidden" name="livraisonId" id="livraisonId" value="{{ livraisonId }}"><br />
 
                <button type="submit" class="submit-button" id="submitItemButton">confirmer</button>
@@ -280,8 +280,12 @@
             this.classList.add("selected");
 
             // Update the value of the hidden input field with the selected item
-            var selectedItemValue = this.textContent.trim();
-            document.getElementById("selectedItem").value = selectedItemValue;
+            // var selectedItemValue = this.textContent.trim();
+               var selectedItemText = this.textContent.trim();
+            var selectedItemId = selectedItemText.split(' - ')[0];
+               var selectedItemres = selectedItemText.split(' - ')[1]; // Assuming ID comes before '-'
+            document.getElementById("selectedItem").value = selectedItemId;
+                  document.getElementById("selectedres").value = selectedItemres;
         });
     });
 

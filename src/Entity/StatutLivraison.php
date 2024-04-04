@@ -32,6 +32,9 @@ class StatutLivraison
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $note = null;
 
+    #[ORM\ManyToOne(inversedBy: 'statutLivraisons')]
+    private ?RaisonsEchec $raison_echec = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -105,6 +108,18 @@ class StatutLivraison
     public function setNote(?string $note): static
     {
         $this->note = $note;
+
+        return $this;
+    }
+
+    public function getRaisonEchec(): ?RaisonsEchec
+    {
+        return $this->raison_echec;
+    }
+
+    public function setRaisonEchec(?RaisonsEchec $raison_echec): static
+    {
+        $this->raison_echec = $raison_echec;
 
         return $this;
     }

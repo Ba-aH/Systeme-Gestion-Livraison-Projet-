@@ -77,10 +77,17 @@
    <div class="containerm" >
         <form method="post" action="{{ path('ajout_disponibilté') }}" >
       <label for="region">Region:</label>
-      <input type="text" id="region" name="region" placeholder="Enter region" required>
-  
+      {# <input type="text" id="region" name="region" placeholder="Enter region" required> #}
+  <select id="region" name="region" class="form-select" required>
+    <option value="" disabled selected>Select region</option>
+       {% for region in regions %}
+    
+    <option value="{{region.id}}">{{region.name}}</option>
+       {% endfor %}
+    <!-- Add more options as needed -->
+</select>
       <label for="date">Date:</label>
-      <input type="date" id="date" name="date" required>
+      <input type="date" id="date" name="date" class="form-select" required>
   
       <button type="submit">Submit</button>
     </form>
@@ -130,7 +137,11 @@
                        
                         
                         <p><strong>:{{ stat.getId() }}</strong></p>
-                        <p><strong>:{{ stat.getRegion() }}</strong> </p>
+                     {% if stat.getRegion() is not null %}
+    <p><strong>{{ stat.getRegion().getName() }}</strong></p>
+{% else %}
+    <p><strong>No region available</strong></p>
+{% endif %}
                         <p><strong>:{{ stat.getDebutTourner()|date('Y-m-d') }}</strong> </p>
                         
                         <p><strong>:{{ stat.getTitreStatut()}}</strong> </p>
