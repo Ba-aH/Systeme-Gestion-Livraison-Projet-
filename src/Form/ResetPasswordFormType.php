@@ -1,10 +1,11 @@
 <?php
 
 namespace App\Form;
+
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\Regex;
 
 class ResetPasswordFormType extends AbstractType
 {
@@ -16,10 +17,12 @@ class ResetPasswordFormType extends AbstractType
                 'attr' => [
                     'placeholder' => 'Enter your password',
                 ],
-                new Assert\Regex([
-                    'pattern' => '/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9A-Za-z]{8,}$/',
-                    'message' => 'Votre mot de passe doit contenir au moins une lettre majuscule, une lettre minuscule et un chiffre.',
-                ]),
+                'constraints' => [
+                    new Regex([
+                        'pattern' => '/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9A-Za-z]{8,}$/',
+                        'message' => 'Votre mot de passe doit contenir au moins une lettre majuscule, une lettre minuscule et un chiffre.',
+                    ]),
+                ],
             ])
             ->add('confirmPassword', PasswordType::class, [
                 'label' => false,
@@ -28,5 +31,4 @@ class ResetPasswordFormType extends AbstractType
                 ],
             ]);
     }
-    
 }

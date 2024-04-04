@@ -24,12 +24,14 @@ use App\Repository\AdresseRepository ;
 use App\Repository\TournerRepository ;
 use App\Repository\CoursierRepository ;
 use App\Repository\StatutCoursierRepository;
+use App\Service\MercureCookieGenerator;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Doctrine\Persistence\ManagerRegistry;
-
+use Symfony\Component\Mime\Header\Headers;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 
 
 #[Route('/administrator')]
@@ -45,25 +47,104 @@ class AdministratorController extends AbstractController
         $this->serializer = $serializer;
         
     }
-    #[Route('/', name: 'app_administrator')]
-    public function index(): Response
-    {
-        return $this->render('administrator/index.html.twig', [
-            'controller_name' => 'AdministratorController',
-        ]);
-    }
+    
 
 
     #[Route('/adv', name: 'adv')]
-    public function adv(): Response
+    public function adv(MercureCookieGenerator $cookieGenerator): Response
     {
-        return $this->render('adminv2/index.html.twig');
+        $response = $this->render('adminv2/index.html.twig');
+        $response ->headers->set('set-cookie', $cookieGenerator->generate($this->getUser()));
+        return $response;
     }
    
-    #[Route('/dashboard', name: 'dashboard')]
-    public function dashboard(): Response
+    #[Route('/', name: 'dashboard')]
+    public function dashboard(MercureCookieGenerator $cookieGenerator): Response
     {
-        return $this->render('adminv2/dashboard.html.twig');
+        $token = $this->tokenStorage->getToken();
+        $currentUser = $token->getUser();
+            
+            if ($currentUser instanceof Administrateur) {
+                $email = $currentUser->getEmail();
+            }
+
+        $response = $this->render('adminv2/dashboard.html.twig',[
+            'user'=> $currentUser,
+        ]);
+        $response ->headers->set('set-cookie', $cookieGenerator->generate($this->getUser()));
+        return $response;
+    }
+
+    #[Route('/extend', name: 'dashboardExtend')]
+    public function dashboardExtend(
+        LivraisonRepository $livraisonRepository,
+        StatutLivraisonRepository $statutLivraisonRepository,
+        SerializerInterface $serializer,
+        AdresseRepository $adresseRepository
+    ): JsonResponse {
+        $ann = $statutLivraisonRepository->findBy(['status_title' => "annulée"]);
+        $att = $statutLivraisonRepository->findBy(['status_title' => "en attente"]);
+        $echec = $statutLivraisonRepository->findBy(['status_title' => "échec"]);
+        $nb = 0;
+        $livraisons = [];
+
+        foreach ($ann as $item) {
+            $liv = $item->getLivraison();
+            $ref = $liv->getReference();
+            $adr = $liv->getAddressId();
+            $date = $liv->getLivraisonDate()->format('Y-m-d');
+            $adresse = $adresseRepository->findOneBy(['id'=>$adr]);
+            $region = $adresse->getRegion();
+            $livraisons[] = [
+                'reference' => $ref,
+                'region' => $region,
+                'date'=>$date,
+            ];
+            $nb++;
+        }
+
+        foreach ($att as $item) {
+            $liv = $item->getLivraison();
+            $ref = $liv->getReference();
+            $date = $liv->getLivraisonDate()->format('Y-m-d');
+            $adr = $liv->getAddressId();
+            $adresse = $adresseRepository->findOneBy(['id'=>$adr]);
+            $region = $adresse->getRegion();
+            $livraisons[] = [
+                'reference' => $ref,
+                'region' => $region,
+                'date'=>$date,
+            ];
+            $nb++;
+        }
+
+        foreach ($echec as $item) {
+            $liv = $item->getLivraison();
+            $ref = $liv->getReference();
+            $adr = $liv->getAddressId();
+            $adresse = $adresseRepository->findOneBy(['id'=>$adr]);
+            $date = $liv->getLivraisonDate()->format('Y-m-d');
+            $region = $adresse->getRegion();
+            $livraisons[] = [
+                'reference' => $ref,
+                'region' => $region,
+                'date'=>$date,
+            ];
+            $nb++;
+        }
+
+        $data = $serializer->serialize([
+            'livraisons' => $livraisons,
+            'nbLivraisons' => $nb,
+        ], 'json', [
+            AbstractNormalizer::IGNORED_ATTRIBUTES => ['livraisons'],
+            AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function ($object) {
+                return $object->getId();
+            }
+        ]);
+
+        // Return JsonResponse
+        return new JsonResponse($data, 200, [], true);
     }
     
     #[Route('/profile', name: 'profile')]
@@ -305,6 +386,16 @@ class AdministratorController extends AbstractController
         return $this->redirectToRoute('profile');
     }
 
+    #[Route('/notif', name: 'notif')]
+    public function Notifications(CoursierRepository $coursierRepository): Response
+    {
+        // return $this->render('administrator/coursier.html.twig', [
+        //     'coursiers' => $coursierRepository->findAll(),
+        // ]);
+        return $this->render('adminv2/coursier.html.twig', [
+            'coursiers' => $coursierRepository->findAll(),
+        ]);
+    }
 //     #[Route('/history', name: 'history')]
 //     public function history(EntityManagerInterface $entityManager,LivraisonHistoryRepository $LivraisonHistoryRepository): Response
 //     {

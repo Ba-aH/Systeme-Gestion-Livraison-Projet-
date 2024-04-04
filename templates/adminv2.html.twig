@@ -84,36 +84,32 @@
             <i class="bi bi-search"></i>
           </a>
         </li><!-- End Search Icon-->
-
         <li class="nav-item dropdown">
-
-          <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
-            <i class="bi bi-bell"></i>
-            <span class="badge bg-primary badge-number">5</span>
-          </a><!-- End Notification Icon -->
+            <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+                <i class="bi bi-bell"></i>
+                <span id="notification-count" class="badge bg-primary badge-number"></span>
+            </a><!-- End Notification Icon -->
 
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
             <li class="dropdown-header">
-              You have 4 new notifications
-              <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
+              Vous avez des livraison en attente 
+              <a href="{{path('app_gerer_tour')}}"><span class="badge rounded-pill bg-primary p-2 ms-2">Voir tous</span></a>
             </li>
             <li>
               <hr class="dropdown-divider">
             </li>
 
             <li class="notification-item">
-              <i class="bi bi-exclamation-circle text-warning"></i>
-              <div>
-                <h4>Lorem Ipsum</h4>
-                <p>Quae dolorem earum veritatis oditseno</p>
-                <p>30 min. ago</p>
+              {# <i class="bi bi-exclamation-circle text-warning"></i> #}
+              <div id="notification-list">
+                
               </div>
             </li>
 
             <li>
               <hr class="dropdown-divider">
             </li>
-
+          {#
             <li class="notification-item">
               <i class="bi bi-x-circle text-danger"></i>
               <div>
@@ -123,7 +119,7 @@
               </div>
             </li>
 
-            <li>
+             <li>
               <hr class="dropdown-divider">
             </li>
 
@@ -147,13 +143,13 @@
                 <p>Quae dolorem earum veritatis oditseno</p>
                 <p>4 hrs. ago</p>
               </div>
-            </li>
+            </li> 
 
             <li>
               <hr class="dropdown-divider">
-            </li>
+            </li>#}
             <li class="dropdown-footer">
-              <a href="#">Show all notifications</a>
+              <a href="{{path('app_gerer_tour')}}">Voir tous les livraison non affeté</a>
             </li>
 
           </ul><!-- End Notification Dropdown Items -->
@@ -394,6 +390,47 @@
 
     </ul>
 
+    
+<script>
+    // Fetching data of the bell nb livraison et livraisons
+    fetch('{{ path('dashboardExtend') }}')
+    .then(response => response.json())
+    .then(data => {
+        // Update notification count in the HTML
+        const notificationCountElement = document.getElementById('notification-count');
+        if (notificationCountElement) {
+            notificationCountElement.textContent = data.nbLivraisons;
+        }
+
+        // Get the container where reference items will be appended
+        const notificationList = document.getElementById('notification-list');
+
+        // Iterate through the livraisons array and append reference items
+        data.livraisons.forEach(livraison => {
+            const referenceItem = document.createElement('div');
+            referenceItem.innerHTML = `
+                <div class="notification-item-wrapper">
+                    <i class="bi bi-exclamation-circle text-warning"></i>
+                    <div>
+                        <h4>Reference de livraison: ${livraison.reference}</h4>
+                        <p>Region: ${livraison.region} </p>
+                        <p>Doit étre livré en: ${livraison.date}</p>
+                    </div>
+                </div>
+            `;
+            notificationList.appendChild(referenceItem);
+        });
+    })
+    .catch(error => {
+        console.error('Error fetching data:', error);
+    });
+</script>
+<style>
+.notification-item-wrapper {
+    display: flex;
+    align-items: center;
+}
+</style>
   </aside><!-- End Sidebar-->{% endblock %}
     </body>
 </html>
