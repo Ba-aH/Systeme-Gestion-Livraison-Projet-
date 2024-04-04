@@ -7,6 +7,7 @@ use App\Entity\Colis;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use App\Entity\Coursier;
 use App\Entity\Client;
+
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use App\Repository\LivraisonRepository;
 use App\Repository\StatutLivraisonRepository;
@@ -19,6 +20,7 @@ use App\Repository\LivraisonHistoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\AdresseRepository ;
 use App\Repository\StatutCoursierRepository;
+
 use App\Repository\RaisonsEchecRepository;
 use App\Entity\Tourner;
 use App\Entity\StatutCoursier;
@@ -65,7 +67,7 @@ class ClientController extends AbstractController
 
     
     #[Route('/afficher_livraisons', name: 'afficher_livraisons', methods: ['GET'])]
-    public function afficher_livraisons(Request $request ,EntityManagerInterface $entityManager,TournerRepository $tournerRepository,LivraisonRepository $livraisonRepository): Response
+    public function afficher_livraisons(Request $request ,LivraisonHistoryRepository $livraisonHistoryRepository,EntityManagerInterface $entityManager,TournerRepository $tournerRepository,LivraisonRepository $livraisonRepository): Response
     {     
         $token = $this->tokenStorage->getToken();
         $currentUser = $token->getUser();
@@ -77,10 +79,20 @@ class ClientController extends AbstractController
             $prenom = $currentUser->getPrenom();
             $phone = $currentUser->getPhone();
         }
-    $tablivraison=$livraisonRepository->findBy(['client' => $id]);
+
+        $livraisonshistory = $livraisonHistoryRepository->findAll();
+        $livhistorytab= [];
+     
+        foreach ($livraisonshistory as $item) {
+          $currentliv =$item->getLivraison();
+          $cli=$currentliv->getClient();
+            if($cli->getId()==$id){
     
+                $livhistorytab[]=$currentliv;
+            }
+         }
 
-
+    $tablivraison=$livraisonRepository->findBy(['client' => $id]);
     $livraisons=[];
     foreach ($tablivraison as $item) {
        $id=$item->getId();
@@ -92,7 +104,7 @@ class ClientController extends AbstractController
     }
          $error = $request->query->get('error', 0);
         return $this->render('client/viw.html.twig', [
-            'livraisons' =>  $livraisons ,'error'=> $error
+            'livraisons' =>  $livraisons ,'error'=> $error, 'livraisonshistory' =>   $livhistorytab 
         ]);
         
     }
@@ -161,6 +173,29 @@ class ClientController extends AbstractController
             'liv' =>  $liv,'address' =>$address , 'items'=>$items,'error'=>$error
         ]);
     }
+    #[Route('/consultclient/{id}', name: 'consultclient', methods: ['GET'])]
+    public function consultclient(Request $request ,LivraisonRepository $livraisonRepository,EntityManagerInterface $entityManager,AdresseRepository $adresseRepository): Response
+    {
+        $token = $this->tokenStorage->getToken();
+        $currentUser = $token->getUser();
+        if ($currentUser instanceof Client) {
+            $identifier = $currentUser->getUserIdentifier();
+            $id = $currentUser->getId();
+        }
+        $livraisonId = $request->get('id');
+        $liv = $entityManager->getRepository(Livraison::class)->findOneBy(['id' =>  $livraisonId]);
+        $address=$adresseRepository->findOneBy(['id' => $liv->getAddressId()]);
+        $statut=$entityManager->getRepository(StatutLivraison::class)->findOneBy(['livraison' =>  $livraisonId]);
+        $error = $request->query->get('error', 0);
+        return $this->render('client/consult.html.twig', [
+            'liv' =>  $liv,'address' =>$address ,'error'=>$error,'stat'=>$statut
+        ]);
+    }
+
+
+
+
+
     #[Route('/confirmedit', name: 'confirmedit', methods: ['post'])]
     public function confirmedit(Request $request ,StatutLivraisonRepository $statutLivraison,EntityManagerInterface $entityManager,AdresseRepository $adresseRepository): Response
     {   $reference = $request->request->get('reference');
@@ -212,20 +247,29 @@ class ClientController extends AbstractController
 #[Route('/historyclient', name: 'historyclient')]
 public function history(Request $request,EntityManagerInterface $entityManager,LivraisonHistoryRepository $livraisonHistoryRepository,LivraisonRepository $livraisonRepository,AdresseRepository $adresseRepository,ClientRepository $clientRepository,CoursierRepository $coursierRepository): Response
 {   
-    $iduser=2;
-    $livraisons = $livraisonHistoryRepository->findAll();
-    $livtab= [];
+    $token = $this->tokenStorage->getToken();
+    $currentUser = $token->getUser();
+    if ($currentUser instanceof Client) {
+        $identifier = $currentUser->getUserIdentifier();
+        $id = $currentUser->getId();
+        $username = $currentUser->getUsername();
+        $nom = $currentUser->getNom();
+        $prenom = $currentUser->getPrenom();
+        $phone = $currentUser->getPhone();
+    }
+    $livraisonshistory = $livraisonHistoryRepository->findAll();
+    $livhistorytab= [];
  
-    foreach ($livraisons as $item) {
+    foreach ($livraisonshistory as $item) {
       $currentliv =$item->getLivraison();
       $cli=$currentliv->getClient();
-        if($cli->getId()==$iduser){
+        if($cli->getId()==$id){
 
-            $livtab[]=$currentliv;
+            $livhistorytab[]=$currentliv;
         }
      }
      return $this->render('client/hist.html.twig', [
-        'livraisons' =>   $livtab 
+        'livraisons' =>   $livhistorytab 
     ]); }
     
 

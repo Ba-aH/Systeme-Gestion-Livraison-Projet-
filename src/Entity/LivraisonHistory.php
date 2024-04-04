@@ -20,6 +20,9 @@ class LivraisonHistory
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?Livraison $livraison = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $event = null;
+
  
     public function getId(): ?int
     {
@@ -46,6 +49,18 @@ class LivraisonHistory
     public function setLivraison(?Livraison $livraison): static
     {
         $this->livraison = $livraison;
+
+        return $this;
+    }
+
+    public function getEvent(): ?string
+    {
+        return $this->event;
+    }
+
+    public function setEvent(string $event): static
+    {
+        $this->event = $event;
 
         return $this;
     }

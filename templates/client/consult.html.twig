@@ -1,11 +1,15 @@
 {% extends 'index.html.twig' %}
-
-{% block title %}Hello CoursierController!{% endblock %}
-
-
-
 {% block body %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" />
+	<link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
 
+
+<link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,700' rel='stylesheet' type='text/css'>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	
+	<link rel="stylesheet" href={{ asset('assetss/css/style.css')}}>
  <section id="hero" class="hero d-flex align-items-center">
     <div class="container">
     <div class="container position-relative">
@@ -17,8 +21,9 @@
           </div>
         </div>
     </div>
-  </section><!-- End Hero Section --> </br></br>
+  </section><!-- End Hero Section --> 
   
+   <div class="container">
 <style>
 
   .containert {
@@ -111,35 +116,6 @@ input[type="submit"]:hover {
 <div class="containert">
 
 
-   {# {% set  Variable = 1 %}
- {% for coli in colis %}
- <div class="section">
-    <h2>colis numéro : {{Variable}}</h2>
-    <div>
-      <label></label>
-      <p></p>
-    </div>
-    <div class="infot">
-      <label>nom produit:</label>
-      <p>{{ coli.getNomProduit() }}</p>
-    </div>
-   
-    <div class="infot">
-      <label>type produit:</label>
-      <p>{{ coli.getType() }}</p>
-    </div> 
-     <div class="infot">
-      <label>prix:</label>
-      <p>{{ coli.getPrix() }}</p>
-    </div> 
-     <div class="infot">
-      <label>poid :</label>
-      <p>{{ coli. getPoid () }}</p>
-    </div> 
- 
-  </div>
- {% set Variable = Variable + 1 %}
-{% endfor %} #}
 
  <style>
 
@@ -263,8 +239,7 @@ h2 {
 }
 
 
-/* FOOTER STYLES
-–––––––––––––––––––––––––––––––––––––––––––––––––– */
+
 .page-footer {
   position: fixed;
   right: 0;
@@ -295,65 +270,8 @@ h2 {
   }
 </style>
 
-   {# {% set  Variable = 1 %}
- {% for coli in colis %}
- <div class="section">
-    <h2>colis numéro : {{Variable}}</h2>
-    <div>
-      <label></label>
-      <p></p>
-    </div>
-    <div class="infot">
-      <label>nom produit:</label>
-      <p>{{ coli.getNomProduit() }}</p>
-    </div>
    
-    <div class="infot">
-      <label>type produit:</label>
-      <p>{{ coli.getType() }}</p>
-    </div> 
-     <div class="infot">
-      <label>prix:</label>
-      <p>{{ coli.getPrix() }}</p>
-    </div> 
-     <div class="infot">
-      <label>poid :</label>
-      <p>{{ coli. getPoid () }}</p>
-    </div> 
- 
-  </div>
- {% set Variable = Variable + 1 %}
-{% endfor %} #}
-   <div class="container">
-  <h2>les colis associé a cette commande:</h2>
-  <ul class="cards">
-   {% set  Variable = 1 %}
- {% for coli in colis %}
-    <li class="card">
-      <div>
-        <h3 class="card-title">colis numéro : {{Variable}}
-                        </h3></br>
-        <div class="card-content">
-         <p><strong>nom produit::</strong> {{ coli.getNomProduit() }}</p></br>
-                        <p><strong>type produit:</strong> {{ coli.getType() }}</p></br>
-                        <p><strong>prix:</strong> {{ coli.getPrix() }}</p></br>
-                        <p><strong>poid:</strong> {{ coli. getPoid() }}</p></br>
-                         {# {% if coli.getStatut()=='non recu'  %} #}
-                         <p><strong>statut:</strong> {{ coli.getStatut() }}</p></br> 
-                             {# {% endif %} #}
-        </div>
-      </div>
   
-      <div class="card-link-wrapper">
-
-        <a href="{{ path('nonrecu',{'id': coli.id,'idliv': liv.id}) }}" class="card-link">colis non reçu </a>
-        
-      
-      
-    </li> 
-   {% set Variable = Variable + 1 %}
-  {% endfor %}
-    
     
 
 
@@ -366,12 +284,37 @@ h2 {
     <img width="24" height="24" src="https://assets.codepen.io/162656/george-martsoukos-small-logo.svg" alt="George Martsoukos logo">
   </a>
 </footer>
+ <div class="section">
+    <h2>statut pour cette livraison :</h2>
+    <div>
+      <label></label>
+      <p></p>
+    </div>
+    <div class="infot">
+      <label>Référence:</label>
+      <p>{{ stat.getStatusTitle() }}</p>
+    </div>
+   
+  </div>
+<div class="containermap">
+ <h2>suivie commande :</h2>
+    <div id="map"></div>
+</div>
 
+<style>
+    .containermap {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+          flex-direction: column;
+    }
 
-
-
-
-
+    #map {
+        width: 60%;
+        height: 70vh;
+    }
+</style>
 
   <div class="section">
     <h2>Informations de commande</h2>
@@ -452,7 +395,30 @@ h2 {
     </div>
  
   </div>
-</div>
 
-   
+
+
+   </div>
+<script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"></script>
+	<script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+  <script>
+var coordinates;
+var map = L.map('map').setView([36.86012, 10.19337], 11);
+        mapLink = "<a href='http://openstreetmap.org'>OpenStreetMap</a>";
+        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: 'Leaflet &copy; ' + mapLink + ', contribution', maxZoom: 18 }).addTo(map);
+
+        var marker1 = L.marker([36.86012, 10.19337],).addTo(map);
+        var marker2 = L.marker([36.92125234021674    ,  10.167224446625106]).addTo(map); // Initialize the second marker at the same position
+        var movingMarker = L.marker([36.86012, 10.19337]).addTo(map);
+
+ 
+		var routeControl = L.Routing.control({
+    waypoints: [
+        L.latLng(36.86012, 10.19337),
+        L.latLng(36.92125234021674, 10.167224446625106)
+    ]
+}).addTo(map);
+
+
+</script>
 {% endblock %}
