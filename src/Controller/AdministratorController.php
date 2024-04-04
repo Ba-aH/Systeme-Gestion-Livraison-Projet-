@@ -148,12 +148,12 @@ class AdministratorController extends AbstractController
     }
     
     #[Route('/profile', name: 'profile')]
-    public function profile(EntityManagerInterface $entityManager): Response
-    {
+    public function profile(Request $request,EntityManagerInterface $entityManager): Response
+    {  $error = $request->query->get('error', 0);
         $token = $this->tokenStorage->getToken();
         $currentUser = $token->getUser();
              return $this->render('adminv2/profile.html.twig',[
-            'admin'=> $currentUser,
+            'admin'=> $currentUser,'error'=> $error
         ]);
     }
 
@@ -377,7 +377,7 @@ class AdministratorController extends AbstractController
                     return $this->redirectToRoute('profile');
                 }
                 else{
-                    return $this->redirectToRoute('profile');
+                    return $this->redirectToRoute('profile', ['error' => 1]);
                 }
             }   
         

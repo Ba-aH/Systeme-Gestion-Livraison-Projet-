@@ -180,54 +180,6 @@ h2 {
     color: black;
   }
 </style>
-
-   <div class="container">
-  <h2>Mes livraisons :</h2>
-  <ul class="cards">
-    {% for livraison in livraisons %}
-    <li class="card">
-      <div>
-        <h3 class="card-title">Reference :   {{ livraison.getReference() }}
-                        </h3>
-        <div class="card-content">
-         <p><strong>FraisLivraison:</strong> {{ livraison.getFraisLivraison() }}</p></br>
-                        <p><strong>PrixTotaleLivraison:</strong> {{ livraison.getPrixTotaleLivraison() }}</p></br>
-                        <p><strong>PoidLivraison:</strong> {{ livraison.getPoidLivraison() }}</p></br>
-                        <p><strong>LivraisonDate:</strong> {{ livraison.getLivraisonDate()|date('Y-m-d ') }}</p></br>
-        </div>
-      </div>
-      <div class="hor">
-      <div class="card-link-wrapper">
-        <a href="{{ path('client_annulation',{'id': livraison.id}) }}" class="card-link">annuler livraison</a>
-        
-      </div>
-      <div class="card-link-wrapper">
-        <a href="{{ path('editbyclient',{'id': livraison.id}) }}" class="card-link">modifier livraison</a>
-        
-      </div>
-      </div>
-      
-    </li> 
-  
-  {% endfor %}
-    
-    
-
-
-  </ul>
-    {% if error == 1 %}
-                       
-    <div class="alert alert-danger" role="alert">
-       <p>cette livraison et déja en cours {{error}} </p>
-    </div>
-
-    {% elseif error == 2 %}
- <div class="alert alert-success" role="alert">
-   <p>operation terminé avec succès .</p>
-   </div>
-
-  {% endif %}
-</div>
 <section class="ftco-section">
 		<div class="container">
 			<div class="row justify-content-center">
@@ -247,6 +199,7 @@ h2 {
 						      <th>Sera livré en</th>
                   <th>Actions</th>
                   <th>&nbsp;</th>
+                  <th>&nbsp;</th>
 						    </tr>
 						  </thead>
 						  <tbody>
@@ -258,8 +211,11 @@ h2 {
 						      <td>
                     <a href="{{ path('editbyclient',{'id': livraison.id}) }}" class="card-link"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Editer la livraison</a>
                   </td>
+                  <td>
+                    <a href="{{ path('consultclient',{'id': livraison.id}) }}" class="card-link"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Consulter  livraison</a>
+                  </td>
 						      <td>	
-                    <a href="{{ path('client_annulation',{'id': livraison.id}) }}" class="card-link" style="color: red;"><i class="fa fa-ban" aria-hidden="true"></i> Annuler la livraison</a>
+                    <a id="link{{ loop.index }}" href="{{ path('client_annulation',{'id': livraison.id}) }}" class="card-link"   style="color: red;"><i class="fa fa-ban" aria-hidden="true"></i> Annuler la livraison</a>
 				        	</td>
 						    </tr>
                 {% endfor %}
@@ -284,6 +240,107 @@ h2 {
       {% endif %}
     </div> 
 		</div>
+   <div class="container">
+ <div class="row justify-content-center">
+				<div class="col-md-6 text-center mb-5">
+					<h2 class="heading-section">mon historique </h2>
+				</div>
+			</div>
+  <ul class="cards">
+    {% for livraison in livraisonshistory %}
+    <li class="card">
+      <div>
+        <h3 class="card-title">Reference :   {{ livraison.getReference() }}
+                        </h3>
+        <div class="card-content">
+         <p><strong>FraisLivraison:</strong> {{ livraison.getFraisLivraison() }}</p></br>
+                        <p><strong>PrixTotaleLivraison:</strong> {{ livraison.getPrixTotaleLivraison() }}</p></br>
+                        <p><strong>PoidLivraison:</strong> {{ livraison.getPoidLivraison() }}</p></br>
+                        <p><strong>LivraisonDate:</strong> {{ livraison.getLivraisonDate()|date('Y-m-d ') }}</p></br>
+        </div>
+      </div>
+      <div class="hor">
+       
+            <div class="text-center"> <a href="{{ path('history_details',{'id': livraison.id}) }}"  class="buy-btn">plus de details </a></div>
+          
+      </div>
+      
+    </li> 
+  <style>
+
+.text-center:hover .buy-btn {
+    color: black; /* Change text color to black when the container is hovered */
+}
+
+.text-center:hover {
+    background-color: #fff; /* Change background color of the container to white on hover */
+}
+</style>
+  {% endfor %}
+    
+    
+
+
+  </ul>
+    
+</div>
+
+   <div class="dialog-overlay" id="confirmationDialog">
+  <div class="dialog-box">
+    <p>confirmer la suppression de cette livraison de votre tournée</p>
+    <div class="dialog-buttons">
+      <button id="confirmButton">Confirm</button>
+      <button id="cancelButton" onclick="cancelAction()">Cancel</button>
+    </div>
+  </div>
+</div>
+<script>
+  // Function to show the confirmation dialog for a specific link
+  function showConfirmationDialog(linkId) {
+    var confirmationDialog = document.getElementById('confirmationDialog');
+    var link = document.getElementById(linkId);
+
+    // Show the confirmation dialog
+    confirmationDialog.style.display = 'flex';
+
+    // Store the link's href in a data attribute for later use
+    confirmationDialog.setAttribute('data-href', link.href);
+  }
+
+  // Function to handle confirmation for a specific link
+  function confirmAction() {
+    var confirmationDialog = document.getElementById('confirmationDialog');
+
+    // Get the stored href from the data attribute
+    var href = confirmationDialog.getAttribute('data-href');
+
+    // Navigate to the link's href if confirmed
+    if (href) {
+      window.location.href = href;
+    }
+  }
+
+  // Attach event listeners to each annuler button
+  {% for livraison in livraisons %}
+    document.getElementById('link{{ loop.index }}').addEventListener('click', function(event) {
+      event.preventDefault(); // Prevent the default link behavior
+      showConfirmationDialog('link{{ loop.index }}');
+    });
+  {% endfor %}
+
+  // Attach event listener to the confirm button
+  document.getElementById('confirmButton').addEventListener('click', function(event) {
+    event.preventDefault(); // Prevent the default button behavior
+    confirmAction();
+  });
+
+  // Function to cancel the action
+  function cancelAction() {
+    var confirmationDialog = document.getElementById('confirmationDialog');
+    // Hide the confirmation dialog
+    confirmationDialog.style.display = 'none';
+  }
+</script>
 	</section>
 <footer class="page-footer">
   <span>made by </span>
@@ -291,7 +348,64 @@ h2 {
     <img width="24" height="24" src="https://assets.codepen.io/162656/george-martsoukos-small-logo.svg" alt="George Martsoukos logo">
   </a>
 </footer>
+<style>
+  /* Styles for the custom dialog */
+  .dialog-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+}
 
+.dialog-box {
+  background-color: #fff;
+  border-radius: 5px;
+  padding: 20px;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+  .dialog-buttons {
+    margin-top: 20px;
+  }
+
+  /* Styling for buttons */
+  #confirmButton {
+    background-color: green;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  #confirmButton:hover {
+    background-color: darkgreen;
+  }
+
+  #cancelButton {
+    background-color: red;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  #cancelButton:hover {
+    background-color: darkred;
+  }
+</style>
    
    
 {% endblock %}

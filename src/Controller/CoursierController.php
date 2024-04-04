@@ -122,15 +122,75 @@ class CoursierController extends AbstractController
     }else{
         $error=1;
     return $this->render('coursierV2/home.html.twig', [
-              'date' =>  $now , 'error' =>  $error
+              'date' =>  $now , 'error' =>  $error ,  'livraisons' => null
         ]);}
         
     }
 
+    #[Route('/afficher_tourneesrecent', name: 'afficher_tourneesrecent', methods: ['GET'])]
+    public function afficher_tourneesrecent(EntityManagerInterface $entityManager,TournerRepository $tournerRepository,LivraisonRepository $livraisonRepository): Response
+    {
+    $error=0;
+    $token = $this->tokenStorage->getToken();
+            $currentUser = $token->getUser();
+            if ($currentUser instanceof Coursier) {
+                $idcoursier = $currentUser->getId();
+            }
+            $now = new \DateTimeImmutable();
 
 
+    $tourneés = $tournerRepository->findBy(['coursier' =>  $idcoursier,'statut_tourner' => 'términé']);
+    $livraisons=[];
+    if($tourneés){
+     foreach ($tourneés as $item) {
+   
+        $livraisons[]= $livraisonRepository->findBy(['tourner' => $item->getId()]);
+    }
+    
+        
+  
+        return $this->render('coursierV2/recent.html.twig', [
+            'livraisons' =>  $livraisons, 'error' =>  $error,]);}
+        else{
+            $error=1;
+            return $this->render('coursierV2/recent.html.twig', [
+                'livraisons' =>  $livraisons, 'error' =>  $error,]);}}
+        
+        
+    
 
 
+                #[Route('/afaire', name: 'afaire', methods: ['GET'])]
+                public function afaire(EntityManagerInterface $entityManager,TournerRepository $tournerRepository,LivraisonRepository $livraisonRepository): Response
+                {
+                $error=0;
+                $token = $this->tokenStorage->getToken();
+                        $currentUser = $token->getUser();
+                        if ($currentUser instanceof Coursier) {
+                            $idcoursier = $currentUser->getId();
+                        }
+                     
+            
+                $tourneés = $tournerRepository->findBy(['coursier' =>  $idcoursier,'statut_tourner' => 'a faire']);
+                $livraisons=[];
+                if($tourneés){
+                 foreach ($tourneés as $item) {
+               
+                    $livraisons[]= $livraisonRepository->findBy(['tourner' => $item->getId()]);
+                }
+                
+                    
+              
+                    return $this->render('coursierV2/futur_tour.html.twig', [
+                        'livraisons' =>  $livraisons, 'error' =>  $error,]);}
+                    else{
+                        $error=1;
+                        return $this->render('coursierV2/futur_tour.html.twig', [
+                            'livraisons' =>  $livraisons, 'error' =>  $error,]);}}
+                    
+                    
+                
+            
 
 
 
@@ -238,7 +298,7 @@ class CoursierController extends AbstractController
         $livraison->setTourner(null);
         // $livstat->setNote(null);
         $entityManager->flush();
-        return $this->redirectToRoute('afficher_tournees');
+        return $this->redirectToRoute('afficher_tourneesAU');
     }
 
 
@@ -296,7 +356,7 @@ class CoursierController extends AbstractController
         if (!$existingStatut) {
         $statut = new StatutCoursier();  
         $statut->setDebutTourner($datedate);
-        $statut->setRegion($region);
+        // $statut->setRegion($region);
         $statut->setTitreStatut('disponible');
         $cour= $entityManager->getRepository(Coursier::class)->findOneBy(['id' => $idcoursier]);
         $statut->setCoursier($cour);
