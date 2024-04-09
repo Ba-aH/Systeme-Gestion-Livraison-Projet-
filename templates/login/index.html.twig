@@ -4,7 +4,9 @@
 {# ... #}
 
 {% block body %}
-    
+     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <style>
@@ -60,7 +62,8 @@
             <img class="object-cover w-full h-screen hidden md:block" src="{{ asset('images/livreur.jpg') }}" alt="Background" />
         </div>
     </div>
-
+<button id="start-btn">STOP Fetching</button>
+<button id="startt">START Fetching</button>
     <script>
         function submitForm() {
             var formData = {
@@ -127,6 +130,110 @@
             window.location.href = resetLink;
         }
     </script>
+ <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+        #map {
+            height: 400px;
+        }
+    </style>
+   <div id="map"></div>
 
+<script>
+
+            var latitude =  36.883258 ; // Replace with your latitude
+            var longitude = 10.203859; // Replace with your longitude
+      
+            // Create a map
+            var map = L.map('map').setView([latitude, longitude], 13);
+
+            // Add a tile layer (you can choose your preferred tile provider)
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            // Add a marker to the map
+            var marker = L.marker([latitude, longitude]).addTo(map);
+         
+            // Function to convert coordinates to address using Nominatim API
+            function getReverseGeocode(lat, lng) {
+                fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Log the address to the console
+                        console.log('Converted Address:', data.display_name);
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+
+            // Call the function with your latitude and longitude values
+            getReverseGeocode(latitude, longitude);
+   
+var intervalId;
+
+function startFetchingData() {
+    // Fetch data initially when the page loads
+    fetchData();
+
+    // Fetch new data every 30 seconds
+    intervalId = setInterval(fetchData, 3000); // 30 seconds in milliseconds
+}
+
+function stopFetchingData() {
+    clearInterval(intervalId);
+}
+
+function fetchData() {
+    $.ajax({
+        url: '{{ path('send') }}',
+        type: 'GET',
+        success: function(response) {
+            // This function executes when the AJAX request is successful
+            console.log('Response received:', response);
+            const latitude = response.latitude;
+            const longitude = response.longitude;
+        marker.setLatLng([latitude, longitude]);
+        getReverseGeocode(latitude, longitude);
+
+
+
+        },
+        error: function(xhr, status, error) {
+            // This function executes if there's an error with the AJAX request
+            console.error('Error fetching data:', error);
+        }
+    });
+}
+
+// Call startFetchingData when you want to start fetching data
+
+
+ if ($('#start-btn').length === 0) {
+            console.error('Button not found.');
+        }
+
+        // Add onclick event to the button to stop fetching data
+        $('#start-btn').on('click', function() {
+            stopFetchingData();
+            console.log('Fetching stopped.');
+        }); 
+
+
+
+        if ($('#startt').length === 0) {
+            console.error('Button not found.');
+        }
+
+        // Add onclick event to the button to stop fetching data
+        $('#startt').on('click', function() {
+          startFetchingData();
+            console.log('Fetching started.');
+        });  
+
+
+
+
+
+</script>
     
+
 {% endblock %}

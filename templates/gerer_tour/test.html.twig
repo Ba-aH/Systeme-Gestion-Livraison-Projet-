@@ -11,7 +11,7 @@
                         </thead>
 
                         <tbody>
-                        {% for courier in couriers %}
+                        {% for courier in rr %}
                         <tr>
                             <td>{{ courier.id }}</td>
                             
@@ -31,5 +31,27 @@
                                 </tr>
                             {% endfor %}
 
-                        
+                        {{count}}
+
+   {% for liv in livs %}
+                        <tr>
+                            <td>{{ liv.id }}</td>
+                            
+                            {# <td>{{ courier.nb_livraison  }}</td> #}
+                            
+                            
+                            {# <td> <p> {{ statutLivraison.getLivraisonDate()|date('Y-m-d H:i:s') }}</p> #}
+
+                            
+                            <td>
+                            {# <a href="{{ path('/') }}">Add to his tour</a> #}
+                            </td>
+                        </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="8">no records found</td>
+                                </tr>
+                            {% endfor %}
+{{livnumber}}
+{{sal}}
                     </table>

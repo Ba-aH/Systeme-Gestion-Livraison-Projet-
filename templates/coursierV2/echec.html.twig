@@ -252,10 +252,10 @@
             <!-- Input -->
             <form method="post" action="{{ path('echecsubmit') }}" >
             <label for="newItem">donner votre propre raison:</label><br /><br />
-                <input type="text" name="newItem" placeholder="Add new reason..."style="width: 560px; height: 40px;"><br />
-              <input type="text" name="selectedres" id="selectedres">
-                <input type="text" name="selectedItem" id="selectedItem">
-                <input type="hidden" name="livraisonId" id="livraisonId" value="{{ livraisonId }}"><br />
+            <input type="text" name="newItem" placeholder="Add new reason..."style="width: 560px; height: 40px;"><br />
+            <input type="hidden" name="selectedres" id="selectedres">
+            <input type="hidden" name="selectedItem" id="selectedItem">
+            <input type="hidden" name="livraisonId" id="livraisonId" value="{{ livraisonId }}"><br />
 
                <button type="submit" class="submit-button" id="submitItemButton">confirmer</button>
                 <!-- Hidden input field to store selected item -->

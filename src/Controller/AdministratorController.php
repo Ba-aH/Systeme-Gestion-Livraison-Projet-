@@ -41,11 +41,11 @@ class AdministratorController extends AbstractController
     private $serializer;
     
 
-    public function __construct(TokenStorageInterface $tokenStorage,SerializerInterface $serializer,StatutCoursierRepository $statutCoursierRepository)
+    public function __construct(TokenStorageInterface $tokenStorage,SerializerInterface $serializer,StatutCoursierRepository $statutCoursierRepository,private ManagerRegistry $doctrine,private EntityManagerInterface $entityManager)
     {
         $this->tokenStorage = $tokenStorage;
         $this->serializer = $serializer;
-        
+        $this->doctrine = $doctrine;
     }
     
 
@@ -59,7 +59,7 @@ class AdministratorController extends AbstractController
     }
    
     #[Route('/', name: 'dashboard')]
-    public function dashboard(MercureCookieGenerator $cookieGenerator): Response
+    public function dashboard(MercureCookieGenerator $cookieGenerator,EntityManagerInterface $entityManager): Response
     {
         $token = $this->tokenStorage->getToken();
         $currentUser = $token->getUser();
@@ -67,9 +67,34 @@ class AdministratorController extends AbstractController
             if ($currentUser instanceof Administrateur) {
                 $email = $currentUser->getEmail();
             }
+            $now = new \DateTimeImmutable();
+            $month = $now->format('m'); 
+            $totale=0;
+            $revenus = $entityManager->getRepository(StatutLivraison::class)->findBy(['status_title' =>'confirmé','status_date_ajout'=>$now]);
+            foreach ($revenus as $item) {
+            $frais=$item->getLivraison()->getFraisLivraison();
+            $prix=$item->getLivraison()->getPrixTotaleLivraison();
+                $totale=$totale+$frais+$prix;
+
+            }
+
+            $commande = $entityManager->getRepository(Livraison::class)->count([]);
+            $clients = $entityManager->getRepository(Client::class)->count([]);
+          
+          $livs=$entityManager->getRepository(Livraison::class)->findBy(['livraison_date'=>$now]);
+         // Assuming YourEntity represents the table in question
+         $repository = $this->entityManager->getRepository(Coursier::class);
+
+         $query = $repository->createQueryBuilder('c');
+
+           $query->orderBy('c.id', 'DESC');
+           $query->setMaxResults(5);
+
+        $lastFiveCouriers = $query->getQuery()->getResult(); 
 
         $response = $this->render('adminv2/dashboard.html.twig',[
-            'user'=> $currentUser,
+            'user'=> $currentUser, 'clients'=> $clients ,'commande'=> $commande,'revenus'=> $totale,'recentliv'=> $livs,'lastFiveCouriers'=>  $lastFiveCouriers
+           
         ]);
         $response ->headers->set('set-cookie', $cookieGenerator->generate($this->getUser()));
         return $response;

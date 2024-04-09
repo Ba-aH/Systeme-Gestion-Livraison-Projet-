@@ -30,6 +30,7 @@ use App\Entity\Region;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use DateTime; 
+use Symfony\Component\HttpFoundation\JsonResponse;
 #[Route('/coursier')]
 class CoursierController extends AbstractController
 {
@@ -271,15 +272,15 @@ class CoursierController extends AbstractController
             $livstat->setStatusTitle('echec');
 
 
-            if ($newraison=='') {
-                $reason= $entityManager->getRepository(RaisonsEchec::class)->findOneBy(['id' => $idreason]);
-            $livstat->setRaisonEchec($reason);}
-            else{
-           $reason= new RaisonsEchec();
+            if ($newraison!='') { $reason= new RaisonsEchec();
            $reason->setRaison($newraison);
            $entityManager->persist($reason);
-           $livstat->setRaisonEchec($reason);
-            }
+           $livstat->setRaisonEchec($reason);}
+               
+            else{
+           $reason= $entityManager->getRepository(RaisonsEchec::class)->findOneBy(['id' => $idreason]);
+            $livstat->setRaisonEchec($reason);}
+            
             $livraison->setTourner(null);
         }
 
@@ -472,4 +473,67 @@ class CoursierController extends AbstractController
             return $this->redirectToRoute('profile');
         }
     
+
+
+        #[Route('/salarie', name: 'salarie')]
+        public function salarie(Request $request,TournerRepository $TournerRepository,EntityManagerInterface $entityManager): Response
+        {   $token = $this->tokenStorage->getToken();
+            $currentUser = $token->getUser();
+            if ($currentUser instanceof Coursier) {
+                $idcoursier = $currentUser->getId();
+            }
+            $coursier= $entityManager->getRepository(Coursier::class)->findOneBy(['id' => $idcoursier]);
+
+        $now = new \DateTimeImmutable();
+        $firstDayOfMonth = $now->modify('first day of this month')->setTime(0, 0, 0);
+        $lastDayOfMonth = $now->modify('last day of this month')->setTime(23, 59, 59);
+        $end = new \DateTimeImmutable();
+
+   $repository = $entityManager->getRepository(Tourner::class);
+   $tournées = $repository->createQueryBuilder('t')
+    ->where('t.coursier = :idcoursier')
+    ->andWhere('t.date BETWEEN :start AND :end')
+    ->setParameter('idcoursier', $idcoursier)
+    ->setParameter('start', $firstDayOfMonth)
+    ->setParameter('end', $end)
+    ->getQuery()
+    ->getResult();
+    $tournéesCount = count($tournées); 
+
+    $tournéesIds = [];
+    foreach ($tournées as $tournée) {
+        $tournéesIds[] = $tournée->getId(); // Assuming getId() retrieves the ID
+    }
+    $livraisons = $entityManager->getRepository(Livraison::class)->findBy(['tourner' =>$tournéesIds]);
+    // Query Livraison entities based on IDs from $tournées
+    $livCount = count($livraisons); 
+    $sal=5* $livCount;
+         
+            return  $this->render('coursierV2/wallet.html.twig',['tour'=>$tournées,'count'=>$tournéesCount,'livs'=>$livraisons
+            ,'livnumber'=>$livCount,'sal'=>$sal ,'coursier'=>$coursier]);
+
+
+
+           
+        }
+
+
+
+
+        #[Route('/send', name: 'send')]
+        public function send(Request $request): Response
+        {
+            $data = [
+                'id' => 1, // Sample ID for demonstration, replace with actual data
+                'longitude' => 9.813538, // Sample longitude, replace with actual data
+                'latitude' => 36.738884, // Sample latitude, replace with actual data
+                'timestamp' => time(), // Include timestamp if needed
+            ];
+    
+            // Return the data as JSON response
+            return new JsonResponse($data);
+        }
+
+
+
 }
