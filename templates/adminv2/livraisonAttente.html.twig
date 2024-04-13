@@ -45,26 +45,73 @@
               </table>
   </main><!-- End #main -->
 
-
+<div id="map" style="width:100%; height: 100vh"></div>
+	<script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"></script>
+	<script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
 <style> 
+  .modifier {
+      display: inline-block;
+      padding: 10px 20px;
+      text-decoration: none;
+      color: white;
+      background-color: blue;
+      border: 1px solid blue;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s, color 0.3s; /* Add transition for smooth effect */
+  }
 
-.modifier {
-    display: inline-block;
-    padding: 10px 20px;
-    text-decoration: none;
-    color: white;
-    background-color: blue;
-    border: 1px solid blue;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s; /* Add transition for smooth effect */
-}
-
-.modifier:hover {
-    background-color: white;
-    color: blue;
-}
+  .modifier:hover {
+      background-color: white;
+      color: blue;
+  }
 </style>
+<script>
+    var coordinates;
+    var map = L.map('map').setView([36.806389, 10.181667], 10);
+    var marker = L.marker([10.698813406372903, 10.698813406372903]).addTo(map);
+    mapLink = "<a href='http://openstreetmap.org'>OpenStreetMap</a>";
+    L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: 'Leaflet &copy; ' + mapLink + ', contribution', maxZoom: 18 }).addTo(map); 
+    const url = new URL('http://localhost:3000/hub');
+    url.searchParams.append('topic', 'http://monsite.com/user');
+    const eventSource = new EventSource(url);
+    eventSource.onmessage = e => { 
+        const data = JSON.parse(e.data);
+        var data2 = {
+                positionHistoryLat: data.positionHistoryLat,
+                positionHistoryLong: data.positionHistoryLong,
+                coursier: data.coursier,
+                tourner: data.tourner
+            };  
+
+            $.ajax({
+                type: 'POST',
+                url: '{{ path('addLocationHistory') }}',
+                data: data2,
+                success: function(response) {
+                    console.log('Address added successfully.');
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error adding address:', error);
+                }
+            });
+        marker.setLatLng([data.positionHistoryLat, data.positionHistoryLong]); 
+        console.log(data);
+        document.querySelector('h1').insertAdjacentHTML('afterend','<div class= "alert alert-success">Ping !</div>')
+        window.setTimeout(() => {
+            const $alert = document.querySelector('.alert')
+            $alert.parentNode.removeChild($alert)
+        }, 2000)
+
+        
+    }
+    </script>
+    
+    
+
 
   {% endblock %}
 

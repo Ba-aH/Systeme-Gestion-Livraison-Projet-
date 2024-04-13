@@ -37,10 +37,14 @@ class Tourner
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $date = null;
 
+    #[ORM\OneToMany(mappedBy: 'tourner', targetEntity: CoursierPositionHistory::class)]
+    private Collection $coursierPositionHistories;
+
     
     public function __construct()
     {
         $this->livraisons = new ArrayCollection();
+        $this->coursierPositionHistories = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -146,6 +150,36 @@ class Tourner
     public function setDate(?\DateTimeInterface $date): static
     {
         $this->date = $date;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CoursierPositionHistory>
+     */
+    public function getCoursierPositionHistories(): Collection
+    {
+        return $this->coursierPositionHistories;
+    }
+
+    public function addCoursierPositionHistory(CoursierPositionHistory $coursierPositionHistory): static
+    {
+        if (!$this->coursierPositionHistories->contains($coursierPositionHistory)) {
+            $this->coursierPositionHistories->add($coursierPositionHistory);
+            $coursierPositionHistory->setTourner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCoursierPositionHistory(CoursierPositionHistory $coursierPositionHistory): static
+    {
+        if ($this->coursierPositionHistories->removeElement($coursierPositionHistory)) {
+            // set the owning side to null (unless already changed)
+            if ($coursierPositionHistory->getTourner() === $this) {
+                $coursierPositionHistory->setTourner(null);
+            }
+        }
 
         return $this;
     }

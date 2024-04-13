@@ -25,6 +25,9 @@ services:
     App\Service\MercureCookieGenerator:
         arguments:
             $secret: '%env(MERCURE_JWT_KEY)%'
+    App\EventListener\CoursierPositionHistoryListener:
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: 'App\Entity\CoursierPositionHistory', event: postPersist }       
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

@@ -17,7 +17,7 @@
         </ol>
       </nav>
     </div><!-- End Page Title -->
-     <h2>Liste des courier disponible a {{regionAdr}} en {{dateLivraison}}</h2>
+     <h2>Liste des courier disponible a {{regionAdr.name}} en {{dateLivraison}}</h2>
       <table class="table table-hover">
                 <thead>
                   <tr>
@@ -34,7 +34,7 @@
                     <td>{{ courier.coursier.nom }}</td>
                     <td>{{ courier.coursier.prenom }}</td>
                     {% set livraisonId = app.request.query.get('livraisonId') %}
-                    <td><a href="{{ path('affectRoute', {'id': courier.coursier.id, 'livraisonId': livraisonId}) }}" class ="modifier" >Add to his tour</a></td>
+                    <td><a href="{{ path('affectRoute', {'id': courier.coursier.id, 'livraisonId': livraisonId}) }}" class ="modifier" >Ajouter à sa tournée</a></td>
                   </tr>
                  
                       {% endfor %}

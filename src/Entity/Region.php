@@ -21,9 +21,13 @@ class Region
     #[ORM\OneToMany(mappedBy: 'region', targetEntity: StatutCoursier::class)]
     private Collection $region;
 
+    #[ORM\OneToMany(mappedBy: 'region', targetEntity: Adresse::class)]
+    private Collection $adresses;
+
     public function __construct()
     {
         $this->region = new ArrayCollection();
+        $this->adresses = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -67,6 +71,36 @@ class Region
             // set the owning side to null (unless already changed)
             if ($region->getRegion() === $this) {
                 $region->setRegion(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Adresse>
+     */
+    public function getAdresses(): Collection
+    {
+        return $this->adresses;
+    }
+
+    public function addAdress(Adresse $adress): static
+    {
+        if (!$this->adresses->contains($adress)) {
+            $this->adresses->add($adress);
+            $adress->setRegion($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAdress(Adresse $adress): static
+    {
+        if ($this->adresses->removeElement($adress)) {
+            // set the owning side to null (unless already changed)
+            if ($adress->getRegion() === $this) {
+                $adress->setRegion(null);
             }
         }
 

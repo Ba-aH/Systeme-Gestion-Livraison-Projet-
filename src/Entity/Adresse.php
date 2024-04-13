@@ -28,11 +28,13 @@ class Adresse
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $zip_code = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $region = null;
+    
 
     #[ORM\ManyToOne(inversedBy: 'adresses')]
     private ?Client $client = null;
+
+    #[ORM\ManyToOne(inversedBy: 'adresses')]
+    private ?Region $region = null;
 
     public function getId(): ?int
     {
@@ -99,18 +101,6 @@ class Adresse
         return $this;
     }
 
-    public function getRegion(): ?string
-    {
-        return $this->region;
-    }
-
-    public function setRegion(?string $region): static
-    {
-        $this->region = $region;
-
-        return $this;
-    }
-
     public function getClient(): ?Client
     {
         return $this->client;
@@ -119,6 +109,18 @@ class Adresse
     public function setClient(?Client $client): static
     {
         $this->client = $client;
+
+        return $this;
+    }
+
+    public function getRegion(): ?Region
+    {
+        return $this->region;
+    }
+
+    public function setRegion(?Region $region): static
+    {
+        $this->region = $region;
 
         return $this;
     }

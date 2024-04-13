@@ -11,6 +11,7 @@ use App\Repository\TournerRepository;
 use App\Repository\ClientRepository;
 use App\Repository\LivraisonHistoryRepository;
 use App\Entity\Tourner;
+use App\Repository\RegionRepository;
 use App\Repository\StatutCoursierRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\Id;
@@ -90,7 +91,7 @@ class GererTourController extends AbstractController
 
 
 #[Route('/available/couriers/{id}', name: 'app_couriers', methods: ['GET'])]
-public function show(Request $request,LivraisonRepository $livraisonRepository, ClientRepository $clientRepository,AdresseRepository $adresseRepository,StatutCoursierRepository $statutCoursierRepository,CoursierRepository $coursierRepository,$id): Response
+public function show(Request $request,RegionRepository $regionRepository,LivraisonRepository $livraisonRepository, ClientRepository $clientRepository,AdresseRepository $adresseRepository,StatutCoursierRepository $statutCoursierRepository,CoursierRepository $coursierRepository,$id): Response
 {
     // $client = $clientRepository->findBy();
     $livraisonId = $request->get('livraisonId');
@@ -106,13 +107,14 @@ public function show(Request $request,LivraisonRepository $livraisonRepository, 
  
     $livraison = $livraisonRepository->findOneBy(['id'=>$livraisonId]);
     $idaddress=$livraison->getAddressId();
-    $adr = $adresseRepository->findBy(['id' => $idaddress]);
-    $regionAdr = $adr[0]->getRegion();
+    $adr = $adresseRepository->findOneBy(['id' => $idaddress]);
 
-    $dateLivraison = $livraison->getLivraisonDate();
+    $regionAdr = $adr->getRegion();
+
+    $dateLivraison = $livraison->getLivraisonDate(['id' => $idaddress]);
     $dateLivrFormatted = $dateLivraison->format('Y-m-d');
     
-    $coursierDispo = $statutCoursierRepository->findBy(['region' => $regionAdr,'titre_statut' => 'disponible','debut_tourner'=>$dateLivraison]);
+    $coursierDispo = $statutCoursierRepository->findBy(['region'=> $regionAdr,'titre_statut' => 'disponible','debut_tourner'=>$dateLivraison]);
     
     return $this->render('adminv2/coursierDisponible.html.twig', [
         'couriers' => $coursierDispo,

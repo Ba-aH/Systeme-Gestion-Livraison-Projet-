@@ -38,9 +38,11 @@ class Coursier  implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $email = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['read'])] 
     private ?string $nom = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['read'])] 
     private ?string $prenom = null;
 
     #[ORM\Column(length: 255)]

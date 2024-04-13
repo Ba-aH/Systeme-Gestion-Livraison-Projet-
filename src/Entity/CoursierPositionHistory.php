@@ -26,6 +26,9 @@ class CoursierPositionHistory
     #[ORM\ManyToOne(inversedBy: 'coursierPositionHistories')]
     private ?Coursier $coursier = null;
 
+    #[ORM\ManyToOne(inversedBy: 'coursierPositionHistories')]
+    private ?Tourner $tourner = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -75,6 +78,18 @@ class CoursierPositionHistory
     public function setCoursier(?Coursier $coursier): static
     {
         $this->coursier = $coursier;
+
+        return $this;
+    }
+
+    public function getTourner(): ?Tourner
+    {
+        return $this->tourner;
+    }
+
+    public function setTourner(?Tourner $tourner): static
+    {
+        $this->tourner = $tourner;
 
         return $this;
     }
