@@ -360,9 +360,7 @@ class CoursierController extends AbstractController
             $status = $statutCoursierRepository->findBy(['coursier' => $idcoursier,'titre_statut' => 'disponible']);
            
            
-            return $this->render('coursierV2/disponibilté.html.twig', [
-                'status' =>   $status,'error'=>   $error
-            ]);
+            return $this->redirectToRoute('disponibilté',['error' => $error]);
 
         }else{
         if (!$existingStatut) {
@@ -385,8 +383,12 @@ class CoursierController extends AbstractController
             return $this->render('coursierV2/disponibilté.html.twig', [
                 'status' =>   $status,'error'=>   $error
             ]);
+        }else{
+            $error=1;
+            return $this->redirectToRoute('disponibilté',['error' => $error]);
         }}
-            
+               
+        
     }
 
     #[Route('/annulerstatut/{id}', name: 'annulerstatut', methods: ['POST'])]

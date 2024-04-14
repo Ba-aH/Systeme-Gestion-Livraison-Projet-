@@ -195,20 +195,20 @@ public function show(Request $request,RegionRepository $regionRepository,Livrais
         // $datess= $livraison->getLivraisonDate();
     }
     
-    #[Route('/available/couriers/{id}', name: 'app_courier_tour', methods: ['GET'])]
-    public function showCoursierTour(Request $request,LivraisonRepository $livraisonRepository,TournerRepository $tournerRepository,CoursierRepository $coursierRepository,$id, AdresseRepository $adresseRepository): Response
-    {
-        $coursier=$tournerRepository->findBy(['coursier' => $id]);
-        $coursierTour = $tournerRepository->findBy(['coursier_id' => $id]);
-        $livraisons=[];
-        foreach($coursierTour as $item){
-            $livraisons[] = $item->getLivraisons();
-        }
-        return $this->render('gerer_tour/index.html.twig', [
-            'livraisons' => $livraisons, 
-            'couriers' => $coursier, 
-        ]);
-    }
+    // #[Route('/available/couriers/{id}', name: 'app_courier_tour', methods: ['GET'])]
+    // public function showCoursierTour(Request $request,LivraisonRepository $livraisonRepository,TournerRepository $tournerRepository,CoursierRepository $coursierRepository,$id, AdresseRepository $adresseRepository): Response
+    // {
+    //     $coursier=$tournerRepository->findBy(['coursier' => $id]);
+    //     $coursierTour = $tournerRepository->findBy(['coursier_id' => $id]);
+    //     $livraisons=[];
+    //     foreach($coursierTour as $item){
+    //         $livraisons[] = $item->getLivraisons();
+    //     }
+    //     return $this->render('gerer_tour/index.html.twig', [
+    //         'livraisons' => $livraisons, 
+    //         'couriers' => $coursier, 
+    //     ]);
+    // }
 
         #[Route('/history', name: 'history')]
         public function history(Request $request,EntityManagerInterface $entityManager,LivraisonHistoryRepository $livraisonHistoryRepository,LivraisonRepository $livraisonRepository,AdresseRepository $adresseRepository,ClientRepository $clientRepository,CoursierRepository $coursierRepository): Response
