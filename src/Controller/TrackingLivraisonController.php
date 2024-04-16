@@ -177,11 +177,20 @@ class TrackingLivraisonController extends AbstractController{
         
             $tourID= $tour->getId();
             $livraisons=$livraisonRepository->findBy(['tourner' =>$tourID]);
-
+            $warehouseAdded = false;
             foreach ($livraisons as $livraison) {
                 $adrID= $livraison->getAddressId();
                 $adrClient=$adresseRepository->findOneBy(['id' =>$adrID]);
                 $warehouse= $warehouseRepository->findOneBy(['region'=>$adrClient->getRegion()]);
+                if (!$warehouseAdded) {
+                    $data[] = [
+                        'warehouse' => [
+                            'latitude' => $warehouse->getLatitude(),
+                            'longtitude' => $warehouse->getLongitude(),
+                        ],
+                    ];
+                    $warehouseAdded = true; 
+                }
             $data[] = [
                 'client' => [
                     'cl' => $livraison->getClient()->getEmail(),
@@ -189,13 +198,9 @@ class TrackingLivraisonController extends AbstractController{
                     'longtitude' => $adrClient->getLongitude(),
                 ],
             ];
+            
         }
-        $data[] = [
-            'warehouse' => [
-                'latitude' => $warehouse->getLatitude(),
-                'longtitude' => $warehouse->getLongitude(),
-            ],
-        ];
+        
         
         
         return $this->json($data);

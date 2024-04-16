@@ -421,6 +421,13 @@ class AdministratorController extends AbstractController
             'coursiers' => $coursierRepository->findAll(),
         ]);
     }
+
+    #[Route('/tarcking/couriers', name: 'trackCoursier')]
+    public function trackCoursier(): Response
+    {
+        
+        return $this->render('adminv2/suivieTours.html.twig');
+    }
 //     #[Route('/history', name: 'history')]
 //     public function history(EntityManagerInterface $entityManager,LivraisonHistoryRepository $LivraisonHistoryRepository): Response
 //     {
