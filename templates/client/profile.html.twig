@@ -220,34 +220,49 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                           </div> <div id="map-container">
-    <div id="map"></div>
-  </div>
+                                           </div> 
+                                                <div id="map-container">
+                                                    <div id="map"></div>
+                                                </div>
+                                            <div class="row">
+                                                <div class="col d-flex justify-content-end">
+                                                    <button class="btn btn-primary" type="submit">Save Changes</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                        <form id="myForm2" class="form2" method="POST" action="{{ path('changePassword_client') }}" onsubmit="updateFormAction2(event)">
                                             <div class="mb-2"><b>Change Password</b></div>
                                             <div class="row">
                                                 <div class="col">
                                                     <div class="row">
-                                                    
+
                                                         <div class="col">
                                                             <div class="form-group">
-                                                                <label>New Password</label>
-                                                                <input class="form-control" type="password" placeholder="•••••••••">
+                                                                <label for="new-password">New Password</label>
+                                                                <input name="password" id="new-password" class="form-control" type="password" placeholder="•••••••••">
                                                             </div>
                                                         </div>
+
                                                         <div class="col">
                                                             <div class="form-group">
-                                                                <div class="form-group">
-                                                                <label>Confirm <span class="d-none d-xl-inline">Password</span></label>
-                                                                <input class="form-control" type="password" placeholder="•••••••••">
+                                                                <label for="confirm-password">Confirm <span class="d-none d-xl-inline">Password</span></label>
+                                                                <input name="renewPassword" id="confirm-password" class="form-control" type="password" placeholder="•••••••••">
                                                             </div>
+                                                        </div>
+
+                                                        <div class="align-self-end"> 
+                                                            <div class="form-group text-right"> 
+                                                              <div id="error-message" class="alert alert-danger d-none" role="alert"></div>
+                                                              {% if error == 1 %}
+                       
+    <div class="alert alert-danger" role="alert">
+       <p>les deux champs doivent correspondre.  </p>
+    </div>    {% endif %}
+                                                                  <button type="submit" class="btn btn-primary">Changer mot de passe</button>
+                                                               
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col d-flex justify-content-end">
-                                                    <button class="btn btn-primary" type="submit">Save Changes</button>
                                                 </div>
                                             </div>
                                         </form>

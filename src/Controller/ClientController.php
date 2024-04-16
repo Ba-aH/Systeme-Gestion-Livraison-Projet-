@@ -12,7 +12,6 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use App\Repository\LivraisonRepository;
 use App\Repository\StatutLivraisonRepository;
 use App\Repository\CoursierRepository;
-use App\Repository\RegionRepository;
 use App\Repository\TournerRepository;
 use App\Repository\ColisRepository;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
@@ -27,7 +26,6 @@ use App\Entity\Tourner;
 use App\Entity\StatutCoursier;
 use App\Entity\StatutLivraison;
 use App\Entity\Livraison;
-use App\Entity\Region;
 use DateTime; 
 use App\Repository\ClientRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -303,7 +301,7 @@ public function history(Request $request,EntityManagerInterface $entityManager,L
     }
 
     #[Route('/profile', name: 'clientProfile')]
-        public function profile(AdresseRepository $adresseRepository,RegionRepository $RegionRepository): Response
+        public function profile(AdresseRepository $adresseRepository): Response
         {
             $token = $this->tokenStorage->getToken();
             $currentUser = $token->getUser();
@@ -311,12 +309,12 @@ public function history(Request $request,EntityManagerInterface $entityManager,L
                 $dateAjout = $currentUser->getDateAjout()->format('Y-m-d');
                 $adresses=$adresseRepository->findBy(['client'=>$currentUser->getId()]);
             }
-            $regions=$RegionRepository->findAll();
+            
 
             return $this->render('client/profile.html.twig', [
                 'user' =>  $currentUser,
                 'dateAjout' =>  $dateAjout,
-                'adresses' => $adresses,'regions' => $regions
+                'adresses' => $adresses,
             ]);
         }
 
@@ -364,11 +362,11 @@ public function history(Request $request,EntityManagerInterface $entityManager,L
             $ville = $request->request->get('ville');
             $region = $request->request->get('region');
             $zip = $request->request->get('zipcode');
-            $reg = $entityManager->getRepository(Region::class)->findOneBy(['id' =>  $region]);
+
             if (!empty($address)) {
                 $adr = new Adresse();
                 $adr->setVille($ville);
-                $adr->setRegion($reg);
+                $adr->setRegion($region);
                 $adr->setFormattedAddress($address);
                 $adr->setZipCode($zip);
                 if ($currentUser instanceof Client) {
