@@ -120,7 +120,10 @@ class CoursierController extends AbstractController
     if($tourneé){
         $livraisons= $livraisonRepository->findBy(['tourner' => $tourneé->getId()]);
         return $this->render('coursierV2/home.html.twig', [
-            'livraisons' =>  $livraisons,    'date' =>  $now ,'error' =>  $error
+            'livraisons' =>  $livraisons,
+            'tour' =>  $tourneé->getId(),
+            'date' =>  $now ,
+            'error' =>  $error
         ]);
         
     }else{
