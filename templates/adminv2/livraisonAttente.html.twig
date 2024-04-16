@@ -2,7 +2,9 @@
  {% block body %}
 
 <body>
-
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <!-- Include Leaflet Routing Machine CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
  
 
   <main id="main" class="main">
@@ -69,12 +71,53 @@
       color: blue;
   }
 </style>
+ <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <!-- Include Leaflet Routing Machine JS -->
+  <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+
 <script>
     var coordinates;
     var map = L.map('map').setView([36.806389, 10.181667], 10);
-    var marker = L.marker([10.698813406372903, 10.698813406372903]).addTo(map);
+    var marker = L.marker([36.86014, 10.19347]).addTo(map);
     mapLink = "<a href='http://openstreetmap.org'>OpenStreetMap</a>";
     L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: 'Leaflet &copy; ' + mapLink + ', contribution', maxZoom: 18 }).addTo(map); 
+  var routeControl = L.Routing.control({
+            waypoints: [
+                L.latLng(36.86014, 10.19347), // First coordinate
+           
+                L.latLng(37.118716, 10.005798)
+            ]
+        }).addTo(map);
+         function calculateDistance(pointA, pointB) {
+         return pointA.distanceTo(pointB);
+    }
+  function updateVehicleLocation(newLat,newLng) {
+    var newCoordinates = L.latLng(newLat, newLng);
+
+      marker.setLatLng(newCoordinates);
+
+      
+      routeControl.setWaypoints([
+        newCoordinates,
+        L.latLng(37.118716, 10.005798)
+      ]);
+
+        var currentLocation = marker.getLatLng();
+      var destinationLocation = L.latLng(37.118716, 10.005798);
+      var distance = calculateDistance(currentLocation, destinationLocation);
+
+      if (distance < 100) {
+
+
+           
+        alert("Vehicle is less than 100 meters away from the destination!"+distance);
+
+
+      }
+      
+    }
+
+
     const url = new URL('http://localhost:3000/hub');
     url.searchParams.append('topic', 'http://monsite.com/user');
     const eventSource = new EventSource(url);
@@ -98,7 +141,8 @@
                     console.error('Error adding address:', error);
                 }
             });
-        marker.setLatLng([data.positionHistoryLat, data.positionHistoryLong]); 
+              updateVehicleLocation(data.positionHistoryLat, data.positionHistoryLong); 
+        // marker.setLatLng([data.positionHistoryLat, data.positionHistoryLong]); 
         console.log(data);
         document.querySelector('h1').insertAdjacentHTML('afterend','<div class= "alert alert-success">Ping !</div>')
         window.setTimeout(() => {
