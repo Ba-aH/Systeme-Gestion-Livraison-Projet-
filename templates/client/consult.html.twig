@@ -1,8 +1,10 @@
 {% extends 'index.html.twig' %}
 {% block body %}
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" />
-	<link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
 
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <!-- Include Leaflet Routing Machine CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
 
 <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,700' rel='stylesheet' type='text/css'>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -33,7 +35,19 @@
   
     padding: 20px;
   }
+.not{
+ width: 80%;
+    margin: 50px auto;
+    background-color: #d2f8d2;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    display: flex;
+     justify-content: center;
+  align-items: center;
+       margin-bottom: 60px; 
 
+}
   .section {
   width: 80%;
     margin: 50px auto;
@@ -295,11 +309,12 @@ h2 {
       <p>{{ stat.getStatusTitle() }}</p>
     </div>
    
-  </div>
+  </div class="mapplace">
+  <div>
 <div class="containermap">
  <h2>suivie commande :</h2>
     <div id="map"></div>
-</div>
+</div></div>
 
 <style>
     .containermap {
@@ -311,7 +326,7 @@ h2 {
     }
 
     #map {
-        width: 60%;
+        width: 90%;
         height: 70vh;
     }
 </style>
@@ -379,11 +394,11 @@ h2 {
     
     <div class="infot">
       <label>Longitude:</label>
-      <p>{{ address.getLongitude()}}</p>
+      <p id="longclient">{{ address.getLongitude()}}</p>
     </div>
    <div class="infot">
       <label>Latitude:</label>
-      <p>{{ address.getLatitude()}}</p>
+      <p id="latitudeclient">{{ address.getLatitude()}}</p>
     </div>
     <div class="infot">
       <label>Region:</label>
@@ -399,26 +414,83 @@ h2 {
 
 
    </div>
-<script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"></script>
-	<script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
-  <script>
-var coordinates;
-var map = L.map('map').setView([36.86012, 10.19337], 11);
-        mapLink = "<a href='http://openstreetmap.org'>OpenStreetMap</a>";
-        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: 'Leaflet &copy; ' + mapLink + ', contribution', maxZoom: 18 }).addTo(map);
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <!-- Include Leaflet Routing Machine JS -->
+  <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
 
-        var marker1 = L.marker([36.86012, 10.19337],).addTo(map);
-        var marker2 = L.marker([36.92125234021674    ,  10.167224446625106]).addTo(map); // Initialize the second marker at the same position
-        var movingMarker = L.marker([36.86012, 10.19337]).addTo(map);
+<script>
+const a =  parseFloat(document.getElementById('longclient').textContent);
+const b =  parseFloat(document.getElementById('latitudeclient').textContent);
 
- 
-		var routeControl = L.Routing.control({
+    var coordinates;
+    var map = L.map('map').setView([36.806389, 10.181667], 10);
+    var marker = L.marker([36.86014, 10.19347]).addTo(map);
+    mapLink = "<a href='http://openstreetmap.org'>OpenStreetMap</a>";
+    L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: 'Leaflet &copy; ' + mapLink + ', contribution', maxZoom: 18 }).addTo(map); 
+  var routeControl = L.Routing.control({
     waypoints: [
-        L.latLng(36.86012, 10.19337),
-        L.latLng(36.92125234021674, 10.167224446625106)
-    ]
-}).addTo(map);
+                L.latLng(36.86014, 10.19347), // First coordinate
+           
+                L.latLng(a,b)
+            ]
+        }).addTo(map);
+   
+  function updateVehicleLocation(newLat,newLng) {
+    var newCoordinates = L.latLng(newLat, newLng);
+
+      marker.setLatLng(newCoordinates);
+
+      
+      routeControl.setWaypoints([
+        newCoordinates,
+        L.latLng(a, b)
+      ]);
+  var distance;
+        var currentLocation = marker.getLatLng();
+      var destinationLocation = L.latLng(37.118716, 10.005798);
+      routeControl.on('routesfound', function(e) {
+        
+    var route = e.routes[0]; // Get the first route (assuming only one route is found)
+     distance = route.summary.totalDistance; // Access the total distance of the route in meters
+    console.log('Route Distance:', distance, 'meters');
+            console.log('aaaaaaaaaaaaaaaa'+distance);
+var distanceNumber = parseFloat(distance);
+
+const containermap = document.querySelector('.containermap');
 
 
-</script>
+ containermap.insertAdjacentHTML('afterend', '<div id="not" class="not">votre commande est à ' + distanceNumber/1000 + ' Km</div>');
+
+     if(distanceNumber<50000){
+document.querySelector('h1').insertAdjacentHTML('afterend','<div id="not" class= "alert alert-success">votre commande est à 100 mètres</div>');
+  }
+
+});
+
+
+
+  
+
+    }
+
+
+    const url = new URL('http://localhost:3000/hub');
+    url.searchParams.append('topic', 'http://monsite.com/user');
+    const eventSource = new EventSource(url);
+    eventSource.onmessage = e => { 
+        const data = JSON.parse(e.data);
+        var data2 = {
+                positionHistoryLat: data.positionHistoryLat,
+                positionHistoryLong: data.positionHistoryLong,
+                coursier: data.coursier,
+                tourner: data.tourner
+            };  
+              updateVehicleLocation(data.positionHistoryLat, data.positionHistoryLong); 
+
+        // marker.setLatLng([data.positionHistoryLat, data.positionHistoryLong]); 
+        console.log(data);
+        
+        
+    }
+    </script>
 {% endblock %}
