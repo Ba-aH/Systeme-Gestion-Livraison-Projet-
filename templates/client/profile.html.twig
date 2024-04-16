@@ -1,8 +1,6 @@
 {% extends 'index.html.twig' %}
 {% block body %}
-
 <head>
-
 <meta charset="utf-8">
 <title>Profile</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -115,7 +113,6 @@
                                                             </div>
                                                         </div>
                                                     </div>
-
                                                     <div class="mb-2"><b>Vos Adresses</b></div>
                                                     {% for adresse in adresses %}
                                                     <div class="row">
@@ -141,13 +138,14 @@
                                                                 <label>Region</label>
                                                                 <div class="input-group">
 
- 
+
 
 
                                                                     <input id="regionInput{{ loop.index }}" class="form-control" type="text"   value="{{adresse.region.name}}" readonly>                      
                                                                 </div>
                                                             </div>
                                                         </div>
+
                                                           <div class="col">
                                                             <div class="form-group">
                                                                 <label>code postale</label>
@@ -156,15 +154,12 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-
-
                                                         <a class="btn-btn-danger" href="{{ path('delete-adresse', {'id': adresse.id}) }}">
                                                             <i class="fa fa-delete"></i>
                                                             <span>Delete</span>
                                                         </a>      
                                                     </div>
                                                     {% endfor %}
-
                                                     <div class="row">
                                                         <div class="col d-flex justify-content-end">
                                                             <button class="btn btn-primary" id="addAddressBtn" type="button">Add Address</button>
@@ -183,8 +178,8 @@
                                                             <label>Region</label>
                                                               <select id="newRegionInput" class="form-control" type="text" placeholder="Enter region" >
     {% for reg in regions %}
-                     
-                        
+
+
   <option value="{{reg.id}}">{{reg.name}}</option>
    {% endfor %}
 </select>
@@ -192,13 +187,19 @@
                                                         </div>
                                                            <div class="form-group">
                                                             <label>code postale</label>
+
+    
+          
+            
+    
+
+          
+          Expand Down
+    
+    
+  
                                                             <input id="zipcodeInput" class="form-control" type="text" placeholder="Enter zip code">
                                                         </div>
-
-
-
-
-
                                                      
                                     <div class="form-group">
                                                             <label>latitude</label>
@@ -211,11 +212,6 @@
                                                        
                                                            
                                                      
-
-
-
-
-
                                                         <button class="btn btn-primary" type="button" id="saveAddressBtn" action="{{ path('ajout-adresse', {'adresse': 'default', 'ville': 'default', 'region':'default'}) }}">Save Address</button>
                                                     </div>
                                                 </div>
@@ -272,12 +268,10 @@
             </div>
         </div>
     </div>
-
 <style>
 .d-none {
     display: none !important;
 }
-
 .btn-btn-danger {
     margin-top: 30.5px; 
     height: 40px;
@@ -292,36 +286,29 @@
     cursor: pointer; 
     text-decoration: none; /* Remove underline */
 }
-
 .btn-btn-danger:hover {
     background-color: darkred; 
     color: white; 
     text-decoration: none;
 }
-
 .btn-btn-danger:focus {
     outline: none; 
 }
-
 </style>
 <script>
    document.addEventListener("DOMContentLoaded", function() {
-
     document.getElementById('editUsernameBtn').addEventListener('click', function() {
             toggleEditMode('usernameInput');
         });
-
         document.getElementById('editNomBtn').addEventListener('click', function() {
             toggleEditMode('nomInput');
         });
-
         document.getElementById('editPrenomBtn').addEventListener('click', function() {
             toggleEditMode('prenomInput');
         });
         document.getElementById('editPhoneBtn').addEventListener('click', function() {
             toggleEditMode('phoneInput');
         });
-
        /* document.getElementById('editAdresseBtn').addEventListener('click', function() {
             toggleEditMode('adresseInput');
         });*/
@@ -337,7 +324,6 @@
             toggleEditMode('adresseInput' + index);
         });
     });
-
     var editButtons = document.querySelectorAll('.editVilleBtn');
     editButtons.forEach(function(button) {
         button.addEventListener('click', function() {
@@ -345,7 +331,6 @@
             toggleEditMode('villeInput' + index);
         });
     });
-
     var editButtons = document.querySelectorAll('.editRegionBtn');
     editButtons.forEach(function(button) {
         button.addEventListener('click', function() {
@@ -353,11 +338,9 @@
             toggleEditMode('regionInput' + index);
         });
     });
-
     function toggleEditMode(inputId) {
         var inputField = document.getElementById(inputId);
         var editButton = document.getElementById('edit' + inputId.charAt(0).toUpperCase() + inputId.slice(1) + 'Btn');
-
         if (inputField.readOnly) {
             inputField.readOnly = false;
             editButton.textContent = 'Save';
@@ -373,25 +356,21 @@
         var nom = document.getElementById('nomInput').value;
         var prenom = document.getElementById('prenomInput').value;
         var phone = document.getElementById('phoneInput').value;
-
         var addresses = [];
         var addressInputs = document.querySelectorAll('[id^="adresseInput"]');
         addressInputs.forEach(function(input) {
             addresses.push(input.value);
         });
-
         var ids = [];
         var idsInputs = document.querySelectorAll('[id^="idInput"]');
         idsInputs.forEach(function(input) {
             ids.push(input.value);
         });
-
         var adrs = "";
         addresses.forEach(function(address, index) {
             // concatenate each address with its corresponding ID
             adrs += "&adresse&id=" + ids[index] + "=" + address;
         });
-
         console.log(adrs);
         
         document.getElementById('myForm').action = "{{ path('update_client_profile', {'nom': ''}) }}" + nom + "&prenom=" + prenom+"&username=" +username+"&phone=" +phone;
@@ -402,7 +381,6 @@
             // toggle visibility of the form
             document.getElementById('addAddressForm').style.display = 'block';
         });
-
         document.getElementById('saveAddressBtn').addEventListener('click', function() {
             // get values from the form
             var address = document.getElementById('newAddressInput').value;
@@ -415,7 +393,6 @@
                 region: region,
                 zipcode: zipcode
             };  
-
             $.ajax({
                 type: 'POST',
                 url: '{{ path('ajout-adresse') }}',
@@ -432,7 +409,6 @@
             document.getElementById('newAddressInput').value = '';
             document.getElementById('newVilleInput').value = '';
             document.getElementById('newRegionInput').value = '';
-
             // hide the form after saving
             document.getElementById('addAddressForm').style.display = 'none';
         });
@@ -443,16 +419,12 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.1/dist/js/bootstrap.bundle.min.js"></script>
 <script type="text/javascript"></script>
 </body>
-
-
-
  <script>
     document.addEventListener('DOMContentLoaded', function () {
       var map = L.map('map').setView([51.505, -0.09], 13);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
       }).addTo(map);
-
       var marker = null; // Initialize marker variable
       
       function onMapClick(e) {
@@ -464,15 +436,12 @@
         } else {
           marker = L.marker(location).addTo(map); // Add marker if it doesn't exist
         }
-
         marker.bindPopup('You clicked at ' + location.toString()).openPopup(); 
         console.log('Clicked Coordinates:', location);
         latitudeInput.value = location.lat.toFixed(6); // Set latitude with 6 decimal places
         longitudeInput.value = location.lng.toFixed(6); // Set longitude with 6 decimal places
       }
-
       map.on('click', onMapClick); // Add click event listener to the map
-
       var geocoder = L.Control.geocoder({
         defaultMarkGeocode: false,
       })
@@ -485,13 +454,11 @@
         } else {
           marker = L.marker(location).addTo(map); // Add marker if it doesn't exist
         }
-
         marker.bindPopup(address).openPopup(); // Show the full address as a popup
         console.log('Coordinates:', location);
         console.log('Addresssssss:', address);
       })
       .addTo(map);
-
       map.addControl(geocoder); // Add the geocoding control to the map
     });
   </script>
@@ -500,7 +467,6 @@
   ></script>
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   
-
     <style>
     /* Style the map container */
     #map-container {
@@ -511,7 +477,6 @@
       width: 600px;
       margin: 0 auto; /* Center the container horizontally */
     }
-
     /* Style the map itself */
     #map {
       height: 100%;
@@ -520,7 +485,6 @@
   </style>
   
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-
   <link
      rel="stylesheet"
      href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css"

@@ -26,6 +26,7 @@ use App\Entity\Tourner;
 use App\Entity\StatutCoursier;
 use App\Entity\StatutLivraison;
 use App\Entity\Livraison;
+use App\Entity\Region;
 use DateTime; 
 use App\Repository\ClientRepository;
 use App\Repository\RegionRepository;
@@ -363,11 +364,11 @@ public function history(Request $request,EntityManagerInterface $entityManager,L
             $ville = $request->request->get('ville');
             $region = $request->request->get('region');
             $zip = $request->request->get('zipcode');
-
+            $reg = $entityManager->getRepository(Region::class)->findOneBy(['id' =>  $region]);
             if (!empty($address)) {
                 $adr = new Adresse();
                 $adr->setVille($ville);
-                $adr->setRegion($region);
+                $adr->setRegion($reg);
                 $adr->setFormattedAddress($address);
                 $adr->setZipCode($zip);
                 if ($currentUser instanceof Client) {
