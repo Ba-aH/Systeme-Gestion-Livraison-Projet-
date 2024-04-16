@@ -301,7 +301,7 @@ public function history(Request $request,EntityManagerInterface $entityManager,L
     }
 
     #[Route('/profile', name: 'clientProfile')]
-        public function profile(AdresseRepository $adresseRepository): Response
+        public function profile(AdresseRepository $adresseRepository,RegionRepository $RegionRepository): Response
         {
             $token = $this->tokenStorage->getToken();
             $currentUser = $token->getUser();
@@ -309,12 +309,12 @@ public function history(Request $request,EntityManagerInterface $entityManager,L
                 $dateAjout = $currentUser->getDateAjout()->format('Y-m-d');
                 $adresses=$adresseRepository->findBy(['client'=>$currentUser->getId()]);
             }
-            
+            $regions=$RegionRepository->findAll();
 
             return $this->render('client/profile.html.twig', [
                 'user' =>  $currentUser,
                 'dateAjout' =>  $dateAjout,
-                'adresses' => $adresses,
+                'adresses' => $adresses,'regions' => $regions
             ]);
         }
 
