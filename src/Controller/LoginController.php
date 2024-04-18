@@ -58,7 +58,7 @@ class LoginController extends AbstractController
         $error = $authenticationUtils->getLastAuthenticationError();
         
         if ($currentUser instanceof Client) {
-            return $this->redirectToRoute('clientProfile');
+            return $this->redirectToRoute('appClient_index');
         }
         if ($currentUser instanceof Coursier) {
             return $this->redirectToRoute('coursierProfile');

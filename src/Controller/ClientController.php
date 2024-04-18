@@ -415,7 +415,21 @@ public function history(Request $request,EntityManagerInterface $entityManager,L
 
         #[Route('', name: 'ClinetIndex')]
         public function index(): Response
-        {     
-            return $this->render('client/index.html.twig');     
+        {      
+            $token = $this->tokenStorage->getToken();
+            $currentUser = $token->getUser();
+            return $this->render('client/index.html.twig', [
+                'user' =>  $currentUser
+            ]);     
+        }
+
+        #[Route('/clientheader', name: 'clientheader')]
+        public function clientheader(): Response
+        {      
+            $token = $this->tokenStorage->getToken();
+            $currentUser = $token->getUser();
+            return $this->render('clientHeader.html.twig', [
+                'user' =>  $currentUser
+            ]);     
         }
 }
