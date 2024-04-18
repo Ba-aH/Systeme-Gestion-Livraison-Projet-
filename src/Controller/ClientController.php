@@ -7,7 +7,7 @@ use App\Entity\Colis;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use App\Entity\Coursier;
 use App\Entity\Client;
-
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use App\Repository\LivraisonRepository;
 use App\Repository\StatutLivraisonRepository;
@@ -52,23 +52,7 @@ class ClientController extends AbstractController
         
     }
     
-
-   
-
-
-
-    #[Route('', name: 'ClinetIndex')]
-    public function index(): Response
-    {     
-        return $this->render('client/home.html.twig');
-        
-    }
-
-
-
-
-    
-    #[Route('/afficher_livraisons', name: 'afficher_livraisons', methods: ['GET'])]
+    #[Route('/mes-livraisons', name: 'afficher_livraisons', methods: ['GET'])]
     public function afficher_livraisons(Request $request ,LivraisonHistoryRepository $livraisonHistoryRepository,EntityManagerInterface $entityManager,TournerRepository $tournerRepository,LivraisonRepository $livraisonRepository): Response
     {     
         $token = $this->tokenStorage->getToken();
@@ -303,7 +287,7 @@ public function history(Request $request,EntityManagerInterface $entityManager,L
     }
 
     #[Route('/profile', name: 'clientProfile')]
-        public function profile(AdresseRepository $adresseRepository,RegionRepository $RegionRepository): Response
+        public function profile(Request $request,AdresseRepository $adresseRepository,RegionRepository $RegionRepository): Response
         {
             $token = $this->tokenStorage->getToken();
             $currentUser = $token->getUser();
@@ -312,11 +296,13 @@ public function history(Request $request,EntityManagerInterface $entityManager,L
                 $adresses=$adresseRepository->findBy(['client'=>$currentUser->getId()]);
             }
             $regions=$RegionRepository->findAll();
-
+            $error = $request->query->get('error', 0);
             return $this->render('client/profile.html.twig', [
                 'user' =>  $currentUser,
                 'dateAjout' =>  $dateAjout,
-                'adresses' => $adresses,'regions' => $regions
+                'adresses' => $adresses,
+                'error'=> $error,
+                'regions' => $regions
             ]);
         }
 
@@ -393,4 +379,43 @@ public function history(Request $request,EntityManagerInterface $entityManager,L
             return $this->redirectToRoute('clientProfile');
         }
 
+        #[Route('/changePassword_client', name: 'changePassword_client',methods: ['POST'])]
+        public function ChangeAdminPassword(Request $request,UserPasswordHasherInterface $userPasswordHasher,  EntityManagerInterface $entityManager, ClientRepository $clientRepository): Response
+        {
+           
+                $token = $this->tokenStorage->getToken();
+                $currentUser = $token->getUser();
+                
+                if ($currentUser instanceof Client) {
+                    $dateAjout = $currentUser->getDateAjout()->format('Y-m-d');
+                    $id = $currentUser->getId();
+                    $user =$clientRepository->findOneBy(['id' => $id]);
+                    $password = $request->get('password');
+                    $cpassword= $request->get('renewPassword');
+                    if ($password==$cpassword){
+                        $user->setPassword(
+                            $userPasswordHasher->hashPassword(
+                                $user,
+                                $password
+                            )
+                        );
+                        $entityManager->persist($user);
+                        $entityManager->flush();
+                        return $this->redirectToRoute('clientProfile');
+                    }
+                    else{
+                        return $this->redirectToRoute('clientProfile', ['error' => 1]);
+                    }
+                }   
+            
+    
+    
+            return $this->redirectToRoute('clientProfile');
+        }
+
+        #[Route('', name: 'ClinetIndex')]
+        public function index(): Response
+        {     
+            return $this->render('client/index.html.twig');     
+        }
 }
