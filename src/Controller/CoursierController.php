@@ -104,9 +104,11 @@ class CoursierController extends AbstractController
 
 
     #[Route('/afficher_tourneesAU', name: 'afficher_tourneesAU', methods: ['GET'])]
-    public function afficher_tourneesAU(EntityManagerInterface $entityManager,TournerRepository $tournerRepository,LivraisonRepository $livraisonRepository): Response
+    public function afficher_tourneesAU(EntityManagerInterface $entityManager,Request $request,TournerRepository $tournerRepository,LivraisonRepository $livraisonRepository): Response
     {
-  $error=0;
+        $start = $request->query->get('start', 0);
+
+    $error=0;
     $token = $this->tokenStorage->getToken();
             $currentUser = $token->getUser();
             if ($currentUser instanceof Coursier) {
@@ -114,22 +116,31 @@ class CoursierController extends AbstractController
             }
 
     $now = new \DateTimeImmutable();
-    $tourneé = $entityManager->getRepository(Tourner::class)->findOneBy(['coursier' =>  $idcoursier,'statut_tourner'=>'en cours','date' => $now]);
-  
+    $tourneé = $entityManager->getRepository(Tourner::class)->findOneBy(['coursier' =>  $idcoursier,'statut_tourner'=>['a faire', 'complet','en cours'],'date' => $now]);
+    $id=$tourneé->getId();
   
     if($tourneé){
         $livraisons= $livraisonRepository->findBy(['tourner' => $tourneé->getId()]);
-        return $this->render('coursierV2/home.html.twig', [
+       
+        $status=[];
+        foreach ($livraisons as $item) {
+
+            $livraisonId = $item->getId();
+            $livstat= $entityManager->getRepository(StatutLivraison::class)->findOneBy(['livraison' => $livraisonId]);
+            $status[]=  $livstat->getStatusTitle();
+            $address=[];
+        }
+       return $this->render('coursierV2/home.html.twig', [
             'livraisons' =>  $livraisons,
             'tour' =>  $tourneé->getId(),
             'date' =>  $now ,
-            'error' =>  $error
+            'error' =>  $error,'idtour'=>  $id,'start'=>$start ,'status'=>$status
         ]);
         
     }else{
         $error=1;
     return $this->render('coursierV2/home.html.twig', [
-              'date' =>  $now , 'error' =>  $error ,  'livraisons' => null
+              'date' =>  $now , 'error' =>  $error ,  'livraisons' => null ,'idtour'=>  $id,'start'=>$start,'status'=>0
         ]);}
         
     }
@@ -257,7 +268,9 @@ class CoursierController extends AbstractController
 
 
             $entityManager->flush();
-            return $this->redirectToRoute('afficher_tourneesAU');
+            $start=1;
+            return $this->redirectToRoute('afficher_tourneesAU',['start' => $start]);
+           
     }
 
 
@@ -289,7 +302,8 @@ class CoursierController extends AbstractController
 
 
             $entityManager->flush();
-            return $this->redirectToRoute('afficher_tourneesAU');
+            $start=1;
+            return $this->redirectToRoute('afficher_tourneesAU',['start' => $start]);
     }
 
     #[Route('/coursier_annulation/{id}', name: 'coursier_annulation', methods: ['GET'])]
@@ -312,7 +326,8 @@ class CoursierController extends AbstractController
         $livraison->setTourner(null);
         // $livstat->setNote(null);
         $entityManager->flush();
-        return $this->redirectToRoute('afficher_tourneesAU');
+        $start=1;
+        return $this->redirectToRoute('afficher_tourneesAU',['start' => $start]);
     }
 
 
@@ -522,7 +537,18 @@ class CoursierController extends AbstractController
            
         }
 
-
+        #[Route('/start_tour/{id}', name: 'start_tour', methods: ['GET'])]
+        public function start_tour(Request $request ,EntityManagerInterface $entityManager): Response
+        {
+            $id = $request->get('id');
+            $livstat= $entityManager->getRepository(Tourner::class)->findOneBy(['id' => $id]);
+            $livstat->setStatutTourner('en cours');
+            $entityManager->flush();
+            $start=1;
+            return $this->redirectToRoute('afficher_tourneesAU',['start' => $start]);
+        }
+    
+     
 
 
         #[Route('/send', name: 'send')]

@@ -153,7 +153,7 @@ public function show(Request $request,RegionRepository $regionRepository,Livrais
             $tour->setPrixTourner($prix);
             $tour->setPoidTourner($poid);
             $tour->setNbLivraison(1);
-            $tour->setStatutTourner('en cours');
+            $tour->setStatutTourner('a faire');
             $tour->setDate($datess);
             $entityManager->persist($tour);
             $entityManager->flush();
@@ -174,14 +174,14 @@ public function show(Request $request,RegionRepository $regionRepository,Livrais
             $tour -> setPoidTourner($poidTour);
             $tour -> setPrixTourner($prixTour);
             $tour -> setNbLivraison($nb+1);
-            $tour->setStatutTourner('en cours');
+            $tour->setStatutTourner('a faire');
             $entityManager->flush();
             $livraison->setTourner($tour);
             $changestat = $statutLivraisonRepository->findOneBy(['livraison' => $livraisonId]);
             $changestat->setStatusTitle('affecte');
             $entityManager->flush();
             
-            if($nb+1>=12){
+            if($nb+1>=8){
                 $changestat = $statutCoursierRepository->findOneBy(['coursier' => $id]); 
                 $changestat->setTitreStatut('complet');
                 $entityManager->persist($changestat);

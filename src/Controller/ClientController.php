@@ -197,6 +197,26 @@ class ClientController extends AbstractController
 
 
 
+    #[Route('/liv_non_recu/{id}', name: 'liv_non_recu', methods: ['GET'])]
+    public function liv_non_recu(Request $request ,LivraisonRepository $livraisonRepository,EntityManagerInterface $entityManager): Response
+    {
+        $token = $this->tokenStorage->getToken();
+        $currentUser = $token->getUser();
+        if ($currentUser instanceof Client) {
+            $identifier = $currentUser->getUserIdentifier();
+            $id = $currentUser->getId();
+        }
+        $now = new \DateTimeImmutable('now', new \DateTimeZone('UTC'));
+
+        $livraisonId = $request->get('id');
+        $livstat= $entityManager->getRepository(StatutLivraison::class)->findOneBy(['livraison' => $livraisonId]);
+        $livstat->setStatusTitle('non recu');
+        $livstat->setStatusDateModifier($now);
+        $entityManager->flush();
+        return $this->redirectToRoute('afficher_livraisons');}
+    
+
+
 
     #[Route('/confirmedit', name: 'confirmedit', methods: ['post'])]
     public function confirmedit(Request $request ,StatutLivraisonRepository $statutLivraison,EntityManagerInterface $entityManager,AdresseRepository $adresseRepository): Response

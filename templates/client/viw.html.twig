@@ -13,20 +13,15 @@
 	
 	<link rel="stylesheet" href={{ asset('assetss/css/style.css')}}>
  <section id="hero" class="hero d-flex align-items-center">
-    <div class="container">
-    <div class="container position-relative">
-          <div class="row d-flex justify-content-center">
-            <div class="col-lg-6 text-center">
-              <h2>commencer maintenant </h2>
-              <p>Odio et unde deleniti. Deserunt numquam exercitationem. Officiis quo odio sint voluptas consequatur ut a odio voluptatem. Sit dolorum debitis veritatis natus dolores. Quasi ratione sint. Sit quaerat ipsum dolorem.</p>
-            </div>
-          </div>
-        </div>
-    </div>
+    
+  
   </section><!-- End Hero Section --> 
   
 <style>
+#hero {
 
+  height: 100px; /* Adjust the height as needed */
+}
 :root {
   --color-default: #0a0d13;
   --color-primary: #0d42ff;
@@ -180,6 +175,12 @@ h2 {
     color: black;
   }
 </style>
+<style>
+    .right-to-left {
+        text-align: right;
+        direction: rtl;
+    }
+</style>
 <section class="ftco-section">
 		<div class="container">
 			<div class="row justify-content-center">
@@ -197,9 +198,10 @@ h2 {
 						      <th>Reference</th>
 						      <th>Prix totale</th>
 						      <th>Sera livré en</th>
-                  <th>Actions</th>
                   <th>&nbsp;</th>
+                  <th class="right-to-left" >Actions</th>
                   <th>&nbsp;</th>
+                    <th>&nbsp;</th>
 						    </tr>
 						  </thead>
 						  <tbody>
@@ -217,6 +219,13 @@ h2 {
 						      <td>	
                     <a id="link{{ loop.index }}" href="{{ path('client_annulation',{'id': livraison.id}) }}" class="card-link"   style="color: red;"><i class="fa fa-ban" aria-hidden="true"></i> Annuler la livraison</a>
 				        	</td>
+                  <td>
+             {% set today = "now"|date('Y-m-d') %}
+            {% if livraison.getLivraisonDate()|date('Y-m-d ') < today %}
+               <a  href="{{ path('liv_non_recu',{'id': livraison.id}) }}" class="card-link"   style="color: red;"><i class="fa fa-ban" aria-hidden="true"></i> signaler</a>
+            
+            {% endif %}
+        </td>
 						    </tr>
                 {% endfor %}
 						  </tbody>
@@ -266,6 +275,10 @@ h2 {
       </div>
       
     </li> 
+
+  {% endfor %}
+    
+    
   <style>
 
 .text-center:hover .buy-btn {
@@ -276,10 +289,6 @@ h2 {
     background-color: #fff; /* Change background color of the container to white on hover */
 }
 </style>
-  {% endfor %}
-    
-    
-
 
   </ul>
     

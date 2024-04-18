@@ -291,15 +291,29 @@
 
         }
     </style>
+ {% if start == 1  %}
+ 
+{% else %}
+ <style>.readonly {
+    pointer-events: none; /* Disable pointer events */
+    opacity: 0.5; /* Reduce opacity to visually indicate read-only */
+}
 
-   
+   </style>
+
+{% endif %}
+    </br>  
+<div class="container">
+  <h3> cliquer ici pour commencer </h3>
+ <a id="startBtn" href="{{ path('start_tour', {'id': idtour}) }}" class=""> Start </a>
+</div> </br>  </br>
 
     <section id="services" class="services">
 
      <div class="container">
      <h1> Vos livraison d'aujourd'hui  </h1>
      {# <h1> Votre Tourner des livraisons de Aujourd'hui :  {{ date|date('Y-m-d ') }}  </h1> #}
-         <div class="containerr">
+         <div class="containerr readonly" id="containerr">
          {% if error == 1  %}
   
 <h2 class="mb-0">pas de livraison pour aujourd'hui .</h2>
@@ -335,13 +349,18 @@
                   <p><strong>PoidLivraison:</strong> {{ livraison.getPoidLivraison() }}</p>
     <p><strong>LivraisonDate:</strong> {{ livraison.getLivraisonDate()|date('Y-m-d ') }}</p>
     
-    
-                         
-{# <ol class="widget-49-meeting-points">
-<li class="widget-49-meeting-item"><span>Expand module is removed</span></li>
-<li class="widget-49-meeting-item"><span>Data migration is in scope</span></li>
-<li class="widget-49-meeting-item"><span>Session timeout increase to 30 minutes</span></li>
-</ol> #}
+      <p><strong>statut:</strong> {{status[(loop.index)-1] }}</p>
+
+
+{% set a = status[(loop.index)-1] %}
+   {% if a == 'confirmé'  %}
+<div class="widget-49-meeting-action">
+<a href="{{ path('details', {'id': livraison.id}) }}"  class="btn btn-sm btn-flash-border-primary">details </a>
+
+
+</div>
+
+   {% else %}
 <div class="widget-49-meeting-action">
 <a href="{{ path('details', {'id': livraison.id}) }}"  class="btn btn-sm btn-flash-border-primary">details </a>
 <a href="{{ path('echecc', {'id': livraison.id}) }}" class="btn btn-sm btn-flash-border-primary">echec </a>
@@ -349,6 +368,7 @@
 <a id="link{{ loop.index }}"  href="{{ path('coursier_annulation', {'id': livraison.id}) }}"  class="btn btn-sm btn-flash-border-primary"  value="{{ path('coursier_annulation', {'id': livraison.id}) }}">annuler </a>
 
 </div>
+      {% endif %}
 </div>
 </div>
 </div>        
@@ -356,6 +376,38 @@
 
                     {% set myVariable = myVariable + 1 %}
                 {% endfor %}
+{% set test = 0 %}
+  {% for row in status %}
+          
+                {% if row == 'confirmé' %}
+                    {% else %}
+                  {% set test = 1 %}
+                {% endif %}
+            </tr>
+        {% endfor %}
+
+{% if test == 0 %}
+
+<h1> terminééééééééééééééééééééééééééééééééé</h1>
+<script>
+
+ $.ajax({
+        type: 'GET',
+        url: '{{ path('terminé') }}',
+        success: function(response) { 
+            tours = response; // Assign the response to 'tours'
+            processTours();
+        },
+        error: function(xhr, status, error) {   
+            console.error('Error fetching tour data:', error);
+        }
+    });
+
+</script>
+
+
+ {% endif %}
+
     <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -494,7 +546,32 @@
 
  
 
-<style>
+<style> #startBtn {
+        width: 200px;
+        background-color: green;
+        color: white;
+        border: 2px solid transparent; /* Transparent border */
+        border-radius: 5px; /* Rounded corners */
+        padding: 10px 20px;
+        cursor: pointer;
+        text-decoration: none; /* Remove underline from link */
+        display: flex;
+         align-items: center;
+  justify-content: center; /* Display as block element */
+    }
+
+    /* Hover effect */
+    #startBtn:hover {
+        background-color: white;
+        color: green;
+        border-color: green; /* Border color on hover */
+    }
+
+    /* Style for the link text */
+    #startBtn a {
+        color: inherit; /* Inherit parent color (white) */
+        text-decoration: none; /* Remove underline from link */
+    }
   /* Styles for the custom dialog */
   .dialog-overlay {
   display: none;
@@ -570,7 +647,7 @@
     top: 50%;
     margin: -15px 0 0 -15px;
   }
-  // to draw white circle
+ 
   .marker-pin::after {
       content: '';
       width: 24px;
@@ -581,7 +658,7 @@
       border-radius: 50%;
   }
 
-  // to align icon
+
   .custom-div-icon i {
     position: absolute;
     width: 22px;
@@ -592,5 +669,15 @@
     text-align: center;
   }
 </style>
+     <script>
+  const startBtn = document.getElementById('startBtn');
+  const container = document.getElementById('containerr');
+  
+  startBtn.addEventListener('click', function() {
+    console.log('Start button clicked!');
+    container.classList.remove('readonly');});
+</script>
+
+
 
 {% endblock %}
