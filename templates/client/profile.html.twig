@@ -218,32 +218,51 @@
                                             </div>
                                            </div>  </br></br><div id="map-container">
     <div id="map"></div>
+<<<<<<< HEAD
   </div> </br></br>
+=======
+  </div>
+                                            
+                                            <div class="row">
+                                                <div class="col d-flex justify-content-end">
+                                                    <button class="btn btn-primary" type="submit">Save Changes</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                        <form id="myForm2" class="form2" method="POST" action="{{ path('changePassword_client') }}" onsubmit="updateFormAction2(event)">
+>>>>>>> a21469c83e33f6fc576dfa5e49071e203f0cafcf
                                             <div class="mb-2"><b>Change Password</b></div>
                                             <div class="row">
                                                 <div class="col">
                                                     <div class="row">
-                                                    
+
                                                         <div class="col">
                                                             <div class="form-group">
-                                                                <label>New Password</label>
-                                                                <input class="form-control" type="password" placeholder="•••••••••">
+                                                                <label for="new-password">New Password</label>
+                                                                <input name="password" id="new-password" class="form-control" type="password" placeholder="•••••••••">
                                                             </div>
                                                         </div>
+
                                                         <div class="col">
                                                             <div class="form-group">
-                                                                <div class="form-group">
-                                                                <label>Confirm <span class="d-none d-xl-inline">Password</span></label>
-                                                                <input class="form-control" type="password" placeholder="•••••••••">
+                                                                <label for="confirm-password">Confirm <span class="d-none d-xl-inline">Password</span></label>
+                                                                <input name="renewPassword" id="confirm-password" class="form-control" type="password" placeholder="•••••••••">
                                                             </div>
+                                                        </div>
+
+                                                        <div class="align-self-end"> 
+                                                            <div class="form-group text-right"> 
+                                                              <div id="error-message" class="alert alert-danger d-none" role="alert"></div>
+                                                              {% if error == 1 %}
+                       
+                                                                <div class="alert alert-danger" role="alert">
+                                                                <p>les deux champs doivent correspondre.  </p>
+                                                                </div>    {% endif %}
+                                                                  <button type="submit" class="btn btn-primary">Changer mot de passe</button>
+                                                               
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col d-flex justify-content-end">
-                                                    <button class="btn btn-primary" type="submit">Save Changes</button>
                                                 </div>
                                             </div>
                                         </form>
@@ -413,7 +432,35 @@
             document.getElementById('addAddressForm').style.display = 'none';
         });
     });
-    
+
+    function updateFormAction2(event) {
+        var newPassword = document.getElementById('new-password').value;
+        var confirmPassword = document.getElementById('confirm-password').value;
+        var errorMessage = document.getElementById('error-message');
+        var isValid = true;
+
+        if (newPassword.length < 6) {
+            errorMessage.textContent = "Le mot de passe doit avoir au moins 6 caractères.";
+            errorMessage.classList.remove('d-none');
+            isValid = false;
+        } else if (!(/[a-z]/.test(newPassword) && /[A-Z]/.test(newPassword) && /[0-9]/.test(newPassword))) {
+            errorMessage.textContent = "Le mot de passe doit contenir des lettres minuscules, des lettres majuscules et des chiffres.";
+            errorMessage.classList.remove('d-none');
+            isValid = false;
+        } 
+
+        if (!isValid) {
+            event.preventDefault(); 
+        }
+
+        return isValid;
+    }
+        function updateFormAction2() {
+        var password = document.getElementById('new-password').value;
+         var renewPassword = document.getElementById('confirm-password').value;
+        document.getElementById('myForm2').action = "{{ path('changePassword_client', {'password': ''}) }}" + password + "&renewPassword=" + renewPassword;
+      return true; 
+      } 
 </script>
 <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.1/dist/js/bootstrap.bundle.min.js"></script>
