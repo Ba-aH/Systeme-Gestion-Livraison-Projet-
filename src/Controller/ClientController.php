@@ -191,14 +191,15 @@ class ClientController extends AbstractController
             $identifier = $currentUser->getUserIdentifier();
             $id = $currentUser->getId();
         }
-        $now = new \DateTimeImmutable('now', new \DateTimeZone('UTC'));
+        $now = new \DateTimeImmutable('now', new \DateTimeZone('Africa/Tunis'));
 
         $livraisonId = $request->get('id');
         $livstat= $entityManager->getRepository(StatutLivraison::class)->findOneBy(['livraison' => $livraisonId]);
         $livstat->setStatusTitle('non recu');
         $livstat->setStatusDateModifier($now);
         $entityManager->flush();
-        return $this->redirectToRoute('afficher_livraisons');}
+        return $this->redirectToRoute('afficher_livraisons');
+    }
     
 
 
