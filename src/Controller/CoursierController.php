@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Controller;
+
+use App\Entity\Adresse;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use App\Entity\Client;
 use App\Entity\RaisonsEchec;
@@ -27,6 +29,7 @@ use App\Entity\StatutCoursier;
 use App\Entity\StatutLivraison;
 use App\Entity\Livraison;
 use App\Entity\Region;
+use App\Entity\Warehouse;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use DateTime; 
@@ -117,30 +120,47 @@ class CoursierController extends AbstractController
 
     $now = new \DateTimeImmutable();
     $tourneé = $entityManager->getRepository(Tourner::class)->findOneBy(['coursier' =>  $idcoursier,'statut_tourner'=>['a faire', 'complet','en cours'],'date' => $now]);
-    $id=$tourneé->getId();
+  
   
     if($tourneé){
+        $id=$tourneé->getId();
         $livraisons= $livraisonRepository->findBy(['tourner' => $tourneé->getId()]);
-       
+       $idregion=0;
         $status=[];
         foreach ($livraisons as $item) {
-
+       
             $livraisonId = $item->getId();
             $livstat= $entityManager->getRepository(StatutLivraison::class)->findOneBy(['livraison' => $livraisonId]);
             $status[]=  $livstat->getStatusTitle();
-            $address=[];
+            
         }
+
+        
+        $adresse=[];
+        foreach ($livraisons as $item) {
+
+            $livraisonad = $item->getAddressId();
+            $ad= $entityManager->getRepository(Adresse::class)->findOneBy(['id' => $livraisonad]);
+            $idregion=$ad->getRegion();
+            $adresse[]=  $ad;
+            
+        }
+
+        $warehouse= $entityManager->getRepository(Warehouse::class)->findOneBy(['region' => $idregion]);
+
        return $this->render('coursierV2/home.html.twig', [
             'livraisons' =>  $livraisons,
             'tour' =>  $tourneé->getId(),
             'date' =>  $now ,
-            'error' =>  $error,'idtour'=>  $id,'start'=>$start ,'status'=>$status
+            'error' =>  $error,'idtour'=>  $id,'start'=>$start ,'status'=>$status,'address'=>$adresse,'warehouse'=>$warehouse
+            ,'distance'=>null
         ]);
         
-    }else{
+    }else{ 
         $error=1;
     return $this->render('coursierV2/home.html.twig', [
-              'date' =>  $now , 'error' =>  $error ,  'livraisons' => null ,'idtour'=>  $id,'start'=>$start,'status'=>0
+              'date' =>  $now , 'error' =>  $error ,'idtour'=>null , 'livraisons' => null ,'start'=>$start,'status'=>0,'address'=>null
+              ,'warehouse'=>null,'distance'=>null
         ]);}
         
     }
@@ -247,14 +267,17 @@ class CoursierController extends AbstractController
         $livstat= $entityManager->getRepository(StatutLivraison::class)->findOneBy(['livraison' => $livraisonId]);
         $submitButton = $request->request->get('submit_button');
         if ($submitButton === 'normal') {
+            $now = new \DateTimeImmutable('now', new \DateTimeZone('Africa/Tunis'));
             $error=2;
-
             $livstat->setStatusTitle('confirmé');
+            $livstat->setStatusDateModifier($now);
+            
         } elseif ($submitButton === 'pin') {
           if($pinform== $pinlivraison){
+            $now = new \DateTimeImmutable('now', new \DateTimeZone('Africa/Tunis'));
             $error=2;
             $livstat->setStatusTitle('confirmé');
-
+            $livstat->setStatusDateModifier($now);
             $livstat->setNote( 'confirmé avec code pin ');
           }else{
             $error=1;
@@ -284,9 +307,9 @@ class CoursierController extends AbstractController
         $res=$request->get('selectedres');
         
         if ($livstat) {
-       
+            $now = new \DateTimeImmutable('now', new \DateTimeZone('Africa/Tunis'));
             $livstat->setStatusTitle('echec');
-
+            $livstat->setStatusDateModifier($now);
 
             if ($newraison!='') { $reason= new RaisonsEchec();
            $reason->setRaison($newraison);
@@ -312,7 +335,9 @@ class CoursierController extends AbstractController
         $livraisonId = $request->get('id');
         $livraison= $entityManager->getRepository(Livraison::class)->findOneBy(['id' =>  $livraisonId]);
         $livstat= $entityManager->getRepository(StatutLivraison::class)->findOneBy(['livraison' => $livraisonId]);
+        $now = new \DateTimeImmutable('now', new \DateTimeZone('Africa/Tunis'));
         $livstat->setStatusTitle('annulée');
+        $livstat->setStatusDateModifier($now);
       
         $prix= $livraison->getPrixTotaleLivraison();
         $poid = $livraison->getPoidLivraison();
@@ -548,7 +573,17 @@ class CoursierController extends AbstractController
             return $this->redirectToRoute('afficher_tourneesAU',['start' => $start]);
         }
     
-     
+        #[Route('/fin_tour/{id}', name: 'fin_tour', methods: ['GET'])]
+        public function fin_tour(Request $request ,EntityManagerInterface $entityManager): Response
+        {
+            $id = $request->get('id');
+            $livstat= $entityManager->getRepository(Tourner::class)->findOneBy(['id' => $id]);
+            $livstat->setStatutTourner('terminé');
+            $entityManager->flush();
+            $start=0;
+            return $this->redirectToRoute('afficher_tourneesAU',['start' => $start]);
+        }
+    
 
 
         #[Route('/send', name: 'send')]

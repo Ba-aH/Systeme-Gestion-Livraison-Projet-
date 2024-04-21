@@ -1,6 +1,7 @@
 {% extends 'admin.html.twig' %}
 {% block body %}
-
+     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
   <section id="topbar" class="d-flex align-items-center">
     <!-- <div class="container d-flex justify-content-center justify-content-md-between">
       <div class="contact-info d-flex align-items-center">
@@ -291,6 +292,28 @@
 
         }
     </style>
+    <script>
+    
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+  // Convert degrees to radians
+  const earthRadius = 6371e3; // meters (change units if desired)
+  const radiansLat1 = deg2rad(lat1);
+  const radiansLat2 = deg2rad(lat2);
+  const dLat = radiansLat2 - radiansLat1;
+  const dLon = deg2rad(lon2 - lon1);
+
+  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(radiansLat1) * Math.cos(radiansLat2) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  return earthRadius * c;
+}
+
+function deg2rad(deg) {
+  return deg * (Math.PI / 180);
+}</script>
  {% if start == 1  %}
  
 {% else %}
@@ -305,7 +328,8 @@
     </br>  
 <div class="container">
   <h3> cliquer ici pour commencer </h3>
- <a id="startBtn" href="{{ path('start_tour', {'id': idtour}) }}" class=""> Start </a>
+  {% if idtour is not null %}
+ <a id="startBtn" href="#" class=""> Start </a>{% else %} <h3> pas de tournée a faire</h3>{% endif %}
 </div> </br>  </br>
 
     <section id="services" class="services">
@@ -321,7 +345,7 @@
 {% else %}
        {% set myVariable = 0 %}
       {% set  Variable = 0 %}
-    
+    {% set latLongDist = [] %}
    
     {% for livraison in livraisons %}
 <div class="col-lg-4">
@@ -351,13 +375,58 @@
     
       <p><strong>statut:</strong> {{status[(loop.index)-1] }}</p>
 
+    <strong>  <div id="distance-result-{{ loop.index }}"></div></strong>
+<script>
+    // Define your function at the top
+    function calculateAndDisplayDistance(lat1, lon1, lat2, lon2) {
+       console.log("Input parameters:", lat1, lon1, lat2, lon2); // Debugging
+         distance = calculateDistance(lat1, lon1, lat2, lon2).toFixed(2);
+         console.log("Distance:", distance); // Debugging
+    
+        // Assuming you have an element with id="distance-result" to display the result
+        var existingContent = document.getElementById('distance-result-{{ loop.index }}').textContent;
+        document.getElementById('distance-result-{{ loop.index }}').textContent = "distance: " + distance + " metres";
+    }
+ function calculateDistance(lat1, lon1, lat2, lon2) {
+  // Convert degrees to radians
+  const earthRadius = 6371e3; // meters (change units if desired)
+  const radiansLat1 = deg2rad(lat1);
+  const radiansLat2 = deg2rad(lat2);
+  const dLat = radiansLat2 - radiansLat1;
+  const dLon = deg2rad(lon2 - lon1);
+
+  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(radiansLat1) * Math.cos(radiansLat2) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  return earthRadius * c;
+}
+
+function deg2rad(deg) {
+  return deg * (Math.PI / 180);
+}
+ 
+
+    // Call the function with appropriate parameters
+    calculateAndDisplayDistance(
+       {{ +warehouse.latitude }},
+    {{ +warehouse.longitude }},
+         {{ +address[(loop.index)-1].latitude }},
+    {{ +address[(loop.index)-1].longitude }}
+   
+    );
+
+      
+</script>
 
 {% set a = status[(loop.index)-1] %}
    {% if a == 'confirmé'  %}
 <div class="widget-49-meeting-action">
 <a href="{{ path('details', {'id': livraison.id}) }}"  class="btn btn-sm btn-flash-border-primary">details </a>
 
-
+<a id="link{{ loop.index }}"  href="{{ path('coursier_annulation', {'id': livraison.id}) }}"  class="btn btn-sm btn-flash-border-primary"  value="{{ path('coursier_annulation', {'id': livraison.id}) }}" style="display:none;">annuler </a>
 </div>
 
    {% else %}
@@ -375,7 +444,129 @@
                     </div>
 
                     {% set myVariable = myVariable + 1 %}
+
+                     {% set latLongDistItem = {
+    'latitude': address[(loop.index)-1].latitude,
+    'longitude': address[(loop.index)-1].longitude,
+     'ref':   livraison.getReference() 
+} %}
+    {% set latLongDist = latLongDist|merge([latLongDistItem]) %} 
                 {% endfor %}
+     <div id="map" style="width:100%; height: 100vh"></div>
+    <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+
+<script>
+    // Encode latLongDist array as JSON
+    var latLongDistJSON = {{ latLongDist|json_encode|raw }};
+
+   
+   function calculateDistance(lat1, lon1, lat2, lon2) {
+  // Convert degrees to radians
+  const earthRadius = 6371e3; // meters (change units if desired)
+  const radiansLat1 = deg2rad(lat1);
+  const radiansLat2 = deg2rad(lat2);
+  const dLat = radiansLat2 - radiansLat1;
+  const dLon = deg2rad(lon2 - lon1);
+
+  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(radiansLat1) * Math.cos(radiansLat2) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  return earthRadius * c;
+}
+
+function deg2rad(deg) {
+  return deg * (Math.PI / 180);
+}
+
+
+    function calculateAndSortDistances(latLongDist) {
+        // Calculate distances for each item in latLongDist
+        latLongDist.forEach(function(item) {
+            item.distance = calculateDistance(item.latitude, item.longitude, {{warehouse.latitude}}, {{warehouse.longitude}});
+        });
+
+        // Sort latLongDist based on distances (ascending order)
+        latLongDist.sort(function(a, b) {
+            return a.distance - b.distance;
+        });
+ 
+
+var latLongDistItem = {
+        latitude: {{warehouse.latitude}},
+        longitude:  {{warehouse.longitude}},
+        ref: 'warehouse',
+        
+    };
+
+    // Add new item to the beginning of the array
+    latLongDist.unshift(latLongDistItem);
+
+        // Use the sorted latLongDist for further processing
+        console.log("Sorted latLongDist:", latLongDist);
+
+            var map = L.map('map').setView([{{warehouse.latitude}}, {{warehouse.longitude}}], 10);
+             mapLink = "<a href='http://openstreetmap.org'>OpenStreetMap</a>";
+        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+            attribution: 'Leaflet &copy; ' + mapLink + ', contribution',
+            maxZoom: 18
+        }).addTo(map);
+    // Add tile layer
+  
+    // Create an array of coordinates for the route
+    var routeCoordinates = [];
+    latLongDist.forEach(function(item) {
+        routeCoordinates.push([item.latitude, item.longitude]);
+         
+          
+    });
+ 
+var routingControl; 
+    // Create Leaflet Routing Machine control
+   routingControl= L.Routing.control({
+        waypoints: routeCoordinates,
+        routeWhileDragging: true
+    }).addTo(map);
+
+
+
+for (var i = 0; i < latLongDist.length; i++) {
+    // Create marker for each latitude and longitude
+    var marker = L.marker([latLongDist[i].latitude, latLongDist[i].longitude]).addTo(map);
+
+    // Create custom tooltip content
+    var tooltipContent = `<b>Reference:</b> ${latLongDist[i].ref}`;
+
+    // Create a custom tooltip
+    var customTooltip = L.tooltip({
+        direction: 'top', // Position the tooltip above the marker
+        permanent: true, // Make the tooltip permanent (always visible)
+        opacity: 1 // Set the opacity to 1 to make it fully visible
+    }).setContent(tooltipContent);
+
+    // Bind the custom tooltip to the marker
+    marker.bindTooltip(customTooltip).openTooltip();
+}
+
+
+
+
+ routingControl.on('routesfound', function(e) {
+
+  var totalDistance = e.routes[0].summary.totalDistance;
+
+  console.log("Total distance:", totalDistance);
+
+});
+ }
+ calculateAndSortDistances(latLongDistJSON);
+
+   
+   
+   </script>             
 {% set test = 0 %}
   {% for row in status %}
           
@@ -389,77 +580,73 @@
 {% if test == 0 %}
 
 <h1> terminééééééééééééééééééééééééééééééééé</h1>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
+var tourId = {{ idtour|default('null') }};
 
- $.ajax({
-        type: 'GET',
-        url: '{{ path('terminé') }}',
-        success: function(response) { 
-            tours = response; // Assign the response to 'tours'
-            processTours();
-        },
-        error: function(xhr, status, error) {   
-            console.error('Error fetching tour data:', error);
-        }
-    });
-
+$.ajax({
+  type: 'GET',
+  url: '{{ path('fin_tour', {'id': 'replace_me'}) }}'.replace('replace_me', tourId),
+  success: function(response) {
+    tours = response;
+    processTours();
+    console.log('Success');
+  },
+  error: function(jqXHR, textStatus, errorThrown) {
+    console.error('AJAX Error:', textStatus, errorThrown);
+  }
+});
 </script>
 
 
  {% endif %}
 
-    <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"></script>
-    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
-    <div id="map" style="width:100%; height: 100vh"></div>
           
-<script>
+ <script>
      
 
-    var tours; // Declare the variable 'tours' before the AJAX request
-            var path = 'https://127.0.0.1:8000/tourDeleveries/{{tour}}' ;
-            $.ajax({
-                type: 'GET',
-                url: path,
-                success: function(deliveryResponse) {
-                  var map = L.map('map').setView([deliveryResponse[0].warehouse.latitude, deliveryResponse[0].warehouse.longtitude], 10);
-                  var initialView = map.getCenter();
-                  mapLink = "<a href='http://openstreetmap.org'>OpenStreetMap</a>";
-                  L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: 'Leaflet &copy; ' + mapLink + ', contribution', maxZoom: 18 }).addTo(map); 
-                    var tourWaypoints = []; // Array to store waypoints for the current tour
-                    deliveryResponse.forEach(function(item) {
-                        if (item.client) {
-                            var clientLatLng = L.latLng(item.client.latitude, item.client.longtitude);
-                            tourWaypoints.push(clientLatLng);
-                            L.marker(clientLatLng).addTo(map);
-                        }
-                        if (item.warehouse) {
-                            var warehouseLatLng = L.latLng(item.warehouse.latitude, item.warehouse.longtitude);
-                            tourWaypoints.push(warehouseLatLng);
-                            var icon = L.divIcon({
-                                className: 'custom-div-icon',
-                                html: "<div style='background-color:#c30b82;' class='marker-pin'></div><i class='material-icons'>WareHouse</i>",
-                                iconSize: [30, 40],
-                                iconAnchor: [15, 45]
-                            });
-                            L.marker(warehouseLatLng, { icon: icon ,zIndexOffset: 1000}).addTo(map);
-                        }
-                    });
-                        L.Routing.control({
-                            waypoints: tourWaypoints,
-                            routeWhileDragging: false, // Disable route dragging
-                            draggableWaypoints: false, // Disable waypoint dragging
-                            show: false, // Hide the control as we don't need to display it on the map
-                        }).addTo(map);
+//     var tours; // Declare the variable 'tours' before the AJAX request
+//             var path = 'https://127.0.0.1:8000/tourDeleveries/{{tour}}' ;
+//             $.ajax({
+//                 type: 'GET',
+//                 url: path,
+//                 success: function(deliveryResponse) {
+//                   var map = L.map('map').setView([deliveryResponse[0].warehouse.latitude, deliveryResponse[0].warehouse.longtitude], 10);
+//                   var initialView = map.getCenter();
+//                   mapLink = "<a href='http://openstreetmap.org'>OpenStreetMap</a>";
+//                   L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: 'Leaflet &copy; ' + mapLink + ', contribution', maxZoom: 18 }).addTo(map); 
+//                     var tourWaypoints = []; // Array to store waypoints for the current tour
+//                     deliveryResponse.forEach(function(item) {
+//                         if (item.client) {
+//                             var clientLatLng = L.latLng(item.client.latitude, item.client.longtitude);
+//                             tourWaypoints.push(clientLatLng);
+//                             L.marker(clientLatLng).addTo(map);
+//                         }
+//                         if (item.warehouse) {
+//                             var warehouseLatLng = L.latLng(item.warehouse.latitude, item.warehouse.longtitude);
+//                             tourWaypoints.push(warehouseLatLng);
+//                             var icon = L.divIcon({
+//                                 className: 'custom-div-icon',
+//                                 html: "<div style='background-color:#c30b82;' class='marker-pin'></div><i class='material-icons'>WareHouse</i>",
+//                                 iconSize: [30, 40],
+//                                 iconAnchor: [15, 45]
+//                             });
+//                             L.marker(warehouseLatLng, { icon: icon ,zIndexOffset: 1000}).addTo(map);
+//                         }
+//                     });
+//                         L.Routing.control({
+//                             waypoints: tourWaypoints,
+//                             routeWhileDragging: false, // Disable route dragging
+//                             draggableWaypoints: false, // Disable waypoint dragging
+//                             show: false, // Hide the control as we don't need to display it on the map
+//                         }).addTo(map);
                     
-                },
-                error: function(xhr, status, error) {   
-                    console.error('Error fetching delivery data:', error);
-                }
-            });
-</script>
+//                 },
+//                 error: function(xhr, status, error) {   
+//                     console.error('Error fetching delivery data:', error);
+//                 }
+//             });
+// </script>
 
 
 </div></div></div>{% endif %}
@@ -473,53 +660,7 @@
     </div>
   </div>
 </div>
-<script>
-  // Function to show the confirmation dialog for a specific link
-  function showConfirmationDialog(linkId) {
-    var confirmationDialog = document.getElementById('confirmationDialog');
-    var link = document.getElementById(linkId);
 
-    // Show the confirmation dialog
-    confirmationDialog.style.display = 'flex';
-
-    // Store the link's href in a data attribute for later use
-    confirmationDialog.setAttribute('data-href', link.href);
-  }
-
-  // Function to handle confirmation for a specific link
-  function confirmAction() {
-    var confirmationDialog = document.getElementById('confirmationDialog');
-
-    // Get the stored href from the data attribute
-    var href = confirmationDialog.getAttribute('data-href');
-
-    // Navigate to the link's href if confirmed
-    if (href) {
-      window.location.href = href;
-    }
-  }
-
-  // Attach event listeners to each annuler button
-  {% for livraison in livraisons %}
-    document.getElementById('link{{ loop.index }}').addEventListener('click', function(event) {
-      event.preventDefault(); // Prevent the default link behavior
-      showConfirmationDialog('link{{ loop.index }}');
-    });
-  {% endfor %}
-
-  // Attach event listener to the confirm button
-  document.getElementById('confirmButton').addEventListener('click', function(event) {
-    event.preventDefault(); // Prevent the default button behavior
-    confirmAction();
-  });
-
-  // Function to cancel the action
-  function cancelAction() {
-    var confirmationDialog = document.getElementById('confirmationDialog');
-    // Hide the confirmation dialog
-    confirmationDialog.style.display = 'none';
-  }
-</script>
 
 
 
@@ -674,10 +815,72 @@
   const container = document.getElementById('containerr');
   
   startBtn.addEventListener('click', function() {
-    console.log('Start button clicked!');
+   event.preventDefault();
+var tourId = {{ idtour|default('null') }};
+
+$.ajax({
+  type: 'GET',
+  url: '{{ path('start_tour', {'id': 'replace_me'}) }}'.replace('replace_me', tourId),
+  success: function(response) {
+    tours = response;
+    processTours();
+    console.log('Success');
+  },
+  error: function(jqXHR, textStatus, errorThrown) {
+    console.error('AJAX Error:', textStatus, errorThrown);
+  }
+});
+
+
     container.classList.remove('readonly');});
 </script>
 
 
+<script>
+  // Function to show the confirmation dialog for a specific link
+  function showConfirmationDialog(linkId) {
+    var confirmationDialog = document.getElementById('confirmationDialog');
+    var link = document.getElementById(linkId);
 
+    // Show the confirmation dialog
+    confirmationDialog.style.display = 'flex';
+
+    // Store the link's href in a data attribute for later use
+    confirmationDialog.setAttribute('data-href', link.href);
+  }
+
+  // Function to handle confirmation for a specific link
+  function confirmAction() {
+    var confirmationDialog = document.getElementById('confirmationDialog');
+
+    // Get the stored href from the data attribute
+    var href = confirmationDialog.getAttribute('data-href');
+
+    // Navigate to the link's href if confirmed
+    if (href) {
+      window.location.href = href;
+    }
+  }
+
+  // Attach event listeners to each annuler button
+  {% for livraison in livraisons %}
+    document.getElementById('link{{ loop.index }}').addEventListener('click', function(event) {
+      event.preventDefault(); // Prevent the default link behavior
+      showConfirmationDialog('link{{ loop.index }}');
+    });
+  {% endfor %}
+
+  // Attach event listener to the confirm button
+  document.getElementById('confirmButton').addEventListener('click', function(event) {
+    event.preventDefault(); // Prevent the default button behavior
+    confirmAction();
+  });
+
+  // Function to cancel the action
+  function cancelAction() {
+    var confirmationDialog = document.getElementById('confirmationDialog');
+    // Hide the confirmation dialog
+    confirmationDialog.style.display = 'none';
+  }
+</script>
 {% endblock %}
