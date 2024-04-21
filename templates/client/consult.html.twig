@@ -306,7 +306,7 @@ h2 {
     </div>
     <div class="infot">
       <label>Référence:</label>
-      <p>{{ stat.getStatusTitle() }}</p>
+      {# <p>{{ stat.getStatusTitle() }}</p> #}
     </div>
    
   </div class="mapplace">
@@ -383,7 +383,7 @@ h2 {
       <p></p>
     </div>
   
-    <div class="infot">
+    {# <div class="infot">
       <label>FormattedAddress:</label>
       <p>{{ address.getFormattedAddress()}}</p>
     </div>
@@ -409,7 +409,7 @@ h2 {
       <p>{{ address.getZipCode()}}</p>
     </div>
  
-  </div>
+  </div> #}
 
 
 
@@ -423,7 +423,7 @@ const a =  parseFloat(document.getElementById('latitudeclient').textContent);
 const b =  parseFloat(document.getElementById('longclient').textContent);
   
     var coordinates;
-    var map = L.map('map').setView([36.806389, 10.181667], 10);
+    var map = L.map('map').setView([a,b], 10);
     var marker = L.marker([36.86014, 10.19347]).addTo(map);
     mapLink = "<a href='http://openstreetmap.org'>OpenStreetMap</a>";
     L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: 'Leaflet &copy; ' + mapLink + ', contribution', maxZoom: 18 }).addTo(map); 

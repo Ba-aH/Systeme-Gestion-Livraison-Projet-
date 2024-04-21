@@ -63,11 +63,24 @@
       <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
       <nav id="navbar" class="navbar">
         <ul>
+            <ul class="d-flex align-items-center">
+            <li class="nav-item dropdown">
+              <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+                  <i class="bi bi-bell"></i>
+                  <span id="notification-count" class="badge bg-primary badge-number"></span>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
+                <li class="notification-item">
+                  <div id="notification-list">  </div>
+                </li>
+              </ul>
+            </li>
             <li><a href="{{path('appClient_index')}}">Home</a></li>
             <li><a href="{{path('afficher_livraisons')}}">Mes Livraisons</a></li> 
             <ul>
               <li class="dropdown"><a href="#"><span>Profile</span> <i class="bi bi-chevron-down dropdown-indicator"></i></a>
                 <ul>
+                  <li><a href="{{path('clientProfile')}}">Mon Profile</a></li>
                   <li><a href="{{path('app_logout')}}">Logout</a></li>
                 </ul>
               </li>
@@ -83,13 +96,64 @@
         background-color: #0e1d34; /* Set your desired background color here */
         transition: background-color 0.3s ease; /* Add a smooth transition effect */
       } #}
+      .notification-item{
+        padding: 15px 15px;
+      }
 
       #header.header-scrolled {
         background-color: #0e1d34; /* Set the same background color when scrolled */
       }
-      
+      .notification-item-wrapper {
+        display: flex;
+        align-items: center;
+        padding: 50px;
+        border-bottom: 1px solid #ddd;
+      }
+
+      .notification-item-wrapper i {
+          font-size: 1.5rem;
+          margin-right: 10px;
+          margin-left: 10px;
+      }
+
+      .notification-item-wrapper h5 {
+          margin: 0;
+      }
+
+      .notification-item-wrapper p {
+          margin: 5px 0;
+      }
+      .dropdown-menu {
+          width: 500px; 
+          margin-left: 10px;
+      }
     </style> 
     <script>
+      fetch('{{ path('notificationClient') }}')
+      .then(response => response.json())
+      .then(data => {
+          const notificationCountElement = document.getElementById('notification-count');
+          if (notificationCountElement) {
+              notificationCountElement.textContent = data.nbLivraisons;
+          }
+          const notificationList = document.getElementById('notification-list');
+          data.livraisons.forEach(livraison => {
+              const referenceItem = document.createElement('div');
+              referenceItem.innerHTML = `
+                  <i class="bi bi-exclamation-circle text-warning"></i>
+                  <div>
+                      <h5>Livraison ref: ${livraison.reference}</h5>
+                      <p>${livraison.warning} </p>
+                      <p>Doit étre livré en: ${livraison.date}</p>
+                  </div>
+              `;
+              notificationList.appendChild(referenceItem);
+          });
+      })
+      .catch(error => {
+          console.error('Error fetching data:', error);
+      });
+
       window.addEventListener('scroll', function() {
       const header = document.getElementById('header');
       if (window.scrollY > 0) {

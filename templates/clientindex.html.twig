@@ -51,7 +51,7 @@
     
       
         {% block body %}{% endblock %}
-          {% block footer %}  <!-- ======= Footer ======= -->
+          {% block footer %}  
   <footer id="footer" class="footer">
 
     <div class="container">
@@ -105,7 +105,43 @@
 
       </div>
     </div>
+<style>
+      {# #header {
+        background-color: #0e1d34; /* Set your desired background color here */
+        transition: background-color 0.3s ease; /* Add a smooth transition effect */
+      } #}
+      .notification-item{
+        padding: 15px 15px;
+      }
 
+      #header.header-scrolled {
+        background-color: #0e1d34; /* Set the same background color when scrolled */
+      }
+      .notification-item-wrapper {
+        display: flex;
+        align-items: center;
+        padding: 50px;
+        border-bottom: 1px solid #ddd;
+      }
+
+      .notification-item-wrapper i {
+          font-size: 1.5rem;
+          margin-right: 10px;
+          margin-left: 10px;
+      }
+
+      .notification-item-wrapper h5 {
+          margin: 0;
+      }
+
+      .notification-item-wrapper p {
+          margin: 5px 0;
+      }
+      .dropdown-menu {
+          width: 500px; 
+          margin-left: 10px;
+      }
+    </style> 
   
 
   </footer><!-- End Footer -->

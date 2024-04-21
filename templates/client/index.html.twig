@@ -18,7 +18,7 @@
       <nav id="navbar" class="navbar">
         <ul>
           {% if user is null %}
-            <li><a href="#" class="active">Home</a></li>
+            <li><a href="{{path('appClient_index')}}" class="active">Home</a></li>
             <li><a href="#" onclick="scrollToDiv('about')">About</a></li>
             <li><a href="#" onclick="scrollToDiv('service')" >Services</a></li>
             <li><a href="#"onclick="scrollToDiv('horizontal-pricing')">Pricing</a></li>
@@ -26,11 +26,26 @@
             <li><a class="get-a-quote" href="{{ path('app_login') }}">Login</a></li>
           {% endif %}
           {% if user is not null %}
+            
+        </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+                  <i class="bi bi-bell"></i>
+                  <span id="notification-count" class="badge bg-primary badge-number"></span>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
+                <li class="notification-item">
+                  <div id="notification-list">  </div>
+                </li>
+              </ul>
+              
+            </li>
             <li><a href="{{path('appClient_index')}}">Home</a></li>
-            <li><a href="{{path('afficher_livraisons')}}">Mes Livraisons</a></li> 
+            <li><a href="{{path('afficher_livraisons')}}">Mes Livraisons</a></li>
             <ul>
               <li class="dropdown"><a href="#"><span>Profile</span> <i class="bi bi-chevron-down dropdown-indicator"></i></a>
                 <ul>
+                  <li><a href="{{path('clientProfile')}}">Mon Profile</a></li>
                   <li><a href="{{path('app_logout')}}">Logout</a></li>
                 </ul>
               </li>
@@ -50,9 +65,9 @@
         <div class="col-lg-6 order-2 order-lg-1 d-flex flex-column justify-content-center">
           <h2 data-aos="fade-up">La solution simple pour vos livraisons.</h2>
 
-          <form action="#" class="form-search d-flex align-items-stretch mb-3" data-aos="fade-up" data-aos-delay="200">
-            <input type="text" class="form-control" placeholder="ZIP code or CitY">
-            <button type="submit" class="btn btn-primary">Search</button>
+          <form action="{{path('CheckOrder')}}" class="form-search d-flex align-items-stretch mb-3" data-aos="fade-up" data-aos-delay="200">
+            <input type="text" class="form-control" name="reference" id="reference" placeholder="Reference">
+            <button type="submit" class="btn btn-primary">Recherche</button>
           </form>
 
           <div class="row gy-4" data-aos="fade-up" data-aos-delay="400">
@@ -467,9 +482,71 @@
 
       </div>
     </section><!-- End Frequently Asked Questions Section -->
+<style>
+      {# #header {
+        background-color: #0e1d34; /* Set your desired background color here */
+        transition: background-color 0.3s ease; /* Add a smooth transition effect */
+      } #}
+      .notification-item{
+        padding: 15px 15px;
+      }
 
-  </main><!-- End #main -->
+      #header.header-scrolled {
+        background-color: #0e1d34; /* Set the same background color when scrolled */
+      }
+      .notification-item-wrapper {
+        display: flex;
+        align-items: center;
+        padding: 50px;
+        border-bottom: 1px solid #ddd;
+      }
+
+      .notification-item-wrapper i {
+          font-size: 1.5rem;
+          margin-right: 10px;
+          margin-left: 10px;
+      }
+
+      .notification-item-wrapper h5 {
+          margin: 0;
+      }
+
+      .notification-item-wrapper p {
+          margin: 5px 0;
+      }
+      .dropdown-menu {
+          width: 500px; 
+          margin-left: 10px;
+      }
+    </style> 
+  </main>
+  <!-- End #main -->
 <script>
+  fetch('{{ path('notificationClient') }}')
+    .then(response => response.json())
+    .then(data => {
+        const notificationCountElement = document.getElementById('notification-count');
+        if (notificationCountElement) {
+            notificationCountElement.textContent = data.nbLivraisons;
+        }
+        const notificationList = document.getElementById('notification-list');
+        data.livraisons.forEach(livraison => {
+            const referenceItem = document.createElement('div');
+              referenceItem.innerHTML = `
+                  <i class="bi bi-exclamation-circle text-warning"></i>
+                  <div>
+                      <h5>Livraison ref: ${livraison.reference}</h5>
+                      <p>${livraison.warning} </p>
+                      <p>Doit étre livré en: ${livraison.date}</p>
+                  </div>
+              `;
+            notificationList.appendChild(referenceItem);
+        });
+    })
+    .catch(error => {
+        console.error('Error fetching data:', error);
+    });
+
     function scrollToDiv(divId) {
         const element = document.getElementById(divId);
         if (element) {
@@ -478,6 +555,8 @@
         }
     }
 </script>
+
+
 
 
 {% endblock %}

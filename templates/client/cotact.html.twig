@@ -16,10 +16,10 @@
       <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
       <nav id="navbar" class="navbar">
         <ul> 
-          <li><a href="{{ path('app_index') }}">Home</a></li>
-          <li><a href="{{ path('app_index') }}">About</a></li>
-          <li><a href="{{ path('app_index') }}">Services</a></li>
-          <li><a href="{{ path('app_index') }}">Pricing</a></li>
+          <li><a href="{{ path('ClinetIndex') }}">Home</a></li>
+          <li><a href="{{ path('ClinetIndex') }}">About</a></li>
+          <li><a href="{{ path('ClinetIndex') }}">Services</a></li>
+          <li><a href="{{ path('ClinetIndex') }}">Pricing</a></li>
         
           <li><a href="#" class="active">Contact</a></li>
           <li><a class="get-a-quote" href="{{ path('app_login') }}">Login</a></li>
@@ -76,8 +76,8 @@
             <div class="info-item d-flex">
               <i class="bi bi-geo-alt flex-shrink-0"></i>
               <div>
-                <h4>Location:</h4>
-                <p>A108 Adam Street, New York, NY 535022</p>
+                <h4>Emplacement:</h4>
+                <p>41 Avenue Kheireddine Pacha Residence Les Jardins du Pacha 1073 TUNIS.</p>
               </div>
             </div><!-- End Info Item -->
 
@@ -85,32 +85,32 @@
               <i class="bi bi-envelope flex-shrink-0"></i>
               <div>
                 <h4>Email:</h4>
-                <p>info@example.com</p>
+                <p>TSF.innovations@gmail.com</p>
               </div>
             </div><!-- End Info Item -->
 
             <div class="info-item d-flex">
               <i class="bi bi-phone flex-shrink-0"></i>
               <div>
-                <h4>Call:</h4>
-                <p>+1 5589 55488 55</p>
+                <h4>Appel:</h4>
+                <p>+216 98 787 283</p>
               </div>
             </div><!-- End Info Item -->
 
           </div>
 
           <div class="col-lg-8">
-            <form action="forms/contact.php" method="post" role="form" class="php-email-form">
+            <form action="{{ path('contact-us') }}" method="post" role="form" class="php-email-form">
               <div class="row">
                 <div class="col-md-6 form-group">
-                  <input type="text" name="name" class="form-control" id="name" placeholder="Your Name" required>
+                  <input type="text" name="name" class="form-control" id="name" placeholder="Votre Nom" required>
                 </div>
                 <div class="col-md-6 form-group mt-3 mt-md-0">
-                  <input type="email" class="form-control" name="email" id="email" placeholder="Your Email" required>
+                  <input type="email" class="form-control" name="email" id="email" placeholder="Votre Email" required>
                 </div>
               </div>
               <div class="form-group mt-3">
-                <input type="text" class="form-control" name="subject" id="subject" placeholder="Subject" required>
+                <input type="text" class="form-control" name="subject" id="subject" placeholder="Sujet" required>
               </div>
               <div class="form-group mt-3">
                 <textarea class="form-control" name="message" rows="5" placeholder="Message" required></textarea>
@@ -128,7 +128,66 @@
 
       </div>
     </section><!-- End Contact Section -->
+<script>
+  window.onload = function() {
+    // Sélectionner le formulaire
+    var form = document.querySelector('.php-email-form');
 
+    // Ajouter un écouteur d'événement pour le soumettre
+    form.addEventListener('submit', function(event) {
+      // Vérification des saisies
+      var nameInput = document.getElementById('name');
+      var emailInput = document.getElementById('email');
+      var subjectInput = document.getElementById('subject');
+      var messageInput = document.getElementById('message');
+
+      var isValid = true;
+
+      if (nameInput.value.trim() === '') {
+        isValid = false;
+        alert('Veuillez entrer votre nom.');
+      } else if (containsNumbers(nameInput.value.trim())) {
+        isValid = false;
+        alert('Le nom ne peut pas contenir des chiffres.');
+      }
+
+      if (emailInput.value.trim() === '') {
+        isValid = false;
+        alert('Veuillez entrer votre adresse email.');
+      } else if (!isValidEmail(emailInput.value.trim())) {
+        isValid = false;
+        alert('Veuillez entrer une adresse email valide.');
+      }
+
+      if (subjectInput.value.trim() === '') {
+        isValid = false;
+        alert('Veuillez entrer le sujet de votre message.');
+      }
+
+      if (messageInput.value.trim() === '') {
+        isValid = false;
+        alert('Veuillez entrer votre message.');
+      }
+
+      if (isValid) {
+        form.removeEventListener('submit', submitHandler);
+        form.submit();
+      } else {
+
+        event.preventDefault();
+      }
+    });
+  };
+
+  function isValidEmail(email) {
+    var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+
+  function containsNumbers(input) {
+    return /\d/.test(input);
+  }
+</script>
   </main><!-- End #main -->
 
 

@@ -52,9 +52,13 @@ class Livraison
     #[ORM\Column]
     private ?int $address_id = null;
 
+    #[ORM\OneToMany(mappedBy: 'livraison', targetEntity: Notification::class)]
+    private Collection $notifications;
+
     public function __construct()
     {
         $this->colis = new ArrayCollection();
+        $this->notifications = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -218,6 +222,36 @@ class Livraison
     public function setAddressId(int $address_id): static
     {
         $this->address_id = $address_id;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Notification>
+     */
+    public function getNotifications(): Collection
+    {
+        return $this->notifications;
+    }
+
+    public function addNotification(Notification $notification): static
+    {
+        if (!$this->notifications->contains($notification)) {
+            $this->notifications->add($notification);
+            $notification->setLivraison($this);
+        }
+
+        return $this;
+    }
+
+    public function removeNotification(Notification $notification): static
+    {
+        if ($this->notifications->removeElement($notification)) {
+            // set the owning side to null (unless already changed)
+            if ($notification->getLivraison() === $this) {
+                $notification->setLivraison(null);
+            }
+        }
 
         return $this;
     }

@@ -20,7 +20,7 @@ use App\Repository\LivraisonHistoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\AdresseRepository ;
 use App\Repository\StatutCoursierRepository;
-
+use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Repository\RaisonsEchecRepository;
 use App\Entity\Tourner;
 use App\Entity\StatutCoursier;
@@ -35,6 +35,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 
 
 #[Route('/client')]
@@ -159,7 +160,7 @@ class ClientController extends AbstractController
             'liv' =>  $liv,'address' =>$address , 'items'=>$items,'error'=>$error
         ]);
     }
-    #[Route('/consultclient/{id}', name: 'consultclient', methods: ['GET'])]
+    #[Route('/consultclient', name: 'consultclient', methods: ['GET'])]
     public function consultclient(Request $request ,LivraisonRepository $livraisonRepository,EntityManagerInterface $entityManager,AdresseRepository $adresseRepository): Response
     {
         $token = $this->tokenStorage->getToken();
@@ -452,4 +453,95 @@ public function history(Request $request,EntityManagerInterface $entityManager,L
                 'user' =>  $currentUser
             ]);     
         }
+
+        #[Route('/notification', name: 'notificationClient')]
+    public function dashboardExtend(
+        LivraisonRepository $livraisonRepository,
+        StatutLivraisonRepository $statutLivraisonRepository,
+        SerializerInterface $serializer,
+        AdresseRepository $adresseRepository
+    ): JsonResponse {
+
+        $token = $this->tokenStorage->getToken();
+        $currentUser = $token->getUser();
+        if ($currentUser instanceof Client){
+            $id=$currentUser->getId();
+        }
+        
+        $ann = $statutLivraisonRepository->findBy(['status_title' => "annulée"]);
+        $echec = $statutLivraisonRepository->findBy(['status_title' => "échec"]);
+        $proche = $statutLivraisonRepository->findBy(['status_title' => "proche"]);
+        $confirmé = $statutLivraisonRepository->findBy(['status_title' => "confirmé"]);
+
+        $nb = 0;
+        $livraisons = [];
+        foreach ($ann as $item) {
+            $liv = $item->getLivraison();
+            if ($liv->getClient()->getId()==$id){
+                $ref = $liv->getReference();
+                $date = $liv->getLivraisonDate()->format('Y-m-d');
+                $livraisons[] = [
+                    'reference' => $ref,
+                    'date'=>$date,
+                    'warning' =>'Il y a quelques problèmes avec la livraison de votre commande, il y aura un certain retard. Voulez-vous attendre jusqu à être affecté à une autre date très proche.'
+                ];
+                $nb++;
+            }
+        }
+
+        foreach ($proche as $item) {
+            $liv = $item->getLivraison();
+            if ($liv->getClient()->getId()==$id){
+                $ref = $liv->getReference();
+                $date = $liv->getLivraisonDate()->format('Y-m-d');
+                $livraisons[] = [
+                    'reference' => $ref,
+                    'date'=>$date,
+                    'warning' =>'Le livreur est très proche et il devrait arriver dans 5 à 10 minutes.'
+                ];
+                $nb++;
+            }
+        }
+
+        foreach ($confirmé as $item) {
+            $liv = $item->getLivraison();
+            if ($liv->getClient()->getId()==$id){
+                $ref = $liv->getReference();
+                $date = $liv->getLivraisonDate()->format('Y-m-d');
+                $livraisons[] = [
+                    'reference' => $ref,
+                    'date'=>$date,
+                    'warning' =>'Votre livraison a été bien livrée. Vous pouvez vérifier votre boîte de réception.'
+                ];
+                $nb++;
+            }
+        }
+
+        foreach ($echec as $item) {
+            $liv = $item->getLivraison();
+            if ($liv->getClient()->getId()==$id){
+                $ref = $liv->getReference();
+                $date = $liv->getLivraisonDate()->format('Y-m-d');
+                $livraisons[] = [
+                    'reference' => $ref,
+                    'date'=>$date,
+                    'warning' =>'Il y a quelques problèmes avec la livraison de votre commande, il y aura un certain retard. Voulez-vous attendre jusqu à être affecté à une autre date très proche.'
+                ];
+                $nb++;
+            }
+        }
+
+        $data = $serializer->serialize([
+            'livraisons' => $livraisons,
+            'nbLivraisons' => $nb,
+        ], 'json', [
+            AbstractNormalizer::IGNORED_ATTRIBUTES => ['livraisons'],
+            AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function ($object) {
+                return $object->getId();
+            }
+        ]);
+
+        // Return JsonResponse
+        return new JsonResponse($data, 200, [], true);
+    }
 }
