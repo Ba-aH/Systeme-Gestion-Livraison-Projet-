@@ -24,7 +24,7 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
-class TrackingLivraisonController extends AbstractController{
+class TrackingController extends AbstractController{
 
     private $tokenStorage;
     private $entityManager;
