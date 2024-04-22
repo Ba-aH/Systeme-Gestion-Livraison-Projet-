@@ -306,7 +306,7 @@ h2 {
     </div>
     <div class="infot">
       <label>Référence:</label>
-      {# <p>{{ stat.getStatusTitle() }}</p> #}
+      <p>{{ stat.getStatusTitle() }}</p>
     </div>
    
   </div class="mapplace">
@@ -314,7 +314,8 @@ h2 {
 <div class="containermap">
  <h2>suivie commande :</h2>
     <div id="map"></div>
-</div></div>
+</div>
+</div>
 
 <style>
     .containermap {
@@ -383,7 +384,7 @@ h2 {
       <p></p>
     </div>
   
-    {# <div class="infot">
+    <div class="infot">
       <label>FormattedAddress:</label>
       <p>{{ address.getFormattedAddress()}}</p>
     </div>
@@ -409,7 +410,7 @@ h2 {
       <p>{{ address.getZipCode()}}</p>
     </div>
  
-  </div> #}
+  </div>
 
 
 
@@ -435,42 +436,30 @@ const b =  parseFloat(document.getElementById('longclient').textContent);
             ]
         }).addTo(map);
    
-  function updateVehicleLocation(newLat,newLng) {
+function updateVehicleLocation(newLat,newLng) {
     var newCoordinates = L.latLng(newLat, newLng);
-
       marker.setLatLng(newCoordinates);
-
-      
       routeControl.setWaypoints([
         newCoordinates,
         L.latLng(a, b)
       ]);
-  var distance;
-        var currentLocation = marker.getLatLng();
-      var destinationLocation = L.latLng(37.118716, 10.005798);
-      routeControl.on('routesfound', function(e) {
-        
+      
+    var distance;
+    var currentLocation = marker.getLatLng();
+    var destinationLocation = L.latLng(37.118716, 10.005798);
+    routeControl.on('routesfound', function(e) {     
     var route = e.routes[0]; // Get the first route (assuming only one route is found)
-     distance = route.summary.totalDistance; // Access the total distance of the route in meters
+    distance = route.summary.totalDistance; // Access the total distance of the route in meters
     console.log('Route Distance:', distance, 'meters');
-            console.log('aaaaaaaaaaaaaaaa'+distance);
-var distanceNumber = parseFloat(distance);
+    console.log('aaaaaaaaaaaaaaaa'+distance);
+    var distanceNumber = parseFloat(distance);
+    const containermap = document.querySelector('.containermap');
+    containermap.insertAdjacentHTML('afterend', '<div id="not" class="not">votre commande est à ' + distanceNumber/1000 + ' Km</div>');
 
-const containermap = document.querySelector('.containermap');
-
-
- containermap.insertAdjacentHTML('afterend', '<div id="not" class="not">votre commande est à ' + distanceNumber/1000 + ' Km</div>');
-
-     if(distanceNumber<50000){
-document.querySelector('h1').insertAdjacentHTML('afterend','<div id="not" class= "alert alert-success">votre commande est à 100 mètres</div>');
-  }
-
-});
-
-
-
-  
-
+    if(distanceNumber<50000){
+      document.querySelector('h1').insertAdjacentHTML('afterend','<div id="not" class= "alert alert-success">votre commande est à 100 mètres</div>');
+    }
+  });
     }
 
 

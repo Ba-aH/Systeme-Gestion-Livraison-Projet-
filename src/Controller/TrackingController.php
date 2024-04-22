@@ -95,7 +95,7 @@ class TrackingLivraisonController extends AbstractController{
         $hub = new Hub($_ENV['MERCURE_URL'], $tokenProvider);
 
         $update = new Update(
-            "http://monsite.com/user",
+            "http://monsite.com/user/{$email}",
             $data
         );
 

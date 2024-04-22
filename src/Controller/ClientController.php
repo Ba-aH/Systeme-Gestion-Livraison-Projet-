@@ -473,6 +473,7 @@ public function history(Request $request,EntityManagerInterface $entityManager,L
         $echec = $statutLivraisonRepository->findBy(['status_title' => "échec"]);
         $proche = $statutLivraisonRepository->findBy(['status_title' => "proche"]);
         $confirmé = $statutLivraisonRepository->findBy(['status_title' => "confirmé"]);
+        $affecte = $statutLivraisonRepository->findBy(['status_title' => "affecte"]);
 
         $nb = 0;
         $livraisons = [];
@@ -485,6 +486,20 @@ public function history(Request $request,EntityManagerInterface $entityManager,L
                     'reference' => $ref,
                     'date'=>$date,
                     'warning' =>'Il y a quelques problèmes avec la livraison de votre commande, il y aura un certain retard. Voulez-vous attendre jusqu à être affecté à une autre date très proche.'
+                ];
+                $nb++;
+            }
+        }
+
+        foreach ($affecte as $item) {
+            $liv = $item->getLivraison();
+            if ($liv->getClient()->getId()==$id){
+                $ref = $liv->getReference();
+                $date = $liv->getLivraisonDate()->format('Y-m-d');
+                $livraisons[] = [
+                    'reference' => $ref,
+                    'date'=>$date,
+                    'warning' =>'Votre commande va étre livree en'
                 ];
                 $nb++;
             }
