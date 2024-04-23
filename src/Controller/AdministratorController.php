@@ -428,6 +428,33 @@ class AdministratorController extends AbstractController
         
         return $this->render('adminv2/suivieTours.html.twig');
     }
+
+
+    #[Route('/perdus', name: 'perdus', methods: ['get'])]
+    public function perdus(LivraisonRepository $livraisonRepository,StatutLivraisonRepository $statut ,ManagerRegistry $registry,ClientRepository $clientRepository,EntityManagerInterface $entityManager): Response
+    {         $now = new \DateTimeImmutable();
+
+        $livraisons = $statut->findBy(['status_title' => ['echec', 'annuler']]);
+        $resultArray=[];
+        foreach ($livraisons as $livraison) {
+            $statusDateModifier = $livraison->getStatusDateModifier();
+            $diff = $now->diff($statusDateModifier);
+            $hoursDifference = $diff->h + $diff->days * 24;
+            $disp= $livraison->getDisponibilité();
+            if ($hoursDifference > 24 && $disp==0 ) { // Check if the difference is greater than 24 hours
+                $resultArray[] = $livraison->getLivraison();
+            }
+
+        }
+       
+        return $this->render('adminv2/perdus.html.twig', [
+            'perdus' =>  $resultArray 
+        ]);
+
+         }
+
+
+
 //     #[Route('/history', name: 'history')]
 //     public function history(EntityManagerInterface $entityManager,LivraisonHistoryRepository $LivraisonHistoryRepository): Response
 //     {
