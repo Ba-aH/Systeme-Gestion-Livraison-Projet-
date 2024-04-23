@@ -1,0 +1,108 @@
+{% extends 'adminv2.html.twig' %}
+ {% block body %}
+
+<body>
+
+ 
+
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>Dashboard</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+          <li class="breadcrumb-item active">colis perdus</li>
+
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+   <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Table des colis perdus</h5>
+
+              <!-- Table with hoverable rows -->
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                  
+                    <th scope="col">reference</th>
+                      <th scope="col">tourneé id</th>
+                    <th scope="col">nom coursier</th>
+                  
+                    <th scope="col">email</th>
+                      <th scope="col">téléphone</th>
+                  <th scope="col">action</th> 
+                  </tr>
+                </thead>
+                <tbody>
+               
+                  
+                  
+                   
+
+                   
+        
+                 {% for perdu in perdus %}
+                  <tr>
+                       <td> <p> {{ perdu.reference }}</p></td>
+                           <td> <p> {{ perdu.tourner.id }}</p></td>
+                             <td> <p> {{ perdu.tourner.coursier.nom }}</p></td>
+                                 <td> <p>   <a href="mailto:{{ perdu.tourner.coursier.email }}">{{ perdu.tourner.coursier.email }}</a></p></td>
+                         
+                              <td> <p> <a href="tel:+216  {{ perdu.tourner.coursier.phone }}">{{ perdu.tourner.coursier.phone }} </a></p></td> 
+                   
+                    <td><a          class ="modifier" >report</a></td>
+                  </tr>
+                    {% endfor %}
+                
+                </tbody>
+              </table>
+              <!-- End Table with hoverable rows -->
+<style> 
+
+.modifier {
+    display: inline-block;
+    padding: 10px 20px;
+    text-decoration: none;
+    color: white;
+    background-color: blue;
+    border: 1px solid blue;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s; /* Add transition for smooth effect */
+}
+
+.modifier:hover {
+    background-color: white;
+    color: blue;
+}
+</style>
+            </div>
+          </div>
+   {# <div class="card">
+            <div id="repmlir_form"class="card-body">
+              <h5 class="card-title">Floating labels Form</h5>
+
+              <!-- Floating Labels Form -->
+              
+            </div>
+          </div> #}
+
+    
+  </main><!-- End #main -->
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer" class="footer">
+    
+ 
+    
+    </div>
+ 
+  </footer><!-- End Footer -->
+
+
+
+
+  {% endblock %}

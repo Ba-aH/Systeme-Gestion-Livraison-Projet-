@@ -17,8 +17,7 @@ class StatutLivraison
     #[ORM\Column(length: 255)]
     private ?string $status_title = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $status_class = null;
+
    
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
@@ -35,6 +34,9 @@ class StatutLivraison
 
     #[ORM\ManyToOne(inversedBy: 'statutLivraisons')]
     private ?RaisonsEchec $raison_echec = null;
+
+    #[ORM\Column(type: Types::SMALLINT)]
+    private ?int $disponibilité = null;
 
     public function getId(): ?int
     {
@@ -53,17 +55,8 @@ class StatutLivraison
         return $this;
     }
 
-    public function getStatusClass(): ?string
-    {
-        return $this->status_class;
-    }
 
-    public function setStatusClass(?string $status_class): static
-    {
-        $this->status_class = $status_class;
 
-        return $this;
-    }
 
     public function getStatusDateAjout(): ?\DateTimeInterface
     {
@@ -121,6 +114,18 @@ class StatutLivraison
     public function setRaisonEchec(?RaisonsEchec $raison_echec): static
     {
         $this->raison_echec = $raison_echec;
+
+        return $this;
+    }
+
+    public function getDisponibilité(): ?int
+    {
+        return $this->disponibilité;
+    }
+
+    public function setDisponibilité(int $disponibilité): static
+    {
+        $this->disponibilité = $disponibilité;
 
         return $this;
     }
