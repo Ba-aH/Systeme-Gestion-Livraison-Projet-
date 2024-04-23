@@ -402,16 +402,17 @@ input[type="submit"]:hover {
 
       }
 
-      // Code pour écouter les mises à jour de position du coursier
-      const url = new URL('http://localhost:3000/hub');
-      url.searchParams.append('topic', `http://monsite.com/user/{{coursier.email}}`);
-      const eventSource = new EventSource(url);
-      eventSource.onmessage = e => { 
-        if('{{stat.getStatusTitle()}}'=='en cours'){
+      if ("{{coursier.email}}" !== "null") { // Check if coursier.email is not equal to the string "null"
+        const url = new URL('http://localhost:3000/hub');
+        url.searchParams.append('topic', `http://monsite.com/user/{{coursier.email}}`);
+        const eventSource = new EventSource(url);
+        eventSource.onmessage = e => { 
+          if('{{stat.getStatusTitle()}}' === 'en cours'){
             const data = JSON.parse(e.data);
             updateVehicleLocation(data.positionHistoryLat, data.positionHistoryLong); 
             console.log(data);
           }
+        }
       }
 </script>
 </body>
