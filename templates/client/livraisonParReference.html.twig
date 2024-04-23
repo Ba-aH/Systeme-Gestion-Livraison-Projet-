@@ -1,4 +1,4 @@
-{% extends 'index.html.twig' %}
+{% extends 'Clientindex.html.twig' %}
 {% block body %}
 
 
@@ -8,6 +8,59 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" href={{ asset('assetss/css/style.css')}}>
+
+<header id="header" class="header d-flex align-items-center fixed-top">
+    <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
+
+      <a href="index.html" class="logo d-flex align-items-center">
+        <!-- Uncomment the line below if you also wish to use an image logo -->
+        <!-- <img src="assets/img/logo.png" alt=""> -->
+        <h1>Logis</h1>
+      </a>
+
+      <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
+      <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
+      <nav id="navbar" class="navbar">
+        <ul>
+          {% if user is null %}
+            <li><a href="{{path('appClient_index')}}" class="active">Home</a></li>
+            <li><a href="#" onclick="scrollToDiv('about')">About</a></li>
+            <li><a href="#" onclick="scrollToDiv('service')" >Services</a></li>
+            <li><a href="#"onclick="scrollToDiv('horizontal-pricing')">Pricing</a></li>
+            <li><a href="{{ path('contact') }}">Contact</a></li>
+            <li><a class="get-a-quote" href="{{ path('app_login') }}">Login</a></li>
+          {% endif %}
+          {% if user is not null %}
+            
+        </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+                  <i class="bi bi-bell"></i>
+                  <span id="notification-count" class="badge bg-primary badge-number"></span>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
+                <li class="notification-item">
+                  <div id="notification-list">  </div>
+                </li>
+              </ul>
+              
+            </li>
+            <li><a href="{{path('appClient_index')}}">Home</a></li>
+            <li><a href="{{path('afficher_livraisons')}}">Mes Livraisons</a></li>
+            <ul>
+              <li class="dropdown"><a href="#"><span>Profile</span> <i class="bi bi-chevron-down dropdown-indicator"></i></a>
+                <ul>
+                  <li><a href="{{path('clientProfile')}}">Mon Profile</a></li>
+                  <li><a href="{{path('app_logout')}}">Logout</a></li>
+                </ul>
+              </li>
+            </ul>
+          {% endif %}
+        </ul>
+      </nav><!-- .navbar -->
+
+    </div>
+  </header>
 
  <section id="hero" class="hero d-flex align-items-center">
     <div class="container">

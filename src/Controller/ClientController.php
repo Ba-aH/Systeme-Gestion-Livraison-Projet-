@@ -30,6 +30,7 @@ use App\Entity\Region;
 use DateTime; 
 use App\Repository\ClientRepository;
 use App\Repository\RegionRepository;
+use App\Repository\WarehouseRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -161,24 +162,34 @@ class ClientController extends AbstractController
         ]);
     }
     #[Route('/consultclient', name: 'consultclient', methods: ['GET'])]
-    public function consultclient(Request $request ,LivraisonRepository $livraisonRepository,EntityManagerInterface $entityManager,AdresseRepository $adresseRepository): Response
+    public function consultclient(Request $request ,WarehouseRepository $warehouseRepository,StatutLivraisonRepository $statutLivraisonRepository,LivraisonRepository $livraisonRepository,EntityManagerInterface $entityManager,AdresseRepository $adresseRepository): Response
     {
         $token = $this->tokenStorage->getToken();
         $currentUser = $token->getUser();
+        $coursier=null;
         if ($currentUser instanceof Client) {
             $identifier = $currentUser->getUserIdentifier();
             $id = $currentUser->getId();
         }
         $livraisonId = $request->get('id');
-        $liv = $entityManager->getRepository(Livraison::class)->findOneBy(['id' =>  $livraisonId]);
+        $liv = $livraisonRepository->findOneBy(['id' =>  $livraisonId]);
         $address=$adresseRepository->findOneBy(['id' => $liv->getAddressId()]);
-        $statut=$entityManager->getRepository(StatutLivraison::class)->findOneBy(['livraison' =>  $livraisonId]);
-        $error = $request->query->get('error', 0);
+        $statut=$statutLivraisonRepository->findOneBy(['livraison' =>  $livraisonId]);
+        $regionAdress=$address->getRegion();
+        $warehouse = $warehouseRepository->findOneBy(['region'=>$regionAdress]);
+        if ($statut->getStatusTitle()=='affecté' or $statut->getStatusTitle()=='proche' or $statut->getStatusTitle()=='confirmé' or $statut->getStatusTitle()=='en cours'){
+            $coursier=$liv->getTourner()->getCoursier();
+            $email=$coursier->getEmail();
+
+        }
         return $this->render('client/consult.html.twig', [
-            'liv' =>  $liv,'address' =>$address ,'error'=>$error,'stat'=>$statut
+            'liv' =>  $liv,
+            'coursier' =>$coursier ,
+            'adress' => $address,
+            'warehouse' => $warehouse,
+            'stat'=>$statut
         ]);
     }
-
 
 
 
@@ -441,7 +452,8 @@ public function history(Request $request,EntityManagerInterface $entityManager,L
             $token = $this->tokenStorage->getToken();
             $currentUser = $token->getUser();
             return $this->render('client/index.html.twig', [
-                'user' =>  $currentUser
+                'user' =>  $currentUser,
+                'error' => null
             ]);     
         }
 
