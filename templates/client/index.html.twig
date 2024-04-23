@@ -64,8 +64,10 @@
       <div class="row gy-4 d-flex justify-content-between">
         <div class="col-lg-6 order-2 order-lg-1 d-flex flex-column justify-content-center">
           <h2 data-aos="fade-up">La solution simple pour vos livraisons.</h2>
-
-          <form action="{{path('CheckOrder')}}" class="form-search d-flex align-items-stretch mb-3" data-aos="fade-up" data-aos-delay="200">
+          {% if error is not null %} 
+          {{error}}
+          {% endif %}
+          <form action="{{path('rechLivParRef')}}" class="form-search d-flex align-items-stretch mb-3" data-aos="fade-up" data-aos-delay="200">
             <input type="text" class="form-control" name="reference" id="reference" placeholder="Reference">
             <button type="submit" class="btn btn-primary">Recherche</button>
           </form>

@@ -3,9 +3,13 @@
 
 namespace App\Controller;
 
+use App\Entity\Client;
 use App\Entity\ContactUs;
+use App\Repository\AdresseRepository;
 use App\Repository\ContactUsRepository;
 use App\Repository\LivraisonRepository;
+use App\Repository\StatutLivraisonRepository;
+use App\Repository\WarehouseRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -39,7 +43,8 @@ public function appClient_index(): Response
     }
     
     return $this->render('client/index.html.twig', [
-        'user' => $currentUser
+        'user' => $currentUser,
+        'error' => null
     ]); 
 }
 
@@ -81,6 +86,51 @@ public function appClient_index(): Response
         return $this->render('client/consult.html.twig', [
             'liv' =>  $livraison,'address' =>null ,'error'=>null,'stat'=>null
         ]);
+    }
+
+    #[Route('/rechLivParRef', name: 'rechLivParRef', methods: ['GET'])]
+    public function rechLivParRef(Request $request ,WarehouseRepository $warehouseRepository,StatutLivraisonRepository $statutLivraisonRepository,LivraisonRepository $livraisonRepository,EntityManagerInterface $entityManager,AdresseRepository $adresseRepository): Response
+    {
+        $token = $this->tokenStorage->getToken();
+        $coursier=null;
+        $currentUser=null;
+        if ($token){
+            $currentUser = $token->getUser();
+            if ($currentUser instanceof Client) {
+                $identifier = $currentUser->getUserIdentifier();
+                $id = $currentUser->getId();
+            }
+        }
+        
+        $livraisonReference = $request->get('reference');
+        $liv = $livraisonRepository->findOneBy(['reference' =>  $livraisonReference]);
+        if ($liv){
+            $address=$adresseRepository->findOneBy(['id' => $liv->getAddressId()]);
+            $statut=$statutLivraisonRepository->findOneBy(['livraison' =>  $liv]);
+            $regionAdress=$address->getRegion();
+            $warehouse = $warehouseRepository->findOneBy(['region'=>$regionAdress]);
+
+            if ($statut->getStatusTitle()=='affecté' or $statut->getStatusTitle()=='proche' or $statut->getStatusTitle()=='confirmé' or $statut->getStatusTitle()=='en cours'){
+                $coursier=$liv->getTourner()->getCoursier();
+                $email=$coursier->getEmail();
+            }
+        }
+        if ($liv){
+            return $this->render('client/livraisonParReference.html.twig', [
+                'user' => null,
+                'liv' =>  $liv,
+                'coursier' =>$coursier ,
+                'adress' => $address,
+                'warehouse' => $warehouse,
+                'stat'=>$statut
+            ]);
+        }
+        else{
+            return $this->render('client/index.html.twig', [
+                'user' => $currentUser,
+                'error' => 'Il n y a pas de livraison correspondant à cette référence.'
+            ]);  
+        }
     }
    
 }
