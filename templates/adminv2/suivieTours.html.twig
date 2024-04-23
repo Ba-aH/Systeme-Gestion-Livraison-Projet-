@@ -8,6 +8,13 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
     
    <script>
+
+   
+
+
+
+
+
     var map = L.map('map').setView([36.806389, 10.181667], 10);
     var initialView = map.getCenter();
     mapLink = "<a href='http://openstreetmap.org'>OpenStreetMap</a>";
@@ -21,53 +28,85 @@
         success: function(response) { 
             tours = response; // Assign the response to 'tours'
             processTours();
+                var toursLength = tours.length;
+console.log("Number of tours:", toursLength);
         },
         error: function(xhr, status, error) {   
             console.error('Error fetching tour data:', error);
         }
     });
+    
 
-    function processTours() {
-        tours.forEach(function(tour) {
-            console.log('Tour ID:', tour.tourId);
-            var path = 'https://127.0.0.1:8000/tourDeleveries/' + tour.tourId;
-            $.ajax({
-                type: 'GET',
-                url: path,
-                success: function(deliveryResponse) {
-                    var tourWaypoints = []; // Array to store waypoints for the current tour
-                    deliveryResponse.forEach(function(item) {
-                        if (item.client) {
-                            var clientLatLng = L.latLng(item.client.latitude, item.client.longtitude);
-                            tourWaypoints.push(clientLatLng);
-                            L.marker(clientLatLng).addTo(map);
-                        }
-                        if (item.warehouse) {
-                            var warehouseLatLng = L.latLng(item.warehouse.latitude, item.warehouse.longtitude);
-                            tourWaypoints.push(warehouseLatLng);
-                            var icon = L.divIcon({
-                                className: 'custom-div-icon',
-                                html: "<div style='background-color:#c30b82;' class='marker-pin'></div><i class='material-icons'>weekend</i>",
-                                iconSize: [30, 42],
-                                iconAnchor: [15, 42]
-                            });
-                            L.marker(warehouseLatLng, { icon: icon }).addTo(map);
-                        }
-                    });
-                        L.Routing.control({
-                            waypoints: tourWaypoints,
-                            routeWhileDragging: false, // Disable route dragging
-                            draggableWaypoints: false, // Disable waypoint dragging
-                            show: false, // Hide the control as we don't need to display it on the map
-                        }).addTo(map);
-                    
-                },
-                error: function(xhr, status, error) {   
-                    console.error('Error fetching delivery data:', error);
-                }
-            });
+   let markers = {};
+   function processTours() {
+    tours.forEach(function(tour) {
+        var coursiermarker = L.marker();
+        markers[tour.tourId] = coursiermarker;
+       
+        console.log('Tour ID:', tour.tourId);
+        var path = 'https://127.0.0.1:8000/tourDeleveries/' + tour.tourId;
+        $.ajax({
+            type: 'GET',
+            url: path,
+            success: function(deliveryResponse) {
+                var tourWaypoints = []; // Array to store waypoints for the current tour
+                deliveryResponse.forEach(function(item) {
+                    if (item.client) {
+                        var clientLatLng = L.latLng(item.client.latitude, item.client.longtitude);
+                        tourWaypoints.push(clientLatLng);
+                        L.marker(clientLatLng).addTo(map);
+                    }
+                    if (item.warehouse) {
+                        var warehouseLatLng = L.latLng(item.warehouse.latitude, item.warehouse.longtitude);
+                        tourWaypoints.push(warehouseLatLng);
+                        var icon = L.divIcon({
+                            className: 'custom-div-icon',
+                            html: "<div style='background-color:#c30b82;' class='marker-pin'></div><i class='material-icons'>Warehouse</i>",
+                            iconSize: [30, 42],
+                            iconAnchor: [15, 42]
+                        });
+                        L.marker(warehouseLatLng, { icon: icon }).addTo(map);
+    
+                    }
+                      
+                });
+
+                // Create routing control for this tour
+                L.Routing.control({
+                    waypoints: tourWaypoints,
+                    routeWhileDragging: false, // Disable route dragging
+                    draggableWaypoints: false, // Disable waypoint dragging
+                    show: false, // Hide the control as we don't need to display it on the map
+                }).addTo(map);
+            },
+            error: function(xhr, status, error) {   
+                console.error('Error fetching delivery data:', error);
+            }
         });
+    });
+}
+
+const url = new URL('http://localhost:3000/hub');
+    url.searchParams.append('topic', 'http://monsite.com/user');
+    const eventSource = new EventSource(url);
+    eventSource.onmessage = e => { 
+        const data = JSON.parse(e.data);
+        var data2 = {
+                positionHistoryLat: data.positionHistoryLat,
+                positionHistoryLong: data.positionHistoryLong,
+                coursier: data.coursier,
+                tourner: data.tourner
+            };  
+                var newCoordinates = L.latLng( data.positionHistoryLat, data.positionHistoryLong); 
+                markers[data.tourner].setLatLng(newCoordinates);
+                if (!map.hasLayer(markers[data.tourner])) {
+             markers[data.tourner].addTo(map); // Add marker to map if not already added
+                }
+        console.log(data);
+        
+        
     }
+  
 </script>
 
 

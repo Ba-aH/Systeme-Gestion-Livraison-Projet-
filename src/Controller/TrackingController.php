@@ -176,8 +176,16 @@ class TrackingController extends AbstractController{
         $tour=$tournerRepository->findOneBy(['id'=> $id]);
         
             $tourID= $tour->getId();
+            $coursierId= $tour->getCoursier()->getId();
+            $coursierEmail= $tour->getCoursier()->getEmail();
             $livraisons=$livraisonRepository->findBy(['tourner' =>$tourID]);
             $warehouseAdded = false;
+            $data[] = [
+                'coursier' => $coursierId
+            ];
+            $data[] = [
+                'tourId' => $tourID
+            ];
             foreach ($livraisons as $livraison) {
                 $adrID= $livraison->getAddressId();
                 $adrClient=$adresseRepository->findOneBy(['id' =>$adrID]);
@@ -198,14 +206,12 @@ class TrackingController extends AbstractController{
                     'longtitude' => $adrClient->getLongitude(),
                 ],
             ];
+          
             
-        }
-        
-        
+        } 
         
         return $this->json($data);
     }
-
     #[Route('/tourEncours', name: 'tourEncours')]
     public function tourEncours(Request $request, TournerRepository $tournerRepository, SerializerInterface $serializer, TokenStorageInterface $tokenStorage):Response
     {
