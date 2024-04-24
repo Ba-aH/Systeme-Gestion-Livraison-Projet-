@@ -21,13 +21,16 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use DateTime; 
 
 #[Route('/administrator')]
 class GererTourController extends AbstractController
 {
     #[Route('/gerer/tour', name: 'app_gerer_tour', methods: ['GET'])]
-    public function index(LivraisonRepository $livraisonRepository, StatutLivraisonRepository $statutLivraisonRepository,CoursierRepository $coursierRepository): Response
+    public function index(LivraisonRepository $livraisonRepository,AdresseRepository $adresseRepository,
+    StatutCoursierRepository $statutCoursierRepository,
+    StatutLivraisonRepository $statutLivraisonRepository,CoursierRepository $coursierRepository): Response
     {
         $ann = $statutLivraisonRepository->findBy(['status_title' => "annulée"]);
         $att = $statutLivraisonRepository->findBy(['status_title' => "en attente"]);
@@ -35,7 +38,7 @@ class GererTourController extends AbstractController
         $prix=0;
         $prixTotale=0;
         $livraisons = [];
-
+        $coursierDispo=[];
         foreach ($ann as $item) {
             $liv = $item->getLivraison();
             $livraisons[] = $liv;
@@ -50,6 +53,20 @@ class GererTourController extends AbstractController
             $nb++;
             $prix= $liv->getPrixTotaleLivraison();
             $prixTotale += $prix ;
+        }
+         
+        foreach($livraisons as $item){
+            $livraisonId = $item->getId();
+            $livraison = $livraisonRepository->findOneBy(['id'=>$livraisonId]);
+            $idaddress=$livraison->getAddressId();
+            $adr = $adresseRepository->findOneBy(['id' => $idaddress]);
+
+            $regionAdr = $adr->getRegion();
+        
+            $dateLivraison = $livraison->getLivraisonDate(['id' => $idaddress]);
+            $dateLivrFormatted = $dateLivraison->format('Y-m-d');
+            
+            $coursierDispo = $statutCoursierRepository->findBy(['region'=> $regionAdr,'titre_statut' => 'disponible','debut_tourner'=>$dateLivraison]);
         }
         
     
@@ -317,5 +334,36 @@ public function show(Request $request,RegionRepository $regionRepository,Livrais
                 'nb'=>$nb,
             ]);}
 
+            
+            #[Route('/availableCouriers/{id}', name: 'showAvailableCourier', methods: ['GET'])]
+            public function showAvailableCourier(Request $request,RegionRepository $regionRepository,LivraisonRepository $livraisonRepository,
+             SerializerInterface $serializer ,ClientRepository $clientRepository,AdresseRepository $adresseRepository,StatutCoursierRepository $statutCoursierRepository,CoursierRepository $coursierRepository,$id): Response
+            {
+                $livraisonId = $id;
+                $livraison = $livraisonRepository->findOneBy(['id'=>$livraisonId]);
+                $idaddress=$livraison->getAddressId();
+                $adr = $adresseRepository->findOneBy(['id' => $idaddress]);
+
+                $regionAdr = $adr->getRegion();
+            
+                $dateLivraison = $livraison->getLivraisonDate(['id' => $idaddress]);
+                $dateLivrFormatted = $dateLivraison->format('Y-m-d');
+                
+                $coursierDispo = $statutCoursierRepository->findBy(['region'=> $regionAdr,'titre_statut' => 'disponible','debut_tourner'=>$dateLivraison]);
+
+                $data =[];
+                foreach( $coursierDispo as $item){
+                    $data[] = [
+                        'coursier' => [
+                            'id'=>$item->getCoursier()->getId(),
+                            'email' => $item->getCoursier()->getEmail(),
+                            'phone' => $item->getCoursier()->getPhone(),
+                            'nom' => $item->getCoursier()->getNom(),
+                            'prenom' => $item->getCoursier()->getPrenom()        
+                        ]   
+                    ]; 
+                }
+                return $this->json($data);
+            }
     
 }

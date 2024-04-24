@@ -40,19 +40,103 @@
                     <td>{{ livraison.poidLivraison}}</td>
 
                     <td><a class ="modifier" href="{{ path('app_couriers', {'id': livraison.Client.id, 'livraisonId': livraison.id}) }}">Verifier les coursier disponible</a></td>
+                    
+                    <td>
+                      <button type="button" class="modifier fetchCouriersBtn" data-toggle="modal" data-target="#exampleModalCenter" data-livraison-id="{{ livraison.id }}">
+                        Verifier les coursier disponible
+                      </button>
+
+
+                      <!-- Modal -->
+                      <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="exampleModalLongTitle">Liste des courier disponible a Nord-Est <br>En 2024-04-12</h5>
+                             
+                            </div>
+                            <div class="modal-body">
+                              <table class="table table-hover">
+                                <thead>
+                                  <tr>
+                                    <th scope="col">Email</th>
+                                    <th scope="col">Nom</th>
+                                    <th scope="col">Prenom</th>
+                                    <th scope="col">Action</th> 
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr>
+                                    
+                                    {# {% set livraisonId = app.request.query.get('livraisonId') %} #}
+                                    {# <td><a href="{{ path('affectRoute', {'id': courier.coursier.id, 'livraisonId': livraisonId}) }}" class ="modifier" >Ajouter à sa tournée</a></td> #}
+                                  </tr>  
+                                </tbody>
+                              </table>
+                            </div>
+                            <script>
+                            const fetchCouriersBtns = document.querySelectorAll('.fetchCouriersBtn');
+
+                            // Add click event listener to each button
+                            fetchCouriersBtns.forEach(button => {
+                              button.addEventListener('click', () => {
+                                // Extract livraison ID from the button's data attribute
+                                const livraisonId = button.dataset.livraisonId;
+
+                                fetch(`https://127.0.0.1:8000/administrator/availableCouriers/${livraisonId}`) // Pass livraison ID in the URL
+                                  .then(response => response.json())
+                                  .then(data => {
+                                    // Data received from the server
+                                    console.log(data);
+
+                                    // Now you can manipulate the DOM to display the data
+                                    // For example, if you want to populate a table with the data
+                                    const modalBody = document.querySelector('#exampleModalCenter .modal-body table tbody');
+
+                                    // Clear existing table rows
+                                    modalBody.innerHTML = '';
+
+                                    data.forEach(courier => {
+                                      const row = document.createElement('tr');
+                                      row.innerHTML = `
+                                        <td>${courier.coursier.email}</td>
+                                        <td>${courier.coursier.nom}</td>
+                                        <td>${courier.coursier.prenom}</td>
+                                        <td>
+                                          <a href="#">Add to tour</a>
+                                        </td>
+                                      `;
+                                      modalBody.appendChild(row);
+                                    });
+                                  })
+                                  .catch(error => {
+                                    console.error('Error:', error);
+                                  });
+                              });
+                            });
+                            </script>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                              <button type="button" class="btn btn-primary">Save changes</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </td>
                   </tr>
                  
                       {% endfor %}
                 </tbody>
               </table>
+          
+              
+          
+
+          <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+          <!-- Include Bootstrap JavaScript -->
+          <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   </main><!-- End #main -->
 
-<div id="map" style="width:100%; height: 100vh"></div>
-	<script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"></script>
-	<script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
 <style> 
   .modifier {
       display: inline-block;
@@ -76,48 +160,6 @@
   <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
 
 <script>
-    var coordinates;
-    var map = L.map('map').setView([36.806389, 10.181667], 10);
-    var marker = L.marker([36.86014, 10.19347]).addTo(map);
-    mapLink = "<a href='http://openstreetmap.org'>OpenStreetMap</a>";
-    L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: 'Leaflet &copy; ' + mapLink + ', contribution', maxZoom: 18 }).addTo(map); 
-  var routeControl = L.Routing.control({
-            waypoints: [
-                L.latLng(36.86014, 10.19347), // First coordinate
-           
-                L.latLng(37.118716, 10.005798)
-            ]
-        }).addTo(map);
-         function calculateDistance(pointA, pointB) {
-         return pointA.distanceTo(pointB);
-    }
-  function updateVehicleLocation(newLat,newLng) {
-    var newCoordinates = L.latLng(newLat, newLng);
-
-      marker.setLatLng(newCoordinates);
-
-      
-      routeControl.setWaypoints([
-        newCoordinates,
-        L.latLng(37.118716, 10.005798)
-      ]);
-
-        var currentLocation = marker.getLatLng();
-      var destinationLocation = L.latLng(37.118716, 10.005798);
-      var distance = calculateDistance(currentLocation, destinationLocation);
-
-      if (distance < 100) {
-
-
-           
-        alert("Vehicle is less than 100 meters away from the destination!"+distance);
-
-
-      }
-      
-    }
-
-
     const url = new URL('http://localhost:3000/hub');
     url.searchParams.append('topic', 'http://monsite.com/user');
     const eventSource = new EventSource(url);
@@ -148,10 +190,11 @@
         window.setTimeout(() => {
             const $alert = document.querySelector('.alert')
             $alert.parentNode.removeChild($alert)
-        }, 2000)
-
-        
+        }, 2000)    
     }
+      $('#myModal').on('shown.bs.modal', function () {
+      $('#myInput').trigger('focus')
+    })
     </script>
     
     
