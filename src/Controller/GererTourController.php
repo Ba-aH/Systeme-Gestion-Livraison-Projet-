@@ -38,7 +38,7 @@ class GererTourController extends AbstractController
         $prix=0;
         $prixTotale=0;
         $livraisons = [];
-        $coursierDispo=[];
+        $coursierDispo= [];
         foreach ($ann as $item) {
             $liv = $item->getLivraison();
             $livraisons[] = $liv;
@@ -55,26 +55,32 @@ class GererTourController extends AbstractController
             $prixTotale += $prix ;
         }
          
-        foreach($livraisons as $item){
-            $livraisonId = $item->getId();
-            $livraison = $livraisonRepository->findOneBy(['id'=>$livraisonId]);
-            $idaddress=$livraison->getAddressId();
+        foreach ($livraisons as $livraison) {
+            $idaddress = $livraison->getAddressId();
             $adr = $adresseRepository->findOneBy(['id' => $idaddress]);
-
             $regionAdr = $adr->getRegion();
-        
             $dateLivraison = $livraison->getLivraisonDate(['id' => $idaddress]);
             $dateLivrFormatted = $dateLivraison->format('Y-m-d');
             
-            $coursierDispo = $statutCoursierRepository->findBy(['region'=> $regionAdr,'titre_statut' => 'disponible','debut_tourner'=>$dateLivraison]);
+            $coursierDispo = $statutCoursierRepository->findBy([
+                'region' => $regionAdr,
+                'titre_statut' => 'disponible',
+                'debut_tourner' => $dateLivraison
+            ]);
+            
+            $availableCouriers = [];
+            foreach ($coursierDispo as $coursier) {
+                $availableCouriers[] = $coursier->getCoursier();
+            }
+            
+            $livraison->setAvailableCouriers($availableCouriers);
         }
         
-    
         return $this->render('adminv2/livraisonAttente.html.twig', [
             'livraisons' => $livraisons, 
             'prixTotale' => $prixTotale,
             'nbLivraisons' => $nb,
-            'coursiers' => $coursierRepository->findAll(),
+            'adresseRepository'=>$adresseRepository,
         ]);
     }
 
