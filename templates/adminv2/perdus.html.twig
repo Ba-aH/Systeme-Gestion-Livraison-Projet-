@@ -50,10 +50,9 @@
                            <td> <p> {{ perdu.tourner.id }}</p></td>
                              <td> <p> {{ perdu.tourner.coursier.nom }}</p></td>
                                  <td> <p>   <a href="mailto:{{ perdu.tourner.coursier.email }}">{{ perdu.tourner.coursier.email }}</a></p></td>
-                         
-                              <td> <p> <a href="tel:+216  {{ perdu.tourner.coursier.phone }}">{{ perdu.tourner.coursier.phone }} </a></p></td> 
+                                 <td> <p> <a href="tel:+216  {{ perdu.tourner.coursier.phone }}">{{ perdu.tourner.coursier.phone }} </a></p></td> 
                    
-                    <td><a          class ="modifier" >report</a></td>
+                    <td><a class ="modifier" href="{{ path('trouvé', {'id': perdu.id}) }}" >Trouvé</a></td>
                   </tr>
                     {% endfor %}
                 

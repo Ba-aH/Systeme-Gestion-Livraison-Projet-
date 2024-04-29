@@ -454,76 +454,21 @@ class AdministratorController extends AbstractController
          }
 
 
+         #[Route('/trouvé/{id}', name: 'trouvé', methods: ['get'])]
+         public function touvé(Request $request,LivraisonRepository $livraisonRepository,StatutLivraisonRepository $statut ,ManagerRegistry $registry,ClientRepository $clientRepository,EntityManagerInterface $entityManager): Response
+         {
 
-//     #[Route('/history', name: 'history')]
-//     public function history(EntityManagerInterface $entityManager,LivraisonHistoryRepository $LivraisonHistoryRepository): Response
-//     {
-//         $liv_hist=$LivraisonHistoryRepository->findAll();
-//         $livraisons = [];
+            $livraisonId = $request->get('id');
+         
+            $livstat= $entityManager->getRepository(StatutLivraison::class)->findOneBy(['livraison' => $livraisonId]);
+            $livstat->setDisponibilité(1);
+            $livstat-> setStatusTitle('en attente');
 
-//   foreach ($liv_hist as $item) {
-//             $livraisons[] = $item->getLivraison();
-//         }
-//         return $this->render('administrator/history.html.twig', [
-//             'livraisons' => $livraisons, 
-//         ]);
-//     }
-   
-
-    //a #[Route('/history', name: 'history')]
-    // public function history(CoursierRepository $CoursierRepository,EntityManagerInterface $entityManager,LivraisonHistoryRepository $LivraisonHistoryRepository): Response
-    // {  $coursiers=$CoursierRepository->findAll();
-      
-    //     return $this->render('administrator/history.html.twig', [
-    //         'coursiers' => $coursiers, 
-    //     ]);
-    // }
-
-               
+            $entityManager->flush();
+            return $this->redirectToRoute('perdus');
+     
+     
+              }
 }
 
 
-
-
-  // #[Route('/filtrer', name: 'filtrer', methods: ['POST']) ]
-    // public function filtrer(EntityManagerInterface $entityManager,LivraisonHistoryRepository $LivraisonHistoryRepository,Request $request): Response
-    // {  
-         // $date = $request->request->get('date');
-// $region = $request->request->get('region');
-// $coursier = $request->request->get('coursier');
-
-// $dql = "SELECT lh 
-// FROM App\Entity\LivraisonHistory lh
-// LEFT JOIN lh.livraison livraison
-// LEFT JOIN livraison.coursier coursier
-// LEFT JOIN livraison.adresse adresse
-// LEFT JOIN adresse.region region
-// WHERE lh.date = :date
-// AND coursier = :coursier
-// AND region = :region";
-
-// $query = $entityManager->createQuery($dql);
-// $query->setParameter('date', $date)
-// ->setParameter('coursier', $coursier)
-// ->setParameter('region', $region);
-
-// $result= $query->getResult();
-// $jsonResult = json_encode($result);
-// return $this->json($jsonResult);
-    // }
-    
-        //     $data = [];
-        // foreach (    $liv as $livraison) {
-          
-        
-        //         $data[] = [
-        //             'id' => $livraison->getId(),
-                   
-        //         ];
-            
-        // }
-        //     return $this->json($data);
-        // } catch (\Exception $e) {
-        //     // Log the error or return a meaningful error response
-        //     return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
-        // }

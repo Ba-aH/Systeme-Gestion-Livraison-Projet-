@@ -1,6 +1,25 @@
 {% extends 'adminv2.html.twig' %}
  {% block body %}
- <div id="map" style="width:100%; height: 100vh"></div>
+
+<main id="main" class="main">
+ <div class="pagetitle">
+      <h1>suivie coursiers</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="#">Home</a></li>
+          <li class="breadcrumb-item active">suivie tours</li>
+          
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+   <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">tournées en cours : </h5>
+ <div id="map" style="width:100%; height: 69vh"></div></div></div>
+  </main>
+
+
     <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -29,7 +48,7 @@
             tours = response; // Assign the response to 'tours'
             processTours();
                 var toursLength = tours.length;
-console.log("Number of tours:", toursLength);
+                console.log("Number of tours:", toursLength);
         },
         error: function(xhr, status, error) {   
             console.error('Error fetching tour data:', error);
@@ -100,8 +119,16 @@ const url = new URL('http://localhost:3000/hub');
                 var newCoordinates = L.latLng( data.positionHistoryLat, data.positionHistoryLong); 
                 markers[data.tourner].setLatLng(newCoordinates);
                 if (!map.hasLayer(markers[data.tourner])) {
-             markers[data.tourner].addTo(map); // Add marker to map if not already added
-                }
+                    var tooltipContent ='couriser id :'+data.coursier;
+    var customTooltip = L.tooltip({
+        direction: 'top', // Position the tooltip above the marker
+        permanent: true, // Make the tooltip permanent (always visible)
+        opacity: 1 // Set the opacity to 1 to make it fully visible
+    }).setContent(tooltipContent);
+markers[data.tourner].bindTooltip(customTooltip).openTooltip();
+
+             markers[data.tourner].addTo(map);
+          }
         console.log(data);
         
         

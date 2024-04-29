@@ -34,6 +34,8 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Symfony\Component\Serializer\SerializerInterface;
 use DateTime; 
 use Symfony\Component\HttpFoundation\JsonResponse;
+
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 #[Route('/coursier')]
 class CoursierController extends AbstractController
 {
@@ -553,9 +555,56 @@ class CoursierController extends AbstractController
     // Query Livraison entities based on IDs from $tournées
     $livCount = count($livraisons); 
     $sal=5* $livCount;
+     
+   $auechec=0;
+    $echecauj = $entityManager->getRepository(Livraison::class)->findBy(['livraison_date' =>$now]);
+    foreach ($echecauj as $item) {
+        if( $item->getTourner()->getCoursier()->getId()== $idcoursier){
+       
+            $statut = $entityManager->getRepository(StatutLivraison::class)->findOneBy(['livraison' =>$item->getId()]);
+            if( $statut->getStatusTitle()=='echec'){
+                $auechec++;
+            }
+        }
+    }
+
+    $annulerau=0;
+    $annau = $entityManager->getRepository(Livraison::class)->findBy(['livraison_date' =>$now]);
+    foreach ($annau as $item) {
+        if( $item->getTourner()->getCoursier()->getId()== $idcoursier){
+       
+            $statut = $entityManager->getRepository(StatutLivraison::class)->findOneBy(['livraison' =>$item->getId()]);
+            if( $statut->getStatusTitle()=='annuler'){
+                $annulerau++;
+            }
+        }
+    }
+    
+ $livtoday=0;     
+ $livau = $entityManager->getRepository(Livraison::class)->findBy(['livraison_date' =>$now]);
+ foreach ($livau as $item) {
+     if( $item->getTourner()->getCoursier()->getId()== $idcoursier){
+        $livtoday++;
          
+     }
+ }
+
+
+
+ $saltoday=0;
+ $sall = $entityManager->getRepository(Livraison::class)->findBy(['livraison_date' =>$now]);
+ foreach ($sall as $item) {
+     if( $item->getTourner()->getCoursier()->getId()== $idcoursier){
+        $statut = $entityManager->getRepository(StatutLivraison::class)->findOneBy(['livraison' =>$item->getId()]);
+        if( $statut->getStatusTitle()=='confirmé'){
+        $saltoday++;
+         }}
+ }
+$dailysal=$saltoday*5;
+
+
             return  $this->render('coursierV2/wallet.html.twig',['tour'=>$tournées,'count'=>$tournéesCount,'livs'=>$livraisons
-            ,'livnumber'=>$livCount,'sal'=>$sal ,'coursier'=>$coursier]);
+            ,'livnumber'=>$livCount,'sal'=>$sal ,'coursier'=>$coursier,'echectoday'=>$auechec, 'annulertoday'=>$annulerau,'livtoday'=>$livtoday,'todaysal'=>$dailysal]);
 
 
 
@@ -601,5 +650,31 @@ class CoursierController extends AbstractController
         }
 
 
+        #[Route('/notificationc', name: 'notificationc', methods: ['GET'])]
+        public function notificationc(EntityManagerInterface $entityManager,TournerRepository $tournerRepository,SerializerInterface $serializer): Response
+        {
+       
+        $token = $this->tokenStorage->getToken();
+                $currentUser = $token->getUser();
+                if ($currentUser instanceof Coursier) {
+                    $idcoursier = $currentUser->getId();
+                }
+        $tourneés = $tournerRepository->findBy(['coursier' =>  $idcoursier,'statut_tourner' => 'complet']);
+        $numItems = count($tourneés);
 
+        $data = $serializer->serialize([
+            'tournées' => $tourneés,
+            'nb' => $numItems,
+        ], 'json', [
+            AbstractNormalizer::IGNORED_ATTRIBUTES => ['coursier','livraison'],
+            AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function ($object) {
+                return $object->getId();
+            }
+        ]);
+
+        // Return JsonResponse
+        return new JsonResponse($data, 200, [], true);
+      
+    
+        }
 }

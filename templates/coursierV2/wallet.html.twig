@@ -6,10 +6,74 @@
 
 {% block body %}
 
-
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" rel="stylesheet">
  
+<style type="text/css">
+    	.carddd {
+    background-color: #fff;
+    border-radius: 10px;
+    border: none;
+    position: relative;
+    margin-bottom: 30px;
+    box-shadow: 0 0.46875rem 2.1875rem rgba(90,97,105,0.1), 0 0.9375rem 1.40625rem rgba(90,97,105,0.1), 0 0.25rem 0.53125rem rgba(90,97,105,0.12), 0 0.125rem 0.1875rem rgba(90,97,105,0.1);
+}
+.l-bg-cherry {
+    background: linear-gradient(to right, #493240, #f09) !important;
+    color: #fff;
+}
 
+.l-bg-blue-dark {
+    background: linear-gradient(to right, #373b44, #4286f4) !important;
+    color: #fff;
+}
+
+.l-bg-green-dark {
+    background: linear-gradient(to right, #0a504a, #38ef7d) !important;
+    color: #fff;
+}
+
+.l-bg-orange-dark {
+    background: linear-gradient(to right, #a86008, #ffba56) !important;
+    color: #fff;
+}
+
+.carddd .card-statistic-3 .card-icon-large .fas, .carddd .card-statistic-3 .card-icon-large .far, .carddd .card-statistic-3 .card-icon-large .fab, .carddd .card-statistic-3 .card-icon-large .fal {
+    font-size: 110px;
+}
+
+.carddd .card-statistic-3 .card-icon {
+    text-align: center;
+    line-height: 50px;
+    margin-left: 15px;
+    color: #000;
+    position: absolute;
+    right: -5px;
+    top: 20px;
+    opacity: 0.1;
+}
+
+.l-bg-cyan {
+    background: linear-gradient(135deg, #289cf5, #84c0ec) !important;
+    color: #fff;
+}
+
+.l-bg-green {
+    background: linear-gradient(135deg, #23bdb8 0%, #43e794 100%) !important;
+    color: #fff;
+}
+
+.l-bg-orange {
+    background: linear-gradient(to right, #f9900e, #ffba56) !important;
+    color: #fff;
+}
+
+.l-bg-cyan {
+    background: linear-gradient(135deg, #289cf5, #84c0ec) !important;
+    color: #fff;
+}
+
+    </style>
   
    <section id="topbar" class="d-flex align-items-center">
     <!-- <div class="container d-flex justify-content-center justify-content-md-between">
@@ -56,10 +120,10 @@
     <div class="container">
 
       <ol>
-        <li><a href="index.html">salaire</a></li>
-        <li>deliver</li>
+        <li><a href="#">home</a></li>
+        <li>paiement</li>
       </ol>
-      <h2>consulter salaire</h2>
+      <h2>consulter paiement</h2>
 
     </div>
   </section>
@@ -308,7 +372,109 @@ a {
 </div>
 </div>
 </div>
+
 <div class="card">
+<div class="container">
+<div class="row ">
+<div class="col-xl-6 col-lg-6">
+<div class="carddd l-bg-cherry">
+<div class="card-statistic-3 p-4">
+<div class="card-icon card-icon-large"><i class="fas fa-shopping-cart"></i></div>
+<div class="mb-4">
+<h5 class="card-title mb-0">Livraisons totales aujourd'hui</h5>
+</div>
+<div class="row align-items-center mb-2 d-flex">
+<div class="col-8">
+<h2 class="d-flex align-items-center mb-0">
+{{livtoday}}
+</h2>
+</div>
+<div class="col-4 text-right">
+<span><i class="fa fa-arrow-up"></i></span>
+</div>
+</div>
+<div class="progress mt-1 " data-height="8" style="height: 8px;">
+<div class="progress-bar l-bg-cyan" role="progressbar" data-width="25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" style="width: 25%;"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="col-xl-6 col-lg-6">
+<div class="carddd l-bg-blue-dark">
+<div class="card-statistic-3 p-4">
+<div class="card-icon card-icon-large"><i class="fas fa-users"></i></div>
+<div class="mb-4">
+<h5 class="card-title mb-0">Livraisons echouées aujourd'hui</h5>
+</div>
+<div class="row align-items-center mb-2 d-flex">
+<div class="col-8">
+<h2 class="d-flex align-items-center mb-0">
+{{echectoday}}
+</h2>
+</div>
+<div class="col-4 text-right">
+<span> <i class="fa fa-arrow-up"></i></span>
+</div>
+</div>
+<div class="progress mt-1 " data-height="8" style="height: 8px;">
+<div class="progress-bar l-bg-green" role="progressbar" data-width="25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" style="width: 25%;"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="col-xl-6 col-lg-6">
+<div class="carddd l-bg-green-dark">
+<div class="card-statistic-3 p-4">
+<div class="card-icon card-icon-large"><i class="fas fa-ticket-alt"></i></div>
+<div class="mb-4">
+<h5 class="card-title mb-0">Livraisons annulées aujourd'hui</h5>
+</div>
+<div class="row align-items-center mb-2 d-flex">
+<div class="col-8">
+<h2 class="d-flex align-items-center mb-0">
+{{annulertoday}}
+</h2>
+</div>
+<div class="col-4 text-right">
+<span> <i class="fa fa-arrow-up"></i></span>
+</div>
+</div>
+<div class="progress mt-1 " data-height="8" style="height: 8px;">
+<div class="progress-bar l-bg-orange" role="progressbar" data-width="25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" style="width: 25%;"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="col-xl-6 col-lg-6">
+<div class="carddd l-bg-orange-dark">
+<div class="card-statistic-3 p-4">
+<div class="card-icon card-icon-large"><i class="fas fa-dollar-sign"></i></div>
+<div class="mb-4">
+<h5 class="card-title mb-0">Revenus aujourd'hui</h5>
+</div>
+<div class="row align-items-center mb-2 d-flex">
+<div class="col-8">
+<h2 class="d-flex align-items-center mb-0">
+{{todaysal}}
+</h2>
+</div>
+<div class="col-4 text-right">
+<span> <i class="fa fa-arrow-up"></i></span>
+</div>
+</div>
+<div class="progress mt-1 " data-height="8" style="height: 8px;">
+<div class="progress-bar l-bg-cyan" role="progressbar" data-width="25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" style="width: 25%;"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.bundle.min.js"></script>
+<script type="text/javascript">
+	
+</script>
 <div class="tab-content p-4">
 <div class="tab-pane active show" id="projects-tab" role="tabpanel">
 <div class="d-flex align-items-center">
@@ -365,7 +531,7 @@ a {
 </div>
 </div>  {% else %}
                                 <tr>
-                                    <td colspan="8">no records found</td>
+                                    <td colspan="8">pas de livraisons</td>
                                 </tr>
                             {% endfor %}
 
@@ -378,6 +544,7 @@ a {
 </div>
 </div>
 </div>
+
 <div class="col-xl-4">
 <div class="card">
 <div class="card-body">
@@ -386,9 +553,9 @@ a {
 <p>votre salaire pour ce mois est:<div><span class="badge badge-soft-success p-2 team-status ss">{{sal}} Dt</span></div></p>
 <ul class="ps-3 mb-0">
 <li>numéros de livraison réaliser</li>
-<span class="badge badge-soft-secondary p-2">{{livnumber}}</span>
+<span class="badge badge-soft-secondary p-2"> {{livnumber}} </span>
 <li>numéros de tournées réaliser</li>
-<span class="badge badge-soft-secondary p-2">   {{count}}</span>
+<span class="badge badge-soft-secondary p-2"> {{count}}</span>
 </ul>
 </div>
 <hr>

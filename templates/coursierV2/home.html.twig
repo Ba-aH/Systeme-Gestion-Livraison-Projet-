@@ -1,5 +1,6 @@
 {% extends 'admin.html.twig' %}
 {% block body %}
+
      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
   <section id="topbar" class="d-flex align-items-center">
@@ -28,6 +29,17 @@
 
       <nav id="navbar" class="navbar">
         <ul>
+           <li class="nav-item dropdown">
+              <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+                  <i class="bi bi-bell"></i>
+                  <span id="notification-count" class="badge bg-primary badge-number"></span>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
+                <li class="notification-item">
+                  <div id="notification-list">  </div>
+                </li>
+              </ul>
+            </li>
           <li><a class="active" href="{{ path('afficher_tourneesAU') }}">Home</a></li>
          <li><a  href="{{ path('afaire') }}">travail a faire</a></li>
           <li><a href="{{ path('afficher_tourneesrecent') }}">historique</a></li>
@@ -42,6 +54,43 @@
       </nav>
 
     </div>
+     <style>
+      {# #header {
+        background-color: #0e1d34; /* Set your desired background color here */
+        transition: background-color 0.3s ease; /* Add a smooth transition effect */
+      } #}
+      .notification-item{
+        padding: 15px 15px;
+      }
+
+      #header.header-scrolled {
+        background-color: #0e1d34; /* Set the same background color when scrolled */
+      }
+      .notification-item-wrapper {
+        display: flex;
+        align-items: center;
+        padding: 50px;
+        border-bottom: 1px solid #ddd;
+      }
+
+      .notification-item-wrapper i {
+          font-size: 1.5rem;
+          margin-right: 10px;
+          margin-left: 10px;
+      }
+
+      .notification-item-wrapper h5 {
+          margin: 0;
+      }
+
+      .notification-item-wrapper p {
+          margin: 5px 0;
+      }
+      .dropdown-menu {
+          width: 500px; 
+          margin-left: 10px;
+      }
+    </style> 
   </header>
    <!-- ======= Breadcrumbs ======= -->
    <section id="breadcrumbs" class="breadcrumbs">
@@ -579,7 +628,7 @@ for (var i = 0; i < latLongDist.length; i++) {
 
 {% if test == 0 %}
 
-<h1> terminééééééééééééééééééééééééééééééééé</h1>
+<h1> terminé</h1>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
 var tourId = {{ idtour|default('null') }};
@@ -883,4 +932,51 @@ $.ajax({
     confirmationDialog.style.display = 'none';
   }
 </script>
+ <script>
+      fetch('{{ path('notificationc') }}')
+      .then(response => response.json())
+      .then(data => {
+          const notificationCountElement = document.getElementById('notification-count');
+          if (notificationCountElement) {
+              notificationCountElement.textContent = data.nb;
+          }
+          const notificationList = document.getElementById('notification-list');
+          data.tournées.forEach(tournée => {
+              const referenceItem = document.createElement('div');
+              var date = new Date(tournée.date);
+           var formattedDate = date.toLocaleDateString();
+              referenceItem.innerHTML = `
+                  <i class="bi bi-exclamation-circle text-warning"></i>
+                  <div>
+                       <h5>tournée numéro:  ${tournée.id}</h5>
+                       
+                      <h5>Doit étre fait en:  ${formattedDate} </h5>
+                       <div class="cube">
+                       
+  <p>statut:  ${tournée.statutTourner}</p>
+</div></br></br>
+                  </div>
+              `;
+              notificationList.appendChild(referenceItem);
+          });
+      })
+      .catch(error => {
+          console.error('Error fetching data:', error);
+      });
+      
+      </script>
+
+<style>.cube {
+  display: inline-block;
+  padding: 2px 70px ; /* Reduced padding */
+  background-color: #007bff; /* Blue background color */
+  color: white; /* Text color */
+  border-radius: 5px; /* Rounded corners */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Optional: Add a shadow */
+}
+
+.cube h5 {
+  margin: 0; /* Remove default margin for h5 */
+  font-size: 16px; /* Adjust font size */
+}</style>
 {% endblock %}
