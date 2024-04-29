@@ -73,10 +73,11 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/administrator, roles: ROLE_ADMIN }
         # - { path: ^/home, roles: ROLE_USER }
         - { path: ^/coursier, roles: ROLE_USER }
         - { path: ^/client, roles: ROLE_USER }
+        - { path: '^/administrator/add-admin', roles: ROLE_SUPER_ADMIN }
 
 when@test:
     security:

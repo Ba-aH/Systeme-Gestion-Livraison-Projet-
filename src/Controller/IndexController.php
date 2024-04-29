@@ -117,7 +117,7 @@ public function appClient_index(): Response
         }
         if ($liv){
             return $this->render('client/livraisonParReference.html.twig', [
-                'user' => null,
+                'user' => $currentUser,
                 'liv' =>  $liv,
                 'coursier' =>$coursier ,
                 'adress' => $address,

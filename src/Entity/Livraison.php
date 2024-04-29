@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Repository\AdresseRepository;
 use App\Repository\LivraisonRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -54,6 +55,8 @@ class Livraison
 
     #[ORM\OneToMany(mappedBy: 'livraison', targetEntity: Notification::class)]
     private Collection $notifications;
+
+    private $availableCouriers;
 
     public function __construct()
     {
@@ -255,4 +258,23 @@ class Livraison
 
         return $this;
     }
+
+    public function getAvailableCouriers()
+    {
+        return $this->availableCouriers;
+    }
+
+    public function setAvailableCouriers($availableCouriers)
+    {
+        $this->availableCouriers = $availableCouriers;
+    }
+
+    public function getLivraisonRegion(AdresseRepository $adresseRepository): ?string
+    {
+        $adr = $adresseRepository->findOneBy(['id' => $this->address_id]);
+        return $adr->getRegion()->getName();
+    }
+
+    
+
 }
