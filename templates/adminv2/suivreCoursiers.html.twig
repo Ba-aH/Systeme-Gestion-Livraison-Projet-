@@ -1,0 +1,145 @@
+{% extends 'adminv2.html.twig' %}
+ {% block body %}
+ <style>
+ th, td {
+        padding: 8px;
+        text-align: center; /* Center align content in all columns */
+        border-bottom: 1px solid #ddd;
+    }</style>
+<body>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <!-- Include Leaflet Routing Machine CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
+ 
+
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>vérifier l'historique des coursiers </h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+          <li class="breadcrumb-item active">suivie coursiers  </li>
+         
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+        <table class="table table-hover">
+                <thead>
+                  <tr>
+                  
+                    <th scope="col">Nom</th>
+                    <th scope="col">Prenom</th>
+                  
+                    <th scope="col">Email</th>
+                      <th scope="col">Téléphone</th>
+                    <th scope="col">Action</th> 
+                  </tr>
+                </thead>
+                <tbody>
+                {% set counter = 0 %}
+                {% for coursier in coursiers %}
+                 {% set counter = counter + 1 %}
+            <tr>
+                  <td>{{ coursier.nom }}</td>
+                                <td>{{ coursier.prenom }}</td>
+                                <td>{{ coursier.email }}</td>
+                                <td>{{ coursier.phone}}</td>
+
+                {# <td>
+                    <a class="modifier" href="{{ path('app_couriers', {'id': livraison.Client.id, 'livraisonId': livraison.id}) }}">Verifier les coursiers disponibles</a>
+                </td> #}
+                            
+                <td>
+                    <button type="button" class="modifier fetchCouriersBtn" data-toggle="modal" data-target="#exampleModalCenter{{ coursier.id }}" data-livraison-id="{{ coursier.id }}">
+                        Verifier tournées
+                    </button>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModalCenter{{ coursier.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLongTitle">Liste des tournées réaliser par {{ coursier.nom }} {{ coursier.prenom }} <br> </h5>
+                                </div>
+                                <div class="modal-body">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Date</th>
+                                                <th scope="col">nb livraisons</th>
+                                                <th scope="col">id</th>
+                                                <th scope="col">Action</th> 
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for tournée in tournées[counter - 1] %}
+                                            <tr>
+                                            
+                                           <td>{{ tournée.date ? tournée.date|date('Y-m-d') : '' }}</td>
+                                                <td>{{ tournée.nbLivraison }}</td>  
+                                                  <td>{{ tournée.id }}</td>
+                                                <td>
+                                                    <a href="{{ path('pathhistory', {'id': tournée.id}) }}">vérifier tournée itinéraire   </a>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button"  class="btn btn-primary" data-dismiss="modal">Close</button>
+                            
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+          
+              
+          
+
+          <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+          <!-- Include Bootstrap JavaScript -->
+          <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  </main><!-- End #main -->
+
+<style> 
+  .modifier {
+      display: inline-block;
+      padding: 10px 20px;
+      text-decoration: none;
+      color: white;
+      background-color: blue;
+      border: 1px solid blue;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s, color 0.3s; /* Add transition for smooth effect */
+  }
+
+  .modifier:hover {
+      background-color: white;
+      color: blue;
+  }
+</style>
+ <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <!-- Include Leaflet Routing Machine JS -->
+  <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+
+<script>
+  
+      $('#myModal').on('shown.bs.modal', function () {
+      $('#myInput').trigger('focus')
+    })
+    </script>
+    
+    
+
+
+  {% endblock %}
+
+  
