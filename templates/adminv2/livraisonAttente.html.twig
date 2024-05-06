@@ -42,12 +42,13 @@
                 {# <td>
                     <a class="modifier" href="{{ path('app_couriers', {'id': livraison.Client.id, 'livraisonId': livraison.id}) }}">Verifier les coursiers disponibles</a>
                 </td> #}
-                            
+                       
                 <td>
+                    {% if livraison.availableCouriers %}
                     <button type="button" class="modifier fetchCouriersBtn" data-toggle="modal" data-target="#exampleModalCenter{{ livraison.id }}" data-livraison-id="{{ livraison.id }}">
                         Verifier les coursiers disponibles
                     </button>
-
+                {% endif %}
                     <!-- Modal -->
                     <div class="modal fade" id="exampleModalCenter{{ livraison.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -68,12 +69,14 @@
                                         <tbody>
                                             {% for coursier in livraison.availableCouriers %}
                                             <tr>
-                                                <td>{{ coursier.email }}</td>
-                                                <td>{{ coursier.nom }}</td>
-                                                <td>{{ coursier.prenom }}</td>
+                                                {% if coursier is not null %}
+                                                    <td>{{ coursier.email }}</td>
+                                                    <td>{{ coursier.nom }}</td>
+                                                    <td>{{ coursier.prenom }}</td>
                                                 <td>
                                                     <a href="{{ path('affectRoute', {'id': coursier.id, 'livraisonId': livraison.id}) }}">Add to tour</a>
                                                 </td>
+                                                {% endif %}
                                             </tr>
                                             {% endfor %}
                                         </tbody>
@@ -87,6 +90,8 @@
                         </div>
                     </div>
                 </td>
+                
+                
             </tr>
             {% endfor %}
             </tbody>

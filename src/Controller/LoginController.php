@@ -42,11 +42,10 @@ class LoginController extends AbstractController
         // last username entered by the user
          $lastUsername = $authenticationUtils->getLastUsername();
          
-
           return $this->render('login/index.html.twig', [
              'controller_name' => 'LoginController',
              'last_username' => $lastUsername,
-             'error'         => $error,
+             'error'         => $error
           ]);
       }
 
@@ -82,7 +81,7 @@ class LoginController extends AbstractController
     }
 
     #[Route('/reset-password', name: 'resetPass')]
-    public function resetPassword(Request $request, MailerInterface $mailer, ClientRepository $clientRepository, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager, CoursierRepository $coursierRepository,ResetPasswordRepository $resetPassword): Response
+    public function resetPassword(Request $request, AuthenticationUtils $authenticationUtils, MailerInterface $mailer, ClientRepository $clientRepository, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager, CoursierRepository $coursierRepository,ResetPasswordRepository $resetPassword): Response
     {
         $email = $request->query->get('email');
         $user = $clientRepository->findOneBy(['email' => $email]);
@@ -113,8 +112,15 @@ class LoginController extends AbstractController
                 
             ]);
         }
-
-        return $this->render('login/reset_password_not_found.html.twig');
+        $lastUsername = $authenticationUtils->getLastUsername();
+        $error = $authenticationUtils->getLastAuthenticationError();
+        $error2= "Adresse email inéxistant";
+        return $this->render('login/index.html.twig', [
+            'controller_name' => 'LoginController',
+            'last_username' => $lastUsername,
+            'error'         => $error,
+            'error2'         => $error2,
+         ]);
     }
 
     #[Route('/verifCodePin', name: 'verifCodePin')]

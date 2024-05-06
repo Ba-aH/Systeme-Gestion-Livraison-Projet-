@@ -18,11 +18,11 @@
         <ul>
           {% if user is null %}
             <li><a href="{{path('appClient_index')}}" class="active">Home</a></li>
-            <li><a href="#" onclick="scrollToDiv('about')">About</a></li>
-            <li><a href="#" onclick="scrollToDiv('service')" >Services</a></li>
-            <li><a href="#"onclick="scrollToDiv('horizontal-pricing')">Pricing</a></li>
+            <li><a href="#" onclick="scrollToDiv('about')">À propos de nous</a></li>
+            <li><a href="#" onclick="scrollToDiv('service')" >Nos Services</a></li>
+            <li><a href="#"onclick="scrollToDiv('horizontal-pricing')">Tarifs</a></li>
             <li><a href="{{ path('contact') }}">Contact</a></li>
-            <li><a class="get-a-quote" href="{{ path('app_login') }}">Login</a></li>
+            <li><a class="get-a-quote" href="{{ path('app_login') }}">Se Connecter</a></li>
           {% endif %}
           {% if user is not null %}
         </li>
@@ -31,7 +31,7 @@
                 <div id="notification-list"></li>
             </ul>
             <li><a href="{{path('afficher_livraisons')}}">Home</a></li>
-            <li><a href="{{path('afficher_livraisons')}}">Mes Livraisons</a></li>
+            <li><a href="{{path('afficher_livraisons')}}">  </a></li>
             <ul>
               <li class="dropdown"><a href="#"><span>Profile</span> <i class="bi bi-chevron-down dropdown-indicator"></i></a>
                 <ul>
