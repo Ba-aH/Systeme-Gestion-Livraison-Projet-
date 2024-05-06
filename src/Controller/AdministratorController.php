@@ -287,7 +287,7 @@ class AdministratorController extends AbstractController
           
                  // Retrieve the Livraison ID
                 
-                 $now = new \DateTimeImmutable();
+                 $now = new \DateTimeImmutable('now', new \DateTimeZone('Africa/Tunis'));
            
                  $livraison = $entityManager->getRepository(Livraison::class)->find($livraisonIdd);
                  $dateLivraisonString = $request->request->get('date'); // Assuming 'date_livraison' is the name of your form field
@@ -303,12 +303,15 @@ class AdministratorController extends AbstractController
                      if ($mod_stat) {
                         $mod_stat->setStatusTitle('en attente');
                         $mod_stat->setStatusDateModifier($now);
+                        $mod_stat->setRaisonEchec(null);
                         $livraison->setTourner(null);
+                        $livraison->setLivraisonDate($dateLivraison);
+
                        }
 
                     
                      $entityManager->flush();
-                     $clients=$clientRepository->findAll();
+                    //  $clients=$clientRepository->findAll();
               
                    
                      return $this->redirectToRoute('echec');
