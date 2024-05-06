@@ -177,10 +177,7 @@ input[type="submit"]:hover {
       <label>Référence:</label>
       <p>{{ liv.getReference() }}</p>
     </div>
-    <div class="infot">
-      <label>ID:</label>
-      <p>{{ liv.getId() }}</p>
-    </div>
+    
     <div class="infot">
       <label>Code PIN:</label>
       <p>{{ liv.getCodePin() }}</p>
@@ -201,12 +198,12 @@ input[type="submit"]:hover {
       <label>Date de livraison:</label>
       <p>{{ liv.getLivraisonDate()|date('Y-m-d ') }}</p>
     </div>
-    {% if liv.getTourner() is not null %}
+    {# {% if liv.getTourner() is not null %}
     <div class="infot">
       <label>ID du tourner:</label>
       <p>{{ liv.getTourner().getId() }}</p>
     </div>
-    {% endif %}
+    {% endif %} #}
   </div>
 
 

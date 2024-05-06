@@ -3,11 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\Administrateur;
+use App\Entity\Adresse;
 use DateTime; 
 
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Entity\Client;
 use App\Entity\Coursier;
+use App\Entity\CoursierPositionHistory;
 use App\Entity\LivraisonHistory;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use App\Entity\Livraison;
@@ -19,6 +21,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\ClientRepository;
 use App\Repository\LivraisonHistoryRepository;
 use App\Repository\StatutLivraisonRepository;
+use App\Repository\CoursierPositionHistoryRepository;
 use App\Repository\LivraisonRepository;
 use App\Repository\AdresseRepository ;
 use App\Repository\TournerRepository ;
@@ -434,14 +437,14 @@ class AdministratorController extends AbstractController
     public function perdus(LivraisonRepository $livraisonRepository,StatutLivraisonRepository $statut ,ManagerRegistry $registry,ClientRepository $clientRepository,EntityManagerInterface $entityManager): Response
     {         $now = new \DateTimeImmutable();
 
-        $livraisons = $statut->findBy(['status_title' => ['echec', 'annuler']]);
+        $livraisons = $statut->findBy(['status_title' => ['echec', 'annuler','non recu']]);
         $resultArray=[];
         foreach ($livraisons as $livraison) {
             $statusDateModifier = $livraison->getStatusDateModifier();
             $diff = $now->diff($statusDateModifier);
             $hoursDifference = $diff->h + $diff->days * 24;
             $disp= $livraison->getDisponibilité();
-            if ($hoursDifference > 24 && $disp==0 ) { // Check if the difference is greater than 24 hours
+            if ($hoursDifference > 24 && $disp==0 ) { 
                 $resultArray[] = $livraison->getLivraison();
             }
 
@@ -457,18 +460,75 @@ class AdministratorController extends AbstractController
          #[Route('/trouvé/{id}', name: 'trouvé', methods: ['get'])]
          public function touvé(Request $request,LivraisonRepository $livraisonRepository,StatutLivraisonRepository $statut ,ManagerRegistry $registry,ClientRepository $clientRepository,EntityManagerInterface $entityManager): Response
          {
-
+            $now = new \DateTimeImmutable('now', new \DateTimeZone('Africa/Tunis'));
             $livraisonId = $request->get('id');
          
             $livstat= $entityManager->getRepository(StatutLivraison::class)->findOneBy(['livraison' => $livraisonId]);
             $livstat->setDisponibilité(1);
             $livstat-> setStatusTitle('en attente');
+            $livstat-> setStatusDateModifier($now);
 
             $entityManager->flush();
             return $this->redirectToRoute('perdus');
      
      
               }
+
+
+
+
+              #[Route('/suivreCoursier', name: 'suivreCoursier', methods: ['GET'])]
+              public function suivreCoursier(LivraisonRepository $livraisonRepository,AdresseRepository $adresseRepository,
+              StatutCoursierRepository $statutCoursierRepository,
+              StatutLivraisonRepository $statutLivraisonRepository,CoursierRepository $coursierRepository,TournerRepository $tournerRepository): Response
+              {    $coursiers=$coursierRepository->findAll();
+                   
+                $tournées = [];
+               
+                foreach ($coursiers as $item) {
+                    $tour=$tournerRepository->findBy(['coursier' => $item->getId(),'statut_tourner'=>'terminé']);
+                    
+                    $tournées[] = $tour;
+                   
+                }
+
+
+
+                  return $this->render('adminv2/suivreCoursiers.html.twig', [
+                      'coursiers' => $coursiers, 
+                      'tournées' => $tournées,
+                     
+                  ]);
+              }
+
+
+
+              #[Route('/pathhistory/{id}', name: 'pathhistory', methods: ['GET'])]
+              public function pathhistory(Request $request,CoursierPositionHistoryRepository $CoursierPositionHistoryRepository,AdresseRepository $adresseRepository,
+              StatutCoursierRepository $statutCoursierRepository,EntityManagerInterface $entityManager,
+              StatutLivraisonRepository $statutLivraisonRepository,CoursierRepository $coursierRepository,TournerRepository $tournerRepository,LivraisonRepository $LivraisonRepository): Response
+              {    
+                $id = $request->get('id');
+                $tour=$CoursierPositionHistoryRepository->findBy(['tourner' => $id ]);
+                   
+                $livs=$LivraisonRepository->findBy(['tourner' => $id ]);
+                $adresses = [];
+                foreach ($livs as $item) {
+                    $ad= $entityManager->getRepository(Adresse::class)->findOneBy(['id' => $item->getAddressId()]);
+                    
+                    $adresses[] = $ad;
+                   
+                }
+                return $this->render('adminv2/coursierpath.html.twig', [
+                      'tour' => $tour, 
+                      'adresses'=> $adresses,
+                            ]);
+
+
+                   }
+
+              
+
 }
 
 

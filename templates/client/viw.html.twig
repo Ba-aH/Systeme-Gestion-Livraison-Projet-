@@ -211,10 +211,10 @@ h2 {
 						      <td>{{ livraison.getPrixTotaleLivraison() }}</td>
 						      <td>{{ livraison.getLivraisonDate()|date('Y-m-d ') }}</td>
 						      <td>
-                    <a href="{{ path('editbyclient',{'id': livraison.id}) }}" class="card-link"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Editer la livraison</a>
+                    <a href="{{ path('editbyclient',{'id': livraison.id}) }}" class="card-link"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> modifier  livraison</a>
                   </td>
                   <td>
-                    <a href="{{ path('consultclient',{'id': livraison.id}) }}" class="card-link"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Consulter  livraison</a>
+                    <a href="{{ path('consultclient',{'id': livraison.id}) }}" class="card-link"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> suivre  livraison</a>
                   </td>
 						      <td>	
                     <a id="link{{ loop.index }}" href="{{ path('client_annulation',{'id': livraison.id}) }}" class="card-link"   style="color: red;"><i class="fa fa-ban" aria-hidden="true"></i> Annuler la livraison</a>
