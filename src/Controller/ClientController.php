@@ -26,9 +26,11 @@ use App\Entity\Tourner;
 use App\Entity\StatutCoursier;
 use App\Entity\StatutLivraison;
 use App\Entity\Livraison;
+use App\Entity\RaisonSignalement;
 use App\Entity\Region;
 use DateTime; 
 use App\Repository\ClientRepository;
+use App\Repository\RaisonSignalementRepository;
 use App\Repository\RegionRepository;
 use App\Repository\WarehouseRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -55,8 +57,9 @@ class ClientController extends AbstractController
     }
     
     #[Route('/mes-livraisons', name: 'afficher_livraisons', methods: ['GET'])]
-    public function afficher_livraisons(Request $request ,LivraisonHistoryRepository $livraisonHistoryRepository,EntityManagerInterface $entityManager,TournerRepository $tournerRepository,LivraisonRepository $livraisonRepository): Response
+    public function afficher_livraisons(Request $request ,RaisonSignalementRepository $raisonSignalementRepository,LivraisonHistoryRepository $livraisonHistoryRepository,EntityManagerInterface $entityManager,TournerRepository $tournerRepository,LivraisonRepository $livraisonRepository): Response
     {     
+        $raisonSignalement = $raisonSignalementRepository->findAll();
         $token = $this->tokenStorage->getToken();
         $currentUser = $token->getUser();
         if ($currentUser instanceof Client) {
@@ -92,7 +95,10 @@ class ClientController extends AbstractController
     }
          $error = $request->query->get('error', 0);
         return $this->render('client/viw.html.twig', [
-            'livraisons' =>  $livraisons ,'error'=> $error, 'livraisonshistory' =>   $livhistorytab 
+            'livraisons' =>  $livraisons ,
+            'error'=> $error,
+            'RaisonsSignalements'=>$raisonSignalement,
+             'livraisonshistory' =>  $livhistorytab 
         ]);
         
     }
@@ -193,21 +199,23 @@ class ClientController extends AbstractController
 
 
 
-    #[Route('/liv_non_recu/{id}', name: 'liv_non_recu', methods: ['GET'])]
-    public function liv_non_recu(Request $request ,LivraisonRepository $livraisonRepository,EntityManagerInterface $entityManager): Response
+    #[Route('/liv_non_recu', name: 'liv_non_recu')]
+    public function liv_non_recu(Request $request ,StatutLivraisonRepository $statutLivraisonRepository,RaisonSignalementRepository $raisonSignalementRepository,LivraisonRepository $livraisonRepository,EntityManagerInterface $entityManager): Response
     {
         $token = $this->tokenStorage->getToken();
         $currentUser = $token->getUser();
+        $livraisonId = $request->get('livraisonId');
+        $raisonSignalId = $request->get('raisonSignalId');
+        $raison=$raisonSignalementRepository->findOneBy(['id'=>$raisonSignalId]);
         if ($currentUser instanceof Client) {
             $identifier = $currentUser->getUserIdentifier();
             $id = $currentUser->getId();
         }
         $now = new \DateTimeImmutable('now', new \DateTimeZone('Africa/Tunis'));
-
-        $livraisonId = $request->get('id');
-        $livstat= $entityManager->getRepository(StatutLivraison::class)->findOneBy(['livraison' => $livraisonId]);
+        $livstat= $statutLivraisonRepository->findOneBy(['livraison' => $livraisonId]);
         $livstat->setStatusTitle('non recu');
         $livstat->setStatusDateModifier($now);
+        $livstat->setRaisonSignalement($raison);
         $entityManager->flush();
         return $this->redirectToRoute('afficher_livraisons');
     }
@@ -263,33 +271,15 @@ class ClientController extends AbstractController
 
 
 
-#[Route('/historyclient', name: 'historyclient')]
+#[Route('/history', name: 'historyclient')]
 public function history(Request $request,EntityManagerInterface $entityManager,LivraisonHistoryRepository $livraisonHistoryRepository,LivraisonRepository $livraisonRepository,AdresseRepository $adresseRepository,ClientRepository $clientRepository,CoursierRepository $coursierRepository): Response
 {   
     $token = $this->tokenStorage->getToken();
     $currentUser = $token->getUser();
-    if ($currentUser instanceof Client) {
-        $identifier = $currentUser->getUserIdentifier();
-        $id = $currentUser->getId();
-        $username = $currentUser->getUsername();
-        $nom = $currentUser->getNom();
-        $prenom = $currentUser->getPrenom();
-        $phone = $currentUser->getPhone();
-    }
-    $livraisonshistory = $livraisonHistoryRepository->findAll();
-    $livhistorytab= [];
- 
-    foreach ($livraisonshistory as $item) {
-      $currentliv =$item->getLivraison();
-      $cli=$currentliv->getClient();
-        if($cli->getId()==$id){
+    
 
-            $livhistorytab[]=$currentliv;
-        }
-     }
-     return $this->render('client/hist.html.twig', [
-        'livraisons' =>   $livhistorytab 
-    ]); }
+     return $this->render('client/hist.html.twig') ;
+    }
     
 
      

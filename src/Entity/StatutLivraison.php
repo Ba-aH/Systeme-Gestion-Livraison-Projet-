@@ -38,6 +38,9 @@ class StatutLivraison
     #[ORM\Column(type: Types::SMALLINT)]
     private ?int $disponibilité = null;
 
+    #[ORM\ManyToOne(inversedBy: 'statutLivraisons')]
+    private ?RaisonSignalement $raison_signalement = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -126,6 +129,18 @@ class StatutLivraison
     public function setDisponibilité(int $disponibilité): static
     {
         $this->disponibilité = $disponibilité;
+
+        return $this;
+    }
+
+    public function getRaisonSignalement(): ?RaisonSignalement
+    {
+        return $this->raison_signalement;
+    }
+
+    public function setRaisonSignalement(?RaisonSignalement $raison_signalement): static
+    {
+        $this->raison_signalement = $raison_signalement;
 
         return $this;
     }

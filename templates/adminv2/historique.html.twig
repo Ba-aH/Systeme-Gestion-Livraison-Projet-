@@ -36,25 +36,27 @@
               <!-- Browser Default Validation -->
               <form class="row g-3">
                 <div class="col-md-4">
-                  <label for="validationDefault01" class="form-label">First name</label>
+                  <label for="validationDefault01" class="form-label">Username</label>
                   <input type="text" class="form-control" id="coursier" name="coursier" >
                 </div>
                 <div class="col-md-4">
-                  <label for="validationDefault02" class="form-label">Last name</label>
+                  <label for="validationDefault02" class="form-label">Date</label>
                   <input type="date" id="date" name="date" class="form-control" >
                 </div>
                 <div class="col-md-4">
-                  <label for="validationDefaultUsername" class="form-label">Username</label>
+                  <label for="validationDefaultUsername" class="form-label">Region</label>
                   <div class="input-group">
                     <select id="region" name="region" class="form-control">
                             <option value="" disabled selected>Select a region</option>
-                            <option value="Grand Tunis">Grand Tunis</option>
-                            <option value="Nord-Est">Nord-Est</option>
+                            {% for region in regions %}
+                            <option value="{{region.name}}">{{region.name}}</option>
+                            {% endfor %}
+                            {# <option value="Nord-Est">Nord-Est</option>
                             <option value="Nord-Ouest">Nord-Ouest</option>
                             <option value="Centre-Est">Centre-Est</option>
                             <option value="Centre-Ouest">Centre-Ouest</option>
                             <option value="Sud-Est">Sud-Est</option>
-                            <option value="Sud-Ouest">Sud-Ouest</option>
+                            <option value="Sud-Ouest">Sud-Ouest</option> #}
                         </select>
                   </div>
                 </div>

@@ -10,7 +10,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-	
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 	<link rel="stylesheet" href={{ asset('assetss/css/style.css')}}>
  <section id="hero" class="hero d-flex align-items-center">
     
@@ -222,8 +224,69 @@ h2 {
                   <td>
              {% set today = "now"|date('Y-m-d') %}
             {% if livraison.getLivraisonDate()|date('Y-m-d ') < today %}
-               <a  href="{{ path('liv_non_recu',{'id': livraison.id}) }}" class="card-link"   style="color: red;"><i class="fa fa-ban" aria-hidden="true"></i> signaler</a>
-            
+            <a type="button" class="card-link signaler-link" data-toggle="modal" style="color: red;" data-target="#exampleModalCenter" data-livraison-id="{{ livraison.id }}">
+              <i class="fa fa-ban" aria-hidden="true"></i>
+              signaler
+            </a>
+              <!-- Modal -->
+            <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Sélectionner la raison de signalement </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+              <div class="modal-body">
+                <form id="reportForm">
+                  {% for RaisonsSignalement in RaisonsSignalements %}
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio" name="reason" value="{{ RaisonsSignalement.id }}" id="reason{{ RaisonsSignalement.id }}">
+                      <label class="form-check-label" for="reason{{ RaisonsSignalement.id }}">
+                        {{ RaisonsSignalement.raison }}
+                      </label>
+                    </div>
+                  {% endfor %}
+                </form>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                      <button type="button" class="btn btn-primary" id="sendReport">Envoyer le signalement</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <script>
+                $(document).ready(function() {
+                  $('.signaler-link').click(function() {
+                    var livraisonId = $(this).data('livraison-id');
+                    $('#exampleModalCenter').data('livraison-id', livraisonId);
+                  });
+
+                  $('#sendReport').click(function() {
+                    var livraisonId = $('#exampleModalCenter').data('livraison-id');
+                    var selectedReasonId = document.querySelector('input[name="reason"]:checked').value;
+                    var data = {
+                        livraisonId: livraisonId,
+                        raisonSignalId: selectedReasonId
+                    };  
+                    $.ajax({
+                        type: 'POST',
+                        url: '{{ path('liv_non_recu') }}',
+                        data: data,
+                        success: function(response) {
+                            console.log('livraison signaler avec succes');
+                            document.querySelector('input[name="reason"]:checked').checked = false;
+                            location.reload();
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Error de signalement', error);
+                        }
+                      });
+                    });
+                });
+              </script>
             {% endif %}
         </td>
 						    </tr>
