@@ -8,11 +8,11 @@
   <main id="main" class="main">
 
     <div class="pagetitle">
-      <h1>Dashboard</h1>
+      <h1>Consulter historique</h1>
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-          <li class="breadcrumb-item active"> historique</li>
+          <li class="breadcrumb-item active"> Historique</li>
          
         </ol>
       </nav>
@@ -21,8 +21,8 @@
    
     <div class="card">
             <div class="card-body">
-              <h5 class="card-title">Browser Default</h5>
-              <p>Browser default validation with using the <code>required</code> keyword. Try submitting the form below. Depending on your browser and OS, you’ll see a slightly different style of feedback.</p>
+              <h5 class="card-title">Filtrer resultat</h5>
+              <p>Vous pouvez filtrer les résultats en saisissant le nom, la date ou le nom d'utilisateur.</p>
 
 
 
@@ -36,15 +36,15 @@
               <!-- Browser Default Validation -->
               <form class="row g-3">
                 <div class="col-md-4">
-                  <label for="validationDefault01" class="form-label">First name</label>
+                  <label for="validationDefault01" class="form-label">Nom</label>
                   <input type="text" class="form-control" id="coursier" name="coursier" >
                 </div>
                 <div class="col-md-4">
-                  <label for="validationDefault02" class="form-label">Last name</label>
+                  <label for="validationDefault02" class="form-label">Date de livraison</label>
                   <input type="date" id="date" name="date" class="form-control" >
                 </div>
                 <div class="col-md-4">
-                  <label for="validationDefaultUsername" class="form-label">Username</label>
+                  <label for="validationDefaultUsername" class="form-label">Region</label>
                   <div class="input-group">
                     <select id="region" name="region" class="form-control">
                             <option value="" disabled selected>Select a region</option>
@@ -136,7 +136,7 @@
                     <div class="fw-bold">{{ coursier.username }}</div>
                  {{ coursier.nom }} , {{ coursier.prenom }}
                   </div>
-                  <span class="badge bg-primary rounded-pill">14</span>
+                  <span class="badge bg-primary rounded-pill">.</span>
                 </li>
                         {% else %}
                         

@@ -3,11 +3,11 @@
 
 <main id="main" class="main">
  <div class="pagetitle">
-      <h1>suivie coursiers</h1>
+      <h1>Suivie tours en temps réel</h1>
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="#">Home</a></li>
-          <li class="breadcrumb-item active">suivie tours</li>
+          <li class="breadcrumb-item active">Suivie tours</li>
           
         </ol>
       </nav>
@@ -15,7 +15,7 @@
 
    <div class="card">
             <div class="card-body">
-              <h5 class="card-title">tournées en cours : </h5>
+              <h5 class="card-title">Tournées en cours : </h5>
  <div id="map" style="width:100%; height: 69vh"></div></div></div>
   </main>
 
@@ -116,6 +116,22 @@ const url = new URL('http://localhost:3000/hub');
                 coursier: data.coursier,
                 tourner: data.tourner
             };  
+
+
+  $.ajax({
+                type: 'POST',
+                url: '{{ path('addLocationHistory') }}',
+                data: data2,
+                success: function(response) {
+                    console.log('Address added successfully.');
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error adding address:', error);
+                }
+            });
+
+
+
                 var newCoordinates = L.latLng( data.positionHistoryLat, data.positionHistoryLong); 
                 markers[data.tourner].setLatLng(newCoordinates);
                 if (!map.hasLayer(markers[data.tourner])) {

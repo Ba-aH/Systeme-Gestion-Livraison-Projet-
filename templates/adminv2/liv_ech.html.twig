@@ -8,7 +8,7 @@
   <main id="main" class="main">
 
     <div class="pagetitle">
-      <h1>Dashboard</h1>
+      <h1>Gérer les livraisons échouées</h1>
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="index.html">Home</a></li>
@@ -19,7 +19,7 @@
     </div><!-- End Page Title -->
  <div class="card">
             <div class="card-body">
-              <h5 class="card-title">liste des livraisons échouées</h5>
+              <h5 class="card-title">Liste des livraisons échouées</h5>
 
               <!-- Dark Table -->
               <table class="table table-dark">
@@ -74,10 +74,13 @@
     background-color:  blue;
     color: white;
 }
+.card-title.le {
+    color: red;
+}
 </style>
    <div id="remplir" class="card">
             <div id="repmlir_form"class="card-body">
-              <h5 class="card-title">VOUS NE POUVEZ MODIFIER QUE LA DATE D'UNE LIVRAISON</h5>
+              <h5 class="card-title le">Vous ne pouvez modifier que la date d'une livraison</h5>
 
               <!-- Floating Labels Form -->
               <form action="edit_byadmin" method="post" class="row g-3">
