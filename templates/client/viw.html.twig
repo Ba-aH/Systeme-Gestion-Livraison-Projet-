@@ -312,34 +312,7 @@ h2 {
       {% endif %}
     </div> 
 		</div>
-   <div class="container">
- <div class="row justify-content-center">
-				<div class="col-md-6 text-center mb-5">
-					<h2 class="heading-section">mon historique </h2>
-				</div>
-			</div>
-  <ul class="cards">
-    {% for livraison in livraisonshistory %}
-    <li class="card">
-      <div>
-        <h3 class="card-title">Reference :   {{ livraison.getReference() }}
-                        </h3>
-        <div class="card-content">
-         <p><strong>FraisLivraison:</strong> {{ livraison.getFraisLivraison() }}</p></br>
-                        <p><strong>PrixTotaleLivraison:</strong> {{ livraison.getPrixTotaleLivraison() }}</p></br>
-                        <p><strong>PoidLivraison:</strong> {{ livraison.getPoidLivraison() }}</p></br>
-                        <p><strong>LivraisonDate:</strong> {{ livraison.getLivraisonDate()|date('Y-m-d ') }}</p></br>
-        </div>
-      </div>
-      <div class="hor">
-       
-            <div class="text-center"> <a href="{{ path('history_details',{'id': livraison.id}) }}"  class="buy-btn">plus de details </a></div>
-          
-      </div>
-      
-    </li> 
-
-  {% endfor %}
+  
     
     
   <style>
