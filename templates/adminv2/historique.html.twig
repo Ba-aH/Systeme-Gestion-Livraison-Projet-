@@ -8,11 +8,11 @@
   <main id="main" class="main">
 
     <div class="pagetitle">
-      <h1>Consulter historique</h1>
+      <h1>Consulter Historique</h1>
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-          <li class="breadcrumb-item active"> Historique</li>
+          <li class="breadcrumb-item active"> historique</li>
          
         </ol>
       </nav>
@@ -22,25 +22,17 @@
     <div class="card">
             <div class="card-body">
               <h5 class="card-title">Filtrer resultat</h5>
-              <p>Vous pouvez filtrer les résultats en saisissant le nom, la date ou le nom d'utilisateur.</p>
-
-
-
-
-
-
-
-
+              <p>Vous pouvez filtrer le résultat selon le nom d'utilisateur de coursier, la date ou la region.</p>
 
 
               <!-- Browser Default Validation -->
               <form class="row g-3">
                 <div class="col-md-4">
-                  <label for="validationDefault01" class="form-label">First name</label>
+                  <label for="validationDefault01" class="form-label">Nom d'utilisateur</label>
                   <input type="text" class="form-control" id="coursier" name="coursier" >
                 </div>
                 <div class="col-md-4">
-                  <label for="validationDefault02" class="form-label">Last name</label>
+                  <label for="validationDefault02" class="form-label">Date</label>
                   <input type="date" id="date" name="date" class="form-control" >
                 </div>
                 <div class="col-md-4">
@@ -138,7 +130,7 @@
                     <div class="fw-bold">{{ coursier.username }}</div>
                  {{ coursier.nom }} , {{ coursier.prenom }}
                   </div>
-                  <span class="badge bg-primary rounded-pill">.</span>
+                  <span class="badge bg-primary rounded-pill">14</span>
                 </li>
                         {% else %}
                         

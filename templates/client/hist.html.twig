@@ -2,27 +2,58 @@
 
 {% block title %}Hello CoursierController!{% endblock %}
 
-
-
 {% block body %}
+    <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,700' rel='stylesheet' type='text/css'>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
- <section id="hero" class="hero d-flex align-items-center">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" href="{{ asset('assetss/css/style.css') }}">
+    <style>
+        /* Your CSS styles here */
+    </style>
+
+    <section id="hero" class="hero d-flex align-items-center"></section><!-- End Hero Section -->
+
     <div class="container">
-    <div class="container position-relative">
-          <div class="row d-flex justify-content-center">
-            <div class="col-lg-6 text-center">
-              <h2>commencer maintenant </h2>
-              <p>Odio et unde deleniti. Deserunt numquam exercitationem. Officiis quo odio sint voluptas consequatur ut a odio voluptatem. Sit dolorum debitis veritatis natus dolores. Quasi ratione sint. Sit quaerat ipsum dolorem.</p>
+        <div class="row justify-content-center">
+            <div class="col-md-6 text-center mb-5">
+                <h2 class="heading-section">Historique</h2>
             </div>
-          </div>
         </div>
-    </div>
-  </section><!-- End Hero Section --> 
-  
-<style>
 
+        <ul class="cards">
+            {% for livraison in CLlivrasons %}
+                <li class="card">
+                    <div>
+                        <h3 class="card-title"><strong>Reference :</strong> {{ livraison.getReference() }}</h3>
+                        <div class="card-content">
+                            <p><strong>Frais de la livraison:</strong> {{ livraison.getFraisLivraison() }}$</p><br>
+                            <p><strong>Prix Totale :</strong> {{ livraison.getPrixTotaleLivraison() }}$</p><br>
+                            <p><strong>Poid :</strong> {{ livraison.getPoidLivraison() }}kg</p><br>
+                        </div>
+                    </div>
+                    <div class="hor">
+                        <div class="text-center">
+                            <a href="{{ path('history_details',{'id': livraison.id}) }}" class="buy-btn">Plus de details</a>
+                        </div>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <style>
+#hero {
+
+  height: 100px; /* Adjust the height as needed */
+}
 :root {
-  --orange: #fd9940;
+  --color-default: #0a0d13;
+  --color-primary: #0d42ff;
+  --color-secondary: #0e1d34;
   --darkorange: #dd7d25;
   --platinum: #e5e5e5;
   --black: #2b2d42;
@@ -72,7 +103,7 @@ h2 {
 
 .card:hover {
   color: var(--white);
-  background: var(--orange);
+  background: var(--color-default);
 }
 
 .card .card-title {
@@ -92,14 +123,14 @@ h2 {
   display: inline-block;
   text-decoration: none;
   color: white;
-  background: var(--orange);
+  background: var(--color-default);
   padding: 6px 12px;
   border-radius: 8px;
   transition: background 0.2s;
 }
 
 .card:hover .card-link {
-  background: var(--darkorange);
+  background: var(--color-primary);
 }
 
 .cards::-webkit-scrollbar {
@@ -112,7 +143,7 @@ h2 {
 }
 
 .cards::-webkit-scrollbar-thumb {
-  background: var(--darkorange);
+  background: var(--color-primary);
 }
 
 .cards::-webkit-scrollbar-track {
@@ -172,77 +203,12 @@ h2 {
     color: black;
   }
 </style>
-
-
-
-    <!-- ======= Horizontal Pricing Section ======= -->
-    <section id="horizontal-pricing" class="horizontal-pricing pt-0">
-      <div class="container" data-aos="fade-up">
-
-        <div class="section-header">
-          <span>commande récente</span>
-          <h2>commande récente</h2>
-
-        </div>
-         {% set  Variable = 1%}
- {% for livraison in livraisons %}
-
-  {%  if Variable % 2 == 0 %}
-    {# <div class="row gy-4 pricing-item" data-aos="fade-up" data-aos-delay="100">
-          <div class="col-lg-3 d-flex align-items-center justify-content-center"> #}
-        <div class="row gy-4 pricing-item featured mt-4" data-aos="fade-up" data-aos-delay="200">
-          <div class="col-lg-3 d-flex align-items-center justify-content-center">
-            <h3>date : {{ livraison.getLivraisonDate()|date('Y-m-d ') }}</h3>
-          </div>
-          <div class="col-lg-3 d-flex align-items-center justify-content-center">
-            <h4> <sup>$</sup>   {{ livraison.getPrixTotaleLivraison() }}</h4>
-          </div>
-          <div class="col-lg-3 d-flex align-items-center justify-content-center">
-            <ul>
-              <li><i class="bi bi-check"></i>    <p><strong>Réference:</strong> {{ livraison.getReference() }}</p></li>
-             
-              <li><i class="bi bi-check"></i> <p><strong>FraisLivraison:</strong> {{ livraison.getFraisLivraison() }}</p></li>
-                    <li><i class="bi bi-check"></i>   <p><strong>PoidLivraison:</strong> {{ livraison.getPoidLivraison() }}</p></br></li>
-              {# <li class="na"><i class="bi bi-x"></i> <span>{{ livraison.getPoidLivraison() }}</span></li> #}
-             
-            </ul>
-          </div>
-          <div class="col-lg-3 d-flex align-items-center justify-content-center">
-       
-            <div class="text-center"> <a href="{{ path('history_details',{'id': livraison.id}) }}"  class="buy-btn">plus de details </a></div>
-          </div>
-        </div><!-- End Pricing Item --> 
-          {%  else %}
-        
-          <div class="row gy-4 pricing-item" data-aos="fade-up" data-aos-delay="100">
-          <div class="col-lg-3 d-flex align-items-center justify-content-center">
-            <h3>date : {{ livraison.getLivraisonDate()|date('Y-m-d ') }}</h3>
-          </div>
-          <div class="col-lg-3 d-flex align-items-center justify-content-center">
-            <h4> <sup>$</sup>   {{ livraison.getPrixTotaleLivraison() }}</h4>
-          </div>
-          <div class="col-lg-3 d-flex align-items-center justify-content-center">
-            <ul>
-              <li><i class="bi bi-check"></i>    <p><strong>Réference:</strong> {{ livraison.getReference() }}</p></li>
-             
-              <li><i class="bi bi-check"></i> <p><strong>FraisLivraison:</strong> {{ livraison.getFraisLivraison() }}</p></li>
-                    <li><i class="bi bi-check"></i>   <p><strong>PoidLivraison:</strong> {{ livraison.getPoidLivraison() }}</p></br></li>
-              {# <li class="na"><i class="bi bi-x"></i> <span>{{ livraison.getPoidLivraison() }}</span></li> #}
-             
-            </ul>
-          </div>
-          <div class="col-lg-3 d-flex align-items-center justify-content-center">
-       
-            <div class="text-center"> <a href="{{ path('history_details',{'id': livraison.id}) }}"  class="buy-btn">plus de details </a></div>
-          </div>
-        </div>
-         {%  endif %}
-        
-          {% set Variable = Variable + 1 %}
-         {% endfor %}
+<style>
+    .right-to-left {
+        text-align: right;
+        direction: rtl;
+    }
+</style>
 
     
-      </div>
-    </section><!-- End Horizontal Pricing Section -->
-   
 {% endblock %}

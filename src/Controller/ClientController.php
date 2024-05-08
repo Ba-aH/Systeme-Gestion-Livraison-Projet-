@@ -272,13 +272,23 @@ class ClientController extends AbstractController
 
 
 #[Route('/history', name: 'historyclient')]
-public function history(Request $request,EntityManagerInterface $entityManager,LivraisonHistoryRepository $livraisonHistoryRepository,LivraisonRepository $livraisonRepository,AdresseRepository $adresseRepository,ClientRepository $clientRepository,CoursierRepository $coursierRepository): Response
+public function history(Request $request,LivraisonHistoryRepository $livraisonHistoryRepository,LivraisonRepository $livraisonRepository,AdresseRepository $adresseRepository,ClientRepository $clientRepository): Response
 {   
     $token = $this->tokenStorage->getToken();
     $currentUser = $token->getUser();
-    
-
-     return $this->render('client/hist.html.twig') ;
+    $livrasons = $livraisonHistoryRepository->findAll();
+    $CLlivrasons=[];
+    foreach( $livrasons as $item){
+        $liv=$item->getLivraison();
+        $client=$liv->getClient();
+            if ($client==$currentUser){
+                $CLlivrasons[]=$liv;  
+            }
+        
+    }
+    return $this->render('client/hist.html.twig',[
+    'CLlivrasons' => $CLlivrasons    
+    ]) ;
     }
     
 
