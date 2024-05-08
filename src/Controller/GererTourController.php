@@ -234,9 +234,10 @@ public function show(Request $request,RegionRepository $regionRepository,Livrais
     // }
 
         #[Route('/history', name: 'history')]
-        public function history(Request $request,EntityManagerInterface $entityManager,LivraisonHistoryRepository $livraisonHistoryRepository,LivraisonRepository $livraisonRepository,AdresseRepository $adresseRepository,ClientRepository $clientRepository,CoursierRepository $coursierRepository): Response
+        public function history(Request $request,RegionRepository $regionRepository,EntityManagerInterface $entityManager,LivraisonHistoryRepository $livraisonHistoryRepository,LivraisonRepository $livraisonRepository,AdresseRepository $adresseRepository,ClientRepository $clientRepository,CoursierRepository $coursierRepository): Response
         {   
             $Display='';
+            $regions=$regionRepository->findAll();
             // $livraisons = $livraisonHistoryRepository->findBy(['event' =>'livrée avec succès']);
             $livraisons = $livraisonHistoryRepository->findAll();
             $livDeRegion = [];
@@ -259,7 +260,7 @@ public function show(Request $request,RegionRepository $regionRepository,Livrais
 
                 $ClientAdr = $adresseRepository->findOneBy(['client' => $client]);
                 if ($coursierUN == '' && $region != '' && $selectedDate =='') {
-                    if ($ClientAdr && $ClientAdr->getRegion() == $region) {
+                    if ($ClientAdr && $ClientAdr->getRegion()->getName() == $region) {
                         $livDeRegion[] = $item;
                         $Display = 'Liste des livraisons livrées à ' . $region; 
                         $prix=$prix+$liv->getPrixTotaleLivraison();
@@ -277,7 +278,7 @@ public function show(Request $request,RegionRepository $regionRepository,Livrais
                 }
 
                 if ($coursierUN != '' && $region != '' && $selectedDate =='') {
-                    if ($coursier->getUsername() == $coursierUN && $ClientAdr->getRegion() == $region ) {
+                    if ($coursier->getUsername() == $coursierUN && $ClientAdr->getRegion()->getName() == $region ) {
                         $livDeRegion[] = $item;
                         $Display = 'Liste des livraisons livrées par ' . $coursierUN . ' à ' . $region;
                         $prix=$prix+$liv->getPrixTotaleLivraison();
@@ -286,7 +287,7 @@ public function show(Request $request,RegionRepository $regionRepository,Livrais
                 }
                 
                 if ($coursierUN != '' && $region != '' && $selectedDate !='') {
-                    if ($coursier->getUsername() == $coursierUN && $ClientAdr->getRegion() == $region && $dateLivrFormatted==$selectedDate ) {
+                    if ($coursier->getUsername() == $coursierUN && $ClientAdr->getRegion()->getName() == $region && $dateLivrFormatted==$selectedDate ) {
                         $livDeRegion[] = $item;
                         $Display = 'Liste des livraisons livrées par ' . $coursierUN . ' à ' . $region . ' en ' . $dateLivrFormatted;
                         $prix=$prix+$liv->getPrixTotaleLivraison();
@@ -295,7 +296,7 @@ public function show(Request $request,RegionRepository $regionRepository,Livrais
                 } 
 
                 if ($coursierUN == '' && $region != '' && $selectedDate !='') {
-                    if ($ClientAdr->getRegion() == $region && $dateLivrFormatted==$selectedDate ) {
+                    if ($ClientAdr->getRegion()->getName() == $region && $dateLivrFormatted==$selectedDate ) {
                         $livDeRegion[] = $item;
                         $Display = 'Liste des livraisons livrées à ' . $region . ' en ' . $dateLivrFormatted ;
                         $prix=$prix+$liv->getPrixTotaleLivraison();
@@ -338,6 +339,7 @@ public function show(Request $request,RegionRepository $regionRepository,Livrais
                 'coursiers'=> $coursierRepository->findAll(),
                 'prix'=>$prix,
                 'nb'=>$nb,
+                'regions'=>$regions,
             ]);}
 
             
