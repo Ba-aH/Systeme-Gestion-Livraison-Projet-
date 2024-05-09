@@ -94,9 +94,15 @@ class AdministratorController extends AbstractController
            $query->setMaxResults(5);
 
         $lastFiveCouriers = $query->getQuery()->getResult(); 
+      
+
+        $REPORTS = $entityManager->getRepository(StatutLivraison::class)->findBy(['status_title' =>'non recu']);
+        $treports = count($REPORTS); 
+
 
         $response = $this->render('adminv2/dashboard.html.twig',[
             'user'=> $currentUser, 'clients'=> $clients ,'commande'=> $commande,'revenus'=> $totale,'recentliv'=> $livs,'lastFiveCouriers'=>  $lastFiveCouriers
+            ,'treports'=>$treports
            
         ]);
         $response ->headers->set('set-cookie', $cookieGenerator->generate($this->getUser()));
