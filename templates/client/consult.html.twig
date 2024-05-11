@@ -24,6 +24,11 @@
                     <h3 style="color: white;">Le livreur est très proche et il devrait arriver dans 5 à 10 minutes.</h3>
                 </div>
               {% endif %}
+              {% if stat.getStatusTitle()=='en attente' %}
+                <div style="color: white;">
+                    <h3 style="color: white;">Votre livraison est en cours de préparation et elle sera planifiée pour être livrée très bientôt.</h3>
+                </div>
+              {% endif %}
               {% if stat.getStatusTitle()=='confirmé' %}
                 <div style="color: white;">
                     <h3 style="color: white;">Votre livraison a été bien livrée. Vous pouvez vérifier votre boîte de réception.</h3>
@@ -102,6 +107,16 @@
     </div>
   </div>
 {% endif %}
+
+  {% if stat.getStatusTitle()=='en attente' %}
+  <div class="container">
+    <div class="section3 shaded">
+      <h2>Votre commande est encore dans l'entrepot de {{ adress.region.name }}</h2>
+      <div class="distanceContainer"></div>
+      <div id="map"></div>
+    </div>
+  </div>
+  {% endif %}
 
 <style> 
   .infot {
@@ -362,7 +377,34 @@ input[type="submit"]:hover {
           }
       }
 </script>
+{% else %}
+</div>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+    <script>
+      const L = window.L;
+      const addressLatitude =  {{ adress.latitude }};
+      const addressLongitude = {{adress.longitude}};
+      const warehouseLatitude = {{warehouse.latitude}};
+      const warehouseLongitude = {{warehouse.longitude}};
+
+      var map = L.map('map').setView([addressLatitude, addressLongitude], 8);
+      var marker = L.marker([addressLatitude, addressLongitude]).addTo(map);
+      mapLink = "<a href='http://openstreetmap.org'>OpenStreetMap</a>";
+      L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: 'Leaflet &copy; ' + mapLink + ', contribution', maxZoom: 18 }).addTo(map); 
+
+      var routeControl = L.Routing.control({
+          waypoints: [
+              L.latLng(warehouseLatitude, warehouseLongitude),
+              L.latLng(addressLatitude, addressLongitude)
+          ]
+      }).addTo(map);
+
+     
+</script>
+
 {% endif %}
+
 
 </body>
   
