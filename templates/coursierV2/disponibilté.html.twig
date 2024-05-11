@@ -21,7 +21,7 @@
     <div class="container d-flex justify-content-between align-items-center">
 
       <div class="logo">
-        <h1><a href="index.html">Eterna</a></h1>
+        <h1><a href="index.html">Colis Express</a></h1>
 
       </div>
 
@@ -120,32 +120,51 @@
 
 <div class="card card-margin">
 <div class="card-header no-border">
-<h5 class="card-title">MOM</h5>
+<h5 class="card-title">Disponible en</h5>
 </div>
 <div class="card-body pt-0">
 <div class="widget-49">
 <div class="widget-49-title-wrapper">
 <div class="widget-49-date-primary">
-<span class="widget-49-date-day">09</span>
-<span class="widget-49-date-month">nov</span>
+<span class="widget-49-date-day">{{ stat.getDebutTourner|date('d ')}}</span>
+<span class="widget-49-date-month-{{ loop.index }} ">nov</span>
+<script>
+// Define the function to get the short month name
+function getShortMonthName(monthNumber) {
+    var monthNames = ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin",
+                  "Juil", "Aoû", "Sep", "Oct", "Nov", "Déc"];                                                                   
+    var shortMonthName = monthNames[monthNumber - 1];
+    return shortMonthName;
+}
+
+// Get the span element containing the month number
+var monthElement = document.querySelector('.widget-49-date-month-{{ loop.index }}');
+// Extract the month number from the innerHTML
+var monthNumber = parseInt(monthElement.innerHTML.trim(), 10);
+// Get the short month name
+var shortMonthName = getShortMonthName({{ stat.getDebutTourner|date('m')}});
+// Update the content of the element to display the short month name
+monthElement.innerHTML = shortMonthName;
+</script>
+
 </div>
 <div class="widget-49-meeting-info">
 <span class="widget-49-pro-title">a faire entre :</span>
 <span class="widget-49-meeting-time">8:00 to 16.30 Hrs</span>
 </div>
 </div>
- <p><strong>Reference:</strong> </p>
+ {# <p><strong>Reference:</strong> </p> #}
                        
                         
-                        <p><strong>:{{ stat.getId() }}</strong></p>
+                        {# <p><strong>:{{ stat.getId() }}</strong></p> #}
                      {% if stat.getRegion() is not null %}
-    <p><strong>{{ stat.getRegion().getName() }}</strong></p>
+    <p><strong>Region: </strong>  {{ stat.getRegion().getName() }}   </p>
 {% else %}
     <p><strong>No region available</strong></p>
 {% endif %}
-                        <p><strong>:{{ stat.getDebutTourner()|date('Y-m-d') }}</strong> </p>
+                        <p><strong>Date: </strong>{{ stat.getDebutTourner()|date('Y-m-d') }} </p>
                         
-                        <p><strong>:{{ stat.getTitreStatut()}}</strong> </p>
+                        <p><strong>Statut: </strong> {{ stat.getTitreStatut()}}</p>
 
                           <form id="myForm"method="post" action="{{ path('annulerstatut', {'id': stat.getId()}) }}"  >
                                  <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ stat.getId()) }}">

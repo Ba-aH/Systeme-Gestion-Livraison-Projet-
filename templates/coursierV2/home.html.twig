@@ -23,7 +23,7 @@
     <div class="container d-flex justify-content-between align-items-center">
 
       <div class="logo">
-        <h1><a href="index.html">Eterna</a></h1>
+        <h1><a href="index.html">Colis Express</a></h1>
 
       </div>
 
@@ -124,7 +124,7 @@
           <div class="col-lg-4" style="width:4000px; ">
             <div class="icon-box" >
               <i class="bi bi-card-checklist"></i>
-              <h3><a href="">livraisons en cours</a></h3>
+              <h3><a href="">livraisons a faire </a></h3>
               <p>livraisons de {{ date|date('Y-m-d ') }}</p>
             </div>
           </div>
@@ -400,7 +400,7 @@ function deg2rad(deg) {
 <div class="col-lg-4">
 <div class="card card-margin">
 <div class="card-header no-border">
-<h5 class="card-title">Liv</h5>
+<h5 class="card-title">Livraison</h5>
 </div>
 <div class="card-body pt-0">
 <div class="widget-49">
@@ -647,7 +647,7 @@ for (var i = 0; i < latLongDist.length; i++) {
 
 {% if test == 0 %}
 
-<h1> terminé</h1>
+<h1> Tournée terminée</h1>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
 var tourId = {{ idtour|default('null') }};
