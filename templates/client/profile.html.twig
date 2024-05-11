@@ -29,7 +29,7 @@
                                     <div class="col-12 col-sm-auto mb-3">
                                         <div class="mx-auto" style="width: 140px;">
                                             <div class="d-flex justify-content-center align-items-center rounded" style="height: 140px; ; background-color: white;">
-                                            <img src="{{ asset('images/user.jpg') }}" alt="Admin" width="140">
+                                            <img src="{{ asset('images/user5.jpg') }}"  width="140">
                                             </div>
                                         </div>
                                     </div>
@@ -37,17 +37,10 @@
                                         <div class="text-center text-sm-left mb-2 mb-sm-0">
                                             <h4 class="pt-sm-2 pb-1 mb-0 text-nowrap">{{user.nom}} {{user.prenom}}</h4>
                                             <p class="mb-0">@{{user.username}}</p>
-                                            <div class="text-muted"><small>Last seen 2 hours ago</small></div>
-                                            <div class="mt-2">
-                                                <button class="btn btn-primary" type="button">
-                                                    <i class="fa fa-fw fa-camera"></i>
-                                                    <span>Change Photo</span>
-                                                </button>
-                                            </div>
+                                            <div class="text-muted"><small>Joined {{dateAjout}}</small></div>
                                         </div>
                                         <div class="text-center text-sm-right">
                                             <span class="badge badge-secondary">Coursier</span>
-                                            <div class="text-muted"><small>Joined {{dateAjout}}</small></div>
                                         </div>
                                     </div>
                                 </div>
@@ -157,13 +150,13 @@
                                                         </div>
                                                         <a class="btn-btn-danger" href="{{ path('delete-adresse', {'id': adresse.id}) }}">
                                                             <i class="fa fa-delete"></i>
-                                                            <span>Delete</span>
+                                                            <span>Supprimer</span>
                                                         </a>      
                                                     </div>
                                                     {% endfor %}
                                                     <div class="row">
                                                         <div class="col d-flex justify-content-end">
-                                                            <button class="btn btn-primary" id="addAddressBtn" type="button">Add Address</button>
+                                                            <button class="btn btn-primary" id="addAddressBtn" type="button">Ajoutez Adresse</button>
                                                         </div>
                                                     </div>
                                                     <div id="addAddressForm" style="display: none;">
@@ -213,26 +206,26 @@
                                             
                                             <div class="row">
                                                 <div class="col d-flex justify-content-end">
-                                                    <button class="btn btn-primary" type="submit">Save Changes</button>
+                                                    <button class="btn btn-primary" type="submit">Sauvegarder les modifications</button>
                                                 </div>
                                             </div>
                                         </form>
                                         <form id="myForm2" class="form2" method="POST" action="{{ path('changePassword_client') }}" onsubmit="updateFormAction2(event)">
-                                            <div class="mb-2"><b>Change Password</b></div>
+                                            <div class="mb-2"><b>Changer le mot de passe</b></div>
                                             <div class="row">
                                                 <div class="col">
                                                     <div class="row">
 
                                                         <div class="col">
                                                             <div class="form-group">
-                                                                <label for="new-password">New Password</label>
+                                                                <label for="new-password">Nouveau mot de passe</label>
                                                                 <input name="password" id="new-password" class="form-control" type="password" placeholder="•••••••••">
                                                             </div>
                                                         </div>
 
                                                         <div class="col">
                                                             <div class="form-group">
-                                                                <label for="confirm-password">Confirm <span class="d-none d-xl-inline">Password</span></label>
+                                                                <label for="confirm-password">Confirmer <span class="d-none d-xl-inline">Password</span></label>
                                                                 <input name="renewPassword" id="confirm-password" class="form-control" type="password" placeholder="•••••••••">
                                                             </div>
                                                         </div>
@@ -443,7 +436,7 @@
 </body>
  <script>
     document.addEventListener('DOMContentLoaded', function () {
-      var map = L.map('map').setView([51.505, -0.09], 13);
+      var map = L.map('map').setView([35.05698, 9.519653], 7);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
       }).addTo(map);
@@ -495,8 +488,8 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 300px;
-      width: 600px;
+      height: 500px;
+      width: 100%;
       margin: 0 auto; /* Center the container horizontally */
     }
     /* Style the map itself */

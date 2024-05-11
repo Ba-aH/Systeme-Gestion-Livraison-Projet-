@@ -101,7 +101,7 @@
                                     <div class="col-12 col-sm-auto mb-3">
                                         <div class="mx-auto" style="width: 140px;">
                                             <div class="d-flex justify-content-center align-items-center rounded" style="height: 140px; background-color: rgb(233, 236, 239);">
-                                            <img src="{{ asset('images/user.jpg') }}" alt="Admin" width="140">
+                                            <img src="{{ asset('images/user5.jpg') }}" alt="Admin" width="140">
                                             </div>
                                         </div>
                                     </div>
@@ -109,6 +109,7 @@
                                         <div class="text-center text-sm-left mb-2 mb-sm-0">
                                             <h4 class="pt-sm-2 pb-1 mb-0 text-nowrap">{{user.nom}} {{user.prenom}}</h4>
                                             <p class="mb-0">@{{user.username}}</p>
+<<<<<<< HEAD
                                             <div class="text-muted"><small>Last seen 2 hours ago</small></div>
                                             {# <div class="mt-2">
                                                 <button class="btn btn-primary" type="button">
@@ -116,10 +117,13 @@
                                                     <span>Change Photo</span>
                                                 </button>
                                             </div> #}
+=======
+                                            <div class="text-muted"><small>Joined {{dateAjout}}</small></div>
+                                            
+>>>>>>> a6a64bd58f8b5dfa88f1def6f51b32877b0e95e7
                                         </div>
                                         <div class="text-center text-sm-right">
                                             <span class="badge badge-secondary">Coursier</span>
-                                            <div class="text-muted"><small>Joined {{dateAjout}}</small></div>
                                         </div>
                                     </div>
                                 </div>
@@ -192,7 +196,11 @@
                                             <div id="errorMessages" class="text-danger"></div>
                                             <div class="row">
                                                 <div class="col d-flex justify-content-end">
+<<<<<<< HEAD
                                                     <button class="btn btn-primary" type="submit">sauvegarder</button>
+=======
+                                                    <button class="btn btn-primary" type="submit">Sauvegarder les modifications</button>
+>>>>>>> a6a64bd58f8b5dfa88f1def6f51b32877b0e95e7
                                                 </div>
                                             </div> </form>
                                             <form id="myForm2" class="form2" method="POST" action="{{ path('changePassword_coursier') }}" onsubmit="updateFormAction2(event)">
@@ -203,14 +211,22 @@
 
                                                         <div class="col">
                                                             <div class="form-group">
+<<<<<<< HEAD
                                                                 <label for="new-password">nouveau mot de passe</label>
+=======
+                                                                <label for="new-password">Nouveau mot de passe</label>
+>>>>>>> a6a64bd58f8b5dfa88f1def6f51b32877b0e95e7
                                                                 <input name="password" id="new-password" class="form-control" type="password" placeholder="•••••••••">
                                                             </div>
                                                         </div>
 
                                                         <div class="col">
                                                             <div class="form-group">
+<<<<<<< HEAD
                                                                 <label for="confirm-password">Confirmez le mot de passe <span class="d-none d-xl-inline"></span></label>
+=======
+                                                                <label for="confirm-password">Confirmez le mot de passe<span class="d-none d-xl-inline">Password</span></label>
+>>>>>>> a6a64bd58f8b5dfa88f1def6f51b32877b0e95e7
                                                                 <input name="renewPassword" id="confirm-password" class="form-control" type="password" placeholder="•••••••••">
                                                             </div>
                                                         </div>
