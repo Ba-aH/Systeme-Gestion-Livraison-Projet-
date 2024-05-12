@@ -76,17 +76,18 @@
                         L.marker(clientLatLng).addTo(map);
                     }
                     if (item.warehouse) {
-                        var warehouseLatLng = L.latLng(item.warehouse.latitude, item.warehouse.longtitude);
-                        tourWaypoints.push(warehouseLatLng);
-                        var icon = L.divIcon({
-                            className: 'custom-div-icon',
-                            html: "<div style='background-color:#c30b82;' class='marker-pin'></div><i class='material-icons'>Warehouse</i>",
-                            iconSize: [30, 42],
-                            iconAnchor: [15, 42]
-                        });
-                        L.marker(warehouseLatLng, { icon: icon }).addTo(map);
-    
-                    }
+                    var warehouseLatLng = L.latLng(item.warehouse.latitude, item.warehouse.longtitude);
+                    tourWaypoints.push(warehouseLatLng);
+
+                    var tooltipContent = item.warehouse.region;
+                    var customTooltip = L.tooltip({
+                        direction: 'top',
+                        permanent: true,
+                        opacity: 1
+                    }).setContent(tooltipContent);
+
+                    L.marker(warehouseLatLng).bindTooltip(customTooltip).addTo(map);
+                }
                       
                 });
 
@@ -118,7 +119,7 @@ const url = new URL('http://localhost:3000/hub');
             };  
 
 
-  $.ajax({
+            $.ajax({
                 type: 'POST',
                 url: '{{ path('addLocationHistory') }}',
                 data: data2,
@@ -135,24 +136,20 @@ const url = new URL('http://localhost:3000/hub');
                 var newCoordinates = L.latLng( data.positionHistoryLat, data.positionHistoryLong); 
                 markers[data.tourner].setLatLng(newCoordinates);
                 if (!map.hasLayer(markers[data.tourner])) {
-                    var tooltipContent ='couriser id :'+data.coursier;
-    var customTooltip = L.tooltip({
-        direction: 'top', // Position the tooltip above the marker
-        permanent: true, // Make the tooltip permanent (always visible)
-        opacity: 1 // Set the opacity to 1 to make it fully visible
-    }).setContent(tooltipContent);
-markers[data.tourner].bindTooltip(customTooltip).openTooltip();
+                    var tooltipContent ='Couriser:'+data.coursier;
+                    var customTooltip = L.tooltip({
+                        direction: 'top',
+                        permanent: true, 
+                        opacity: 1 
+                    }).setContent(tooltipContent);
+                markers[data.tourner].bindTooltip(customTooltip).openTooltip();
 
-             markers[data.tourner].addTo(map);
-          }
-        console.log(data);
-        
-        
+                    markers[data.tourner].addTo(map);
+                }
+                console.log(data);   
     }
   
 </script>
-
-
 
 <style>
     .warehouse-icon {
@@ -163,36 +160,32 @@ markers[data.tourner].bindTooltip(customTooltip).openTooltip();
         color: black;
     }
     .marker-pin {
-    width: 30px;
-    height: 30px;
-    border-radius: 50% 50% 50% 0;
-    background: #c30b82;
-    position: absolute;
-    transform: rotate(-45deg);
-    left: 50%;
-    top: 50%;
-    margin: -15px 0 0 -15px;
-  }
-  // to draw white circle
-  .marker-pin::after {
-      content: '';
-      width: 24px;
-      height: 24px;
-      margin: 3px 0 0 3px;
-      background: #fff;
-      position: absolute;
-      border-radius: 50%;
-  }
+        width: 35px;
+        height: 35px;
+        border-radius: 50% 50% 50% 0;
+        background: #c30b82;
+        position: absolute;
+        transform: rotate(-45deg);
+    }
+    /* to draw white circle */
+    .marker-pin::after {
+        content: '';
+        width: 24px;
+        height: 24px;
+        margin: 3px 0 0 3px;
+        background: #fff;
+        position: absolute;
+        border-radius: 50%;
+    }
 
-  // to align icon
-  .custom-div-icon i {
+    .custom-div-icon i {
     position: absolute;
-    width: 22px;
-    font-size: 22px;
-    left: 0;
-    right: 0;
-    margin: 10px auto;
-    text-align: center;
-  }
+    font-size: 16px;
+    color: black;
+    left: 5%;
+    transform: translate(-50%, -50%);
+    padding: 20px; /* Add padding to the text */
+}
+
 </style>
 {% endblock %}

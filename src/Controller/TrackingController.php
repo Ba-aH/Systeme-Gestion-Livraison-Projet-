@@ -195,6 +195,7 @@ class TrackingController extends AbstractController{
                         'warehouse' => [
                             'latitude' => $warehouse->getLatitude(),
                             'longtitude' => $warehouse->getLongitude(),
+                            'region' => $warehouse->getNom(),
                         ],
                     ];
                     $warehouseAdded = true; 
