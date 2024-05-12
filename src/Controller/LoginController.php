@@ -101,9 +101,9 @@ class LoginController extends AbstractController
             
 
             $email = (new Email())
-                ->from('your@example.com')
+                ->from('ColisExpress@gmail.com')
                 ->to($email)
-                ->subject('Your new password')
+                ->subject('Demande de réinitialisation du mot de passe')
                 ->text(sprintf('Reset password PIN: %s', $pin));    
             $mailer->send($email);
             
