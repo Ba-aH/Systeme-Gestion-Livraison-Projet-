@@ -43,18 +43,21 @@
             <tr>
                   <td>{{ coursier.nom }}</td>
                                 <td>{{ coursier.prenom }}</td>
-                                <td>{{ coursier.email }}</td>
-                                <td>{{ coursier.phone}}</td>
+                                <td><p> <a href="mailto:{{ coursier.email }}">{{ coursier.email }}</a></p></td>
+                                <td><p> <a href="tel:+216  {{ coursier.phone}}">{{ coursier.phone}} </a></p></td>
 
                 {# <td>
                     <a class="modifier" href="{{ path('app_couriers', {'id': livraison.Client.id, 'livraisonId': livraison.id}) }}">Verifier les coursiers disponibles</a>
                 </td> #}
                             
                 <td>
+                    {% if tournées in not null %}
                     <button type="button" class="modifier fetchCouriersBtn" data-toggle="modal" data-target="#exampleModalCenter{{ coursier.id }}" data-livraison-id="{{ coursier.id }}">
                         Verifier tournées
                     </button>
-
+                    {% else %}
+                        <a style="color: red;" href="#">Ce coursier n'effectue aucune tournée. </a>
+                    {% endif %}
                     <!-- Modal -->
                     <div class="modal fade" id="exampleModalCenter{{ coursier.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered" role="document">
