@@ -160,13 +160,18 @@
 }
 
 .content {
-    text-align: center;
+    
     margin: 50px; /* Optional: Add margin for spacing between content */
+       vertical-align: top;
 }
 .containerm.ff {
  
     height: 10vh; /* Optional: Set the height to fill the viewport */
 }
+.content h1 {
+    margin-bottom: 80PX; /* Align h1 to the top of its container */
+}
+
 </style>
 </head>
 <body>
@@ -176,10 +181,12 @@
    
    
         
-     <div  class="content">
+     <div  class="content"><h1 class="tt" >confirmer sans code pin</h1>
+     
             <button  value="normal" name="submit_button" type="submit" class="button confirm-normal">Confirm</button>
  </div>
         <div  class="content">
+        <h1>confirmer avec code pin</h1>
             <button value="pin" name="submit_button" type="submit"  class="button confirm-with-pin">Confirm with PIN</button></br></br>
             <input type="text" name="pin" id="pin" placeholder="Enter PIN">
            <input type="hidden" name="livraisonId" id="livraisonId" value="{{ livraisonId }}"><br />

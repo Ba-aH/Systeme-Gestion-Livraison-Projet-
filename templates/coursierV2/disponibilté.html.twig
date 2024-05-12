@@ -28,12 +28,12 @@
       <nav id="navbar" class="navbar">
         <ul>
                    <li><a  href="{{ path('afficher_tourneesAU') }}">Home</a></li>
-                     <li><a  href="{{ path('afaire') }}">travail a faire</a></li>
-          <li><a href="{{ path('afficher_tourneesrecent') }}">historique</a></li>
-          <li><a  class="active" href="{{ path('disponibilté') }}">disponibilité</a></li>
-                      <li><a href="{{ path('salarie') }}">paiement</a></li>
-       <li><a href="{{ path('coursierProfile') }}">gérer compte</a></li>
-          <li><a href="{{ path('app_logout') }}">logout</a></li>
+                     <li><a  href="{{ path('afaire') }}">Travail a faire</a></li>
+          {# <li><a href="{{ path('afficher_tourneesrecent') }}">Historique</a></li> #}
+          <li><a  class="active" href="{{ path('disponibilté') }}">Disponibilité</a></li>
+                      <li><a href="{{ path('salarie') }}">Paiement</a></li>
+       <li><a href="{{ path('coursierProfile') }}">Gérer compte</a></li>
+          <li><a href="{{ path('app_logout') }}">Logout</a></li>
          
           </ul>
       </nav>
@@ -46,9 +46,9 @@
 
       <ol>
         <li><a href="index.html">Home</a></li>
-        <li>deliver</li>
+        <li>Disponiblité</li>
       </ol>
-      <h2>gestion de disponibilté</h2>
+      <h2>Gestion de disponibilté</h2>
 
     </div>
   </section><!-- End Breadcrumbs --
@@ -90,7 +90,7 @@
       <label for="date">Date:</label>
       <input type="date" id="date" name="date" class="form-select" required>
   
-      <button type="submit">Submit</button>
+      <button type="submit">Soumettre</button>
     </form>
   </div>
  {% if error == 1 %}
@@ -190,10 +190,11 @@ monthElement.innerHTML = shortMonthName;
 </div></div></div>
 <div class="dialog-overlay" id="confirmationDialog">
   <div class="dialog-box">
-    <p>confirmer la suppression de cette livraison de votre tournée</p>
+    <p>confirmer la suppression de cette disponibilité</p>
+    <br>
     <div class="dialog-buttons">
-      <button id="confirmButton">Confirm</button>
-      <button id="cancelButton" onclick="cancelAction()">Cancel</button>
+      <button id="confirmButton">Confirmer</button>
+      <button id="cancelButton" onclick="cancelAction()">Annuler</button>
     </div>
   </div>
 </div>
@@ -247,8 +248,8 @@ function closeConfirmation() {
       <div class="container">
 
         <div class="section-title">
-          <h2>Clients</h2>
-          <p>Magnam dolores commodi suscipit. Necessitatibus eius consequatur ex aliquid fuga eum quidem. Sit sint consectetur velit. Quisquam quos quisquam cupiditate. Et nemo qui impedit suscipit alias ea. Quia fugiat sit in iste officiis commodi quidem hic quas.</p>
+          <h2>Coursiers</h2>
+          <p>Les coursiers sont informés qu'ils ne peuvent pas annuler une disponibilité en cours.</p>
         </div>
 
        

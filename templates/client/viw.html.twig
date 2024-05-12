@@ -15,7 +15,16 @@
 
 	<link rel="stylesheet" href={{ asset('assetss/css/style.css')}}>
  <section id="hero" class="hero d-flex align-items-center">
-    
+      <div class="container">
+    <div class="container position-relative">
+          <div class="row d-flex justify-content-center">
+            <div class="col-lg-6 text-center">
+              <h2>Livraisons non encore livrées</h2>
+              <p>.</p>
+            </div>
+          </div>
+        </div>
+    </div>
   
   </section><!-- End Hero Section --> 
   
@@ -332,10 +341,10 @@ h2 {
 
    <div class="dialog-overlay" id="confirmationDialog">
   <div class="dialog-box">
-    <p>confirmer la suppression de cette livraison de votre tournée</p>
+    <p>confirmer l'annulation de livraison</p>
     <div class="dialog-buttons">
-      <button id="confirmButton">Confirm</button>
-      <button id="cancelButton" onclick="cancelAction()">Cancel</button>
+      <button id="confirmButton">Confirmer</button>
+      <button id="cancelButton" onclick="cancelAction()">Annuler</button>
     </div>
   </div>
 </div>
