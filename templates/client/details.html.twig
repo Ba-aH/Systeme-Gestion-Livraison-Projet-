@@ -11,8 +11,8 @@
     <div class="container position-relative">
           <div class="row d-flex justify-content-center">
             <div class="col-lg-6 text-center">
-              <h2>commencer maintenant </h2>
-              <p>Odio et unde deleniti. Deserunt numquam exercitationem. Officiis quo odio sint voluptas consequatur ut a odio voluptatem. Sit dolorum debitis veritatis natus dolores. Quasi ratione sint. Sit quaerat ipsum dolorem.</p>
+              <h2>détails de la commande </h2>
+             
             </div>
           </div>
         </div>
@@ -324,6 +324,8 @@ h2 {
   </div>
  {% set Variable = Variable + 1 %}
 {% endfor %} #}
+
+{# 
    <div class="container">
   <h2>les colis associé a cette commande:</h2>
   <ul class="cards">
@@ -338,9 +340,9 @@ h2 {
                         <p><strong>type produit:</strong> {{ coli.getType() }}</p></br>
                         <p><strong>prix:</strong> {{ coli.getPrix() }}</p></br>
                         <p><strong>poid:</strong> {{ coli. getPoid() }}</p></br>
-                         {# {% if coli.getStatut()=='non recu'  %} #}
+                       
                          <p><strong>statut:</strong> {{ coli.getStatut() }}</p></br> 
-                             {# {% endif %} #}
+                         
         </div>
       </div>
   
@@ -358,14 +360,14 @@ h2 {
 
 
   </ul>
-    
-</div>
+     #}
+{# </div>
 <footer class="page-footer">
   <span>made by </span>
   <a href="https://georgemartsoukos.com/" target="_blank">
     <img width="24" height="24" src="https://assets.codepen.io/162656/george-martsoukos-small-logo.svg" alt="George Martsoukos logo">
   </a>
-</footer>
+</footer> #}
 
 
 

@@ -41,14 +41,14 @@
               </ul>
             </li>
           <li><a class="active" href="{{ path('afficher_tourneesAU') }}">Home</a></li>
-         <li><a  href="{{ path('afaire') }}">travail a faire</a></li>
+         <li><a  href="{{ path('afaire') }}">Travail a faire</a></li>
           {# <li><a href="{{ path('afficher_tourneesrecent') }}">historique</a></li> #}
 
 
-          <li><a href="{{ path('disponibilté') }}">disponibilité</a></li>
-            <li><a href="{{ path('salarie') }}">paiement</a></li>
-          <li><a href="{{ path('coursierProfile') }}">gérer compte</a></li>
-          <li><a href="{{ path('app_logout') }}">logout</a></li>
+          <li><a href="{{ path('disponibilté') }}">Disponibilité</a></li>
+            <li><a href="{{ path('salarie') }}">Paiement</a></li>
+          <li><a href="{{ path('coursierProfile') }}">Gérer compte</a></li>
+          <li><a href="{{ path('app_logout') }}">Logout</a></li>
          
           </ul>
       </nav>
@@ -87,7 +87,7 @@
           margin: 5px 0;
       }
       .dropdown-menu {
-          width: 500px; 
+          width: 300px; 
           margin-left: 10px;
       }
     </style> 
@@ -566,7 +566,7 @@ function deg2rad(deg) {
 var latLongDistItem = {
         latitude: {{warehouse.latitude}},
         longitude:  {{warehouse.longitude}},
-        ref: 'warehouse',
+        ref: ' {{warehouse.nom}} warehouse',
         
     };
 
@@ -967,7 +967,7 @@ $.ajax({
               referenceItem.innerHTML = `
                   <i class="bi bi-exclamation-circle text-warning"></i>
                   <div>
-                       <h5>tournée numéro:  ${tournée.id}</h5>
+                       <h5>Tournée numéro:  ${tournée.id}</h5>
                        
                       <h5>Doit étre fait en:  ${formattedDate} </h5>
                        <div class="cube">

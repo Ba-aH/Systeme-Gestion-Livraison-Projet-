@@ -85,11 +85,11 @@
       <nav id="navbar" class="navbar">
         <ul>
           <li><a class="active" href="{{ path('afficher_tourneesAU') }}">Home</a></li>
-            <li><a  href="{{ path('afaire') }}">travail a faire</a></li>
-          <li><a href="{{ path('afficher_tourneesrecent') }}">historique</a></li>
-          <li><a href="{{ path('disponibilté') }}">disponibilité</a></li>
-                      <li><a href="{{ path('salarie') }}">paiement</a></li>
-          <li><a href="{{ path('coursierProfile') }}">gérer compte</a></li>
+            <li><a  href="{{ path('afaire') }}">Travail a faire</a></li>
+          {# <li><a href="{{ path('afficher_tourneesrecent') }}">historique</a></li> #}
+          <li><a href="{{ path('disponibilté') }}">Disponibilité</a></li>
+                      <li><a href="{{ path('salarie') }}">Paiement</a></li>
+          <li><a href="{{ path('coursierProfile') }}">Gérer compte</a></li>
           <li><a href="{{ path('app_logout') }}">logout</a></li>
          
         </ul>
@@ -104,16 +104,16 @@
 
       <ol>
         <li><a href="index.html">Home</a></li>
-        <li>deliver</li>
+        <li>Livrer</li>
       </ol>
-      <h2>gérer mes tournées</h2>
+      <h2>Détails de la commande</h2>
 
     </div>
   </section>
-</br></br><h1 style="text-align: center;">details pour cette commande:</h1>
+{# </br></br><h1 style="text-align: center;">details pour cette commande:</h1> #}
 
 <div class="containert">
-
+{# 
   <div class="section">
     <h2>Informations de livraison</h2>
     <div>
@@ -154,7 +154,7 @@
       <p>{{ liv.getTourner().getId() }}</p>
     </div>
     {% endif %}
-  </div>
+  </div> #}
 
 
   <div class="section">
@@ -181,6 +181,83 @@
     </div>
     
   </div>
+
+
+    <section id="contact" class="contact">
+       <div class="container" data-aos="fade-up">
+
+       <div class='mappeu'>
+       <style>
+   
+
+        #map {
+            width: 100%;
+            height: 50vh;
+        }
+        </style>
+          <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+     <div id="map"></div>
+     <script>
+    // Map initialization 
+    // var map = L.map('map').setView([ 36.76806 , 10.27528], 18);
+   
+         var map = L.map('map').setView([{{lat}}, {{long}}], 13);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+      }).addTo(map);
+
+
+
+
+//  var map = L.map('map').setView([{{lat}},{{long}}], 13);
+    //osm layer
+    var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    });
+    osm.addTo(map);
+
+    if(!navigator.geolocation) {
+        console.log("Your browser doesn't support geolocation feature!")
+    } else {
+            navigator.geolocation.getCurrentPosition(getPosition);
+    }
+
+    var marker, circle;
+
+    function getPosition(position){
+      
+        if(marker) {
+            map.removeLayer(marker)
+        }
+
+        if(circle) {
+            map.removeLayer(circle)
+        }
+        
+        marker = L.marker([{{lat}},{{long}}])
+        circle = L.circle([{{lat}},{{long}}])
+
+        var featureGroup = L.featureGroup([marker, circle]).addTo(map)
+
+        map.fitBounds(featureGroup.getBounds())
+
+    }
+
+</script>
+        {# <div>
+          <iframe style="border:0; width: 100%; height: 340px;" src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d12097.433213460943!2d-74.0062269!3d40.7101282!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0xb89d1fe6bc499443!2sDowntown+Conference+Center!5e0!3m2!1smk!2sbg!4v1539943755621" frameborder="0" allowfullscreen></iframe>
+        </div><!-- End Google Maps --> #}
+
+      
+
+      </div>
+    </section><!-- End Contact Section -->
+
+
+
+
+
 
 
   <div class="section">
@@ -243,76 +320,7 @@
 
                    
  <!-- ======= Contact Section ======= -->
-    <section id="contact" class="contact">
-      <div class="container" data-aos="fade-up">
 
-    <div class='mappeu'>
-    <style>
-   
-
-        #map {
-            width: 100%;
-            height: 50vh;
-        }
-        </style>
-          <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-
-    <div id="map"></div>
-    <script>
-    // Map initialization 
-    // var map = L.map('map').setView([ 36.76806 , 10.27528], 18);
-   
-         var map = L.map('map').setView([{{lat}}, {{long}}], 13);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-      }).addTo(map);
-
-
-
-
-//  var map = L.map('map').setView([{{lat}},{{long}}], 13);
-    //osm layer
-    var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    });
-    osm.addTo(map);
-
-    if(!navigator.geolocation) {
-        console.log("Your browser doesn't support geolocation feature!")
-    } else {
-            navigator.geolocation.getCurrentPosition(getPosition);
-    }
-
-    var marker, circle;
-
-    function getPosition(position){
-      
-        if(marker) {
-            map.removeLayer(marker)
-        }
-
-        if(circle) {
-            map.removeLayer(circle)
-        }
-        
-        marker = L.marker([{{lat}},{{long}}])
-        circle = L.circle([{{lat}},{{long}}])
-
-        var featureGroup = L.featureGroup([marker, circle]).addTo(map)
-
-        map.fitBounds(featureGroup.getBounds())
-
-    }
-
-</script>
-        {# <div>
-          <iframe style="border:0; width: 100%; height: 340px;" src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d12097.433213460943!2d-74.0062269!3d40.7101282!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0xb89d1fe6bc499443!2sDowntown+Conference+Center!5e0!3m2!1smk!2sbg!4v1539943755621" frameborder="0" allowfullscreen></iframe>
-        </div><!-- End Google Maps --> #}
-
-      
-
-      </div>
-    </section><!-- End Contact Section -->
 
 
 

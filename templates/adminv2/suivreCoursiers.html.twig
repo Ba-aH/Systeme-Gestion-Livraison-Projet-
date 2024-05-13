@@ -51,7 +51,7 @@
                 </td> #}
                             
                 <td>
-                    {% if tournées in not null %}
+                    {% if tournées[counter - 1] != null %}
                     <button type="button" class="modifier fetchCouriersBtn" data-toggle="modal" data-target="#exampleModalCenter{{ coursier.id }}" data-livraison-id="{{ coursier.id }}">
                         Verifier tournées
                     </button>
