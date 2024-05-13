@@ -114,7 +114,7 @@ class CoursierController extends AbstractController
     public function afficher_tourneesAU(EntityManagerInterface $entityManager,Request $request,TournerRepository $tournerRepository,LivraisonRepository $livraisonRepository): Response
     {
         $start = $request->query->get('start', 0);
-
+        $errorv2 = $request->query->get('errorv2', 0);
     $error=0;
     $token = $this->tokenStorage->getToken();
             $currentUser = $token->getUser();
@@ -157,7 +157,7 @@ class CoursierController extends AbstractController
             'tour' =>  $tourneé->getId(),
             'date' =>  $now ,
             'error' =>  $error,'idtour'=>  $id,'start'=>$start ,'status'=>$status,'address'=>$adresse,'warehouse'=>$warehouse
-            ,'distance'=>null
+            ,'distance'=>null,'errorv2'=>$errorv2
         ]);
         
     }else{ 
@@ -285,10 +285,8 @@ class CoursierController extends AbstractController
             $livstat->setStatusDateModifier($now);
             $livstat->setNote( 'confirmé avec code pin ');
           }else{
-            $error=1;
-            return $this->render('coursier/confrm.html.twig', [
-                'livraisonId' =>  $livraisonId ,'error' =>  $error
-            ]);
+            $errorv2=1;
+            return $this->redirectToRoute('afficher_tourneesAU',['errorv2' => $errorv2,'start' => 1]);
           }
 
            
@@ -297,7 +295,7 @@ class CoursierController extends AbstractController
 
             $entityManager->flush();
             $start=1;
-            return $this->redirectToRoute('afficher_tourneesAU',['start' => $start]);
+            return $this->redirectToRoute('afficher_tourneesAU',['errorv2' => 2,'start' => 1]);
            
     }
 
