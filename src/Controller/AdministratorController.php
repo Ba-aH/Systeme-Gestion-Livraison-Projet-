@@ -466,78 +466,115 @@ class AdministratorController extends AbstractController
          }
 
 
-         #[Route('/trouvé/{id}', name: 'trouvé', methods: ['get'])]
-         public function touvé(Request $request,LivraisonRepository $livraisonRepository,StatutLivraisonRepository $statut ,ManagerRegistry $registry,ClientRepository $clientRepository,EntityManagerInterface $entityManager): Response
-         {
-            $now = new \DateTimeImmutable('now', new \DateTimeZone('Africa/Tunis'));
-            $livraisonId = $request->get('id');
+    #[Route('/trouvé/{id}', name: 'trouvé', methods: ['get'])]
+    public function touvé(Request $request,LivraisonRepository $livraisonRepository,StatutLivraisonRepository $statut ,ManagerRegistry $registry,ClientRepository $clientRepository,EntityManagerInterface $entityManager): Response
+    {
+        $now = new \DateTimeImmutable('now', new \DateTimeZone('Africa/Tunis'));
+        $livraisonId = $request->get('id');
          
-            $livstat= $entityManager->getRepository(StatutLivraison::class)->findOneBy(['livraison' => $livraisonId]);
-            $livstat->setDisponibilité(1);
-            $livstat-> setStatusTitle('en attente');
-            $livstat-> setStatusDateModifier($now);
+        $livstat= $entityManager->getRepository(StatutLivraison::class)->findOneBy(['livraison' => $livraisonId]);
+        $livstat->setDisponibilité(1);
+        $livstat-> setStatusTitle('en attente');
+        $livstat-> setStatusDateModifier($now);
 
-            $entityManager->flush();
-            return $this->redirectToRoute('perdus');
-     
-     
-              }
+        $entityManager->flush();
+        return $this->redirectToRoute('perdus');
+    }
 
+    #[Route('/suivreCoursier', name: 'suivreCoursier', methods: ['GET'])]
+    public function suivreCoursier(LivraisonRepository $livraisonRepository,AdresseRepository $adresseRepository,
+        StatutCoursierRepository $statutCoursierRepository,
+        StatutLivraisonRepository $statutLivraisonRepository,CoursierRepository $coursierRepository,TournerRepository $tournerRepository): Response
+    {    
+        $coursiers=$coursierRepository->findAll();    
+        $tournées = [];
+        foreach ($coursiers as $item) {
+            $tour=$tournerRepository->findBy(['coursier' => $item->getId(),'statut_tourner'=>'terminé']);   
+            $tournées[] = $tour;   
+            }
 
-
-
-              #[Route('/suivreCoursier', name: 'suivreCoursier', methods: ['GET'])]
-              public function suivreCoursier(LivraisonRepository $livraisonRepository,AdresseRepository $adresseRepository,
-              StatutCoursierRepository $statutCoursierRepository,
-              StatutLivraisonRepository $statutLivraisonRepository,CoursierRepository $coursierRepository,TournerRepository $tournerRepository): Response
-              {    $coursiers=$coursierRepository->findAll();
-                   
-                $tournées = [];
-               
-                foreach ($coursiers as $item) {
-                    $tour=$tournerRepository->findBy(['coursier' => $item->getId(),'statut_tourner'=>'terminé']);
-                    
-                    $tournées[] = $tour;
-                   
-                }
-
-
-
-                  return $this->render('adminv2/suivreCoursiers.html.twig', [
-                      'coursiers' => $coursiers, 
-                      'tournées' => $tournées,
-                     
-                  ]);
-              }
-
-
-
-              #[Route('/pathhistory/{id}', name: 'pathhistory', methods: ['GET'])]
-              public function pathhistory(Request $request,CoursierPositionHistoryRepository $CoursierPositionHistoryRepository,AdresseRepository $adresseRepository,
-              StatutCoursierRepository $statutCoursierRepository,EntityManagerInterface $entityManager,
-              StatutLivraisonRepository $statutLivraisonRepository,CoursierRepository $coursierRepository,TournerRepository $tournerRepository,LivraisonRepository $LivraisonRepository): Response
-              {    
-                $id = $request->get('id');
-                $tour=$CoursierPositionHistoryRepository->findBy(['tourner' => $id ]);
-                   
-                $livs=$LivraisonRepository->findBy(['tourner' => $id ]);
-                $adresses = [];
-                foreach ($livs as $item) {
-                    $ad= $entityManager->getRepository(Adresse::class)->findOneBy(['id' => $item->getAddressId()]);
-                    
-                    $adresses[] = $ad;
-                   
-                }
-                return $this->render('adminv2/coursierpath.html.twig', [
-                      'tour' => $tour, 
-                      'adresses'=> $adresses,
+        return $this->render('adminv2/suivreCoursiers.html.twig', [
+                             'coursiers' => $coursiers, 
+                             'tournées' => $tournées,
                             ]);
+    }
 
+    #[Route('/pathhistory/{id}', name: 'pathhistory', methods: ['GET'])]
+    public function pathhistory(Request $request,CoursierPositionHistoryRepository $CoursierPositionHistoryRepository,AdresseRepository $adresseRepository,
+        StatutCoursierRepository $statutCoursierRepository,EntityManagerInterface $entityManager,
+        StatutLivraisonRepository $statutLivraisonRepository,CoursierRepository $coursierRepository,TournerRepository $tournerRepository,LivraisonRepository $LivraisonRepository): Response
+    {    
+        $id = $request->get('id');
+        $tour=$CoursierPositionHistoryRepository->findBy(['tourner' => $id ]);
+                   
+        $livs=$LivraisonRepository->findBy(['tourner' => $id ]);
+        $adresses = [];
+        foreach ($livs as $item) {
+            $ad= $entityManager->getRepository(Adresse::class)->findOneBy(['id' => $item->getAddressId()]);
+            $adresses[] = $ad;  
+            }
 
-                   }
+        return $this->render('adminv2/coursierpath.html.twig', [
+                             'tour' => $tour, 
+                             'adresses'=> $adresses,
+                            ]);
+     }
 
               
+    #[Route('/chartAnalyse', name: 'chartAnalyse')]
+    public function chartAnalyse(Request $request,LivraisonHistoryRepository $livraisonHistoryRepository,EntityManagerInterface $entityManager):Response
+    {
+        $now = new \DateTimeImmutable();
+        $firstDayOfMonth = $now->modify('first day of this month')->setTime(0, 0, 0);
+        $lastDayOfMonth = $now->modify('last day of this month')->setTime(23, 59, 59);
+        $end = new \DateTimeImmutable();
 
+
+        $qb = $this->entityManager->createQueryBuilder();
+        $qb->select('lh')
+            ->from('App\Entity\LivraisonHistory', 'lh')
+            ->where(
+                $qb->expr()->between('lh.date_ajout', ':lastMonth', ':currentMonth')
+            )
+            ->setParameter('lastMonth', $firstDayOfMonth)
+            ->setParameter('currentMonth', $end);
+
+        $livraisonHistory = $qb->getQuery()->getResult();
+        //$livraisonHistory = $livraisonHistoryRepository->findAll();
+        $annuleeClient=0;
+        $signaleeClient=0;
+        $signalerCoursier=0;
+        $annuleeCoursier=0;
+        $succe=0;
+        foreach($livraisonHistory as $index){
+            if ($index->getEvent()=='annulée par client'){
+                $annuleeClient+=1;  
+            }
+            elseif ($index->getEvent()=='signalée par client'){
+                $signaleeClient+=1;  
+            }
+            elseif ($index->getEvent()=='annulée par coursier'){
+                $annuleeCoursier+=1;  
+            }
+            elseif ($index->getEvent()=='signalée par coursier'){
+                $signalerCoursier+=1;  
+            }
+            elseif ($index->getEvent()=='livrée avec succès'){
+                $succe+=1;  
+            }
+            
+            
+            }
+        $data[] = [
+            'nbLivAnnuleeClient' => $annuleeClient,
+            'nbLivAnnuleeCoursier' => $annuleeCoursier,
+            'nbLivSignalerClient' => $signaleeClient,
+            'nbLivSignalerCoursier' => $signalerCoursier,
+            'nbLivSuccee' => $succe,
+            ];       
+        return $this->json($data);
+
+    }
 }
 
 

@@ -26,6 +26,7 @@ use App\Entity\Tourner;
 use App\Entity\StatutCoursier;
 use App\Entity\StatutLivraison;
 use App\Entity\Livraison;
+use App\Entity\LivraisonHistory;
 use App\Entity\RaisonSignalement;
 use App\Entity\Region;
 use DateTime; 
@@ -119,6 +120,14 @@ class ClientController extends AbstractController
 
       }else{
           if($livstat->getStatusTitle()=='affecte'){
+            $livHistory = new LivraisonHistory;
+            $now = new \DateTimeImmutable('now', new \DateTimeZone('Africa/Tunis'));
+            $livHistory->setEvent("annulée par client");
+            $livHistory->setLivraison($livraison);
+            $livHistory->setDateAjout($now);
+            $entityManager->persist($livHistory);
+            $entityManager->flush();
+            
             $prix= $livraison->getPrixTotaleLivraison();
             $poid = $livraison->getPoidLivraison();
             $tour=$livraison->getTourner();
@@ -130,17 +139,26 @@ class ClientController extends AbstractController
             $tour -> setNbLivraison($nb-1);
             $livstat->setStatusTitle('annulée par client');
             $livraison->setTourner(null);
-   
             $entityManager->flush();
+            
+            
+            
+
             return $this->redirectToRoute('afficher_livraisons', ['error' => 2]);
            
           }else{
+        $livHistory = new LivraisonHistory;
+        $now = new \DateTimeImmutable('now', new \DateTimeZone('Africa/Tunis'));
+        $livHistory->setEvent("annulée par client");
+        $livHistory->setLivraison($livraison);
+        $livHistory->setDateAjout($now).
+        $entityManager->persist($livHistory);
+        $entityManager->flush();
 
         $livstat->setStatusTitle('annulée par client');
         $livraison->setTourner(null);
-        
-       
         $entityManager->flush();
+        
         return $this->redirectToRoute('afficher_livraisons', ['error' => 2]);}
 
       }
@@ -217,6 +235,16 @@ class ClientController extends AbstractController
         $livstat->setStatusDateModifier($now);
         $livstat->setRaisonSignalement($raison);
         $entityManager->flush();
+
+        $livHistory = new LivraisonHistory;
+        $now = new \DateTimeImmutable('now', new \DateTimeZone('Africa/Tunis'));
+        $livHistory->setEvent("signalée par client");
+        $livraison=$livraisonRepository->findOneBy(['id' =>$livraisonId]);
+        $livHistory->setLivraison($livraison);
+        $livHistory->setDateAjout($now);
+        $entityManager->persist($livHistory);
+        $entityManager->flush();
+
         return $this->redirectToRoute('afficher_livraisons');
     }
     

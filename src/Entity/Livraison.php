@@ -58,10 +58,14 @@ class Livraison
 
     private $availableCouriers;
 
+    #[ORM\OneToMany(mappedBy: 'livraison', targetEntity: LivraisonHistory::class)]
+    private Collection $livraisonHistories;
+
     public function __construct()
     {
         $this->colis = new ArrayCollection();
         $this->notifications = new ArrayCollection();
+        $this->livraisonHistories = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -273,6 +277,36 @@ class Livraison
     {
         $adr = $adresseRepository->findOneBy(['id' => $this->address_id]);
         return $adr->getRegion()->getName();
+    }
+
+    /**
+     * @return Collection<int, LivraisonHistory>
+     */
+    public function getLivraisonHistories(): Collection
+    {
+        return $this->livraisonHistories;
+    }
+
+    public function addLivraisonHistory(LivraisonHistory $livraisonHistory): static
+    {
+        if (!$this->livraisonHistories->contains($livraisonHistory)) {
+            $this->livraisonHistories->add($livraisonHistory);
+            $livraisonHistory->setLivraison($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLivraisonHistory(LivraisonHistory $livraisonHistory): static
+    {
+        if ($this->livraisonHistories->removeElement($livraisonHistory)) {
+            // set the owning side to null (unless already changed)
+            if ($livraisonHistory->getLivraison() === $this) {
+                $livraisonHistory->setLivraison(null);
+            }
+        }
+
+        return $this;
     }
 
     

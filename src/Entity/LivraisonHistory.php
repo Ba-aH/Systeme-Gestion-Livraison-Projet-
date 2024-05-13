@@ -17,11 +17,13 @@ class LivraisonHistory
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $date_ajout = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    private ?Livraison $livraison = null;
+
 
     #[ORM\Column(length: 255)]
     private ?string $event = null;
+
+    #[ORM\ManyToOne(inversedBy: 'livraisonHistories')]
+    private ?Livraison $livraison = null;
 
  
     public function getId(): ?int
@@ -41,17 +43,6 @@ class LivraisonHistory
         return $this;
     }
 
-    public function getLivraison(): ?Livraison
-    {
-        return $this->livraison;
-    }
-
-    public function setLivraison(?Livraison $livraison): static
-    {
-        $this->livraison = $livraison;
-
-        return $this;
-    }
 
     public function getEvent(): ?string
     {
@@ -61,6 +52,18 @@ class LivraisonHistory
     public function setEvent(string $event): static
     {
         $this->event = $event;
+
+        return $this;
+    }
+
+    public function getLivraison(): ?Livraison
+    {
+        return $this->livraison;
+    }
+
+    public function setLivraison(?Livraison $livraison): static
+    {
+        $this->livraison = $livraison;
 
         return $this;
     }

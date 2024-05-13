@@ -28,8 +28,10 @@ use App\Entity\Tourner;
 use App\Entity\StatutCoursier;
 use App\Entity\StatutLivraison;
 use App\Entity\Livraison;
+use App\Entity\LivraisonHistory;
 use App\Entity\Region;
 use App\Entity\Warehouse;
+use App\Repository\LivraisonHistoryRepository;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use DateTime; 
@@ -248,6 +250,7 @@ class CoursierController extends AbstractController
             'livraisonId' =>  $livraisonId,  'list' =>  $listraisons,
         ]);
     }
+
     #[Route('/confirmer/{id}', name: 'confirmer', methods: ['GET'])]
     public function confirmer(Request $request,RaisonsEchecRepository $raisonsEchecRepository ,LivraisonRepository $livraisonRepository,EntityManagerInterface $entityManager,AdresseRepository $adresseRepository): Response
     {
@@ -300,7 +303,7 @@ class CoursierController extends AbstractController
 
 
     #[Route('/echecsubmit', name: 'echecsubmit', methods: ['post'])]
-    public function echecsubmit(Request $request ,StatutLivraisonRepository $statutLivraison,EntityManagerInterface $entityManager,AdresseRepository $adresseRepository): Response
+    public function echecsubmit(Request $request ,LivraisonHistoryRepository $livraisonHistoryRepository,StatutLivraisonRepository $statutLivraison,EntityManagerInterface $entityManager,AdresseRepository $adresseRepository): Response
     {   $newraison=$request->get('newItem');
         $livraisonId = $request->get('livraisonId');
         $livraison= $entityManager->getRepository(Livraison::class)->findOneBy(['id' =>  $livraisonId]);
@@ -328,6 +331,12 @@ class CoursierController extends AbstractController
 
             $entityManager->flush();
             $start=1;
+            $livHistory= new LivraisonHistory;
+            $livHistory->setLivraison($livraison);
+            $livHistory->setEvent("echec au cours de la livraison");
+            $livHistory->setDateAjout($now);
+            $entityManager->persist($livHistory);
+            $entityManager->flush();
             return $this->redirectToRoute('afficher_tourneesAU',['start' => $start]);
     }
 
