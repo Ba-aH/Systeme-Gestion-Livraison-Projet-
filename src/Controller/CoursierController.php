@@ -164,7 +164,7 @@ class CoursierController extends AbstractController
         $error=1;
     return $this->render('coursierV2/home.html.twig', [
               'date' =>  $now , 'error' =>  $error ,'idtour'=>null , 'livraisons' => null ,'start'=>$start,'status'=>0,'address'=>null
-              ,'warehouse'=>null,'distance'=>null
+              ,'warehouse'=>null,'distance'=>null,'errorv2'=>$errorv2
         ]);}
         
     }
