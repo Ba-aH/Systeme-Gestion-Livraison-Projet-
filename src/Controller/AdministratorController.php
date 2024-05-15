@@ -14,6 +14,7 @@ use App\Entity\LivraisonHistory;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use App\Entity\Livraison;
 use App\Entity\StatutLivraison;
+use App\Entity\Tourner;
 use App\Repository\AdministrateurRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -100,9 +101,12 @@ class AdministratorController extends AbstractController
         $treports = count($REPORTS); 
 
 
+       $touslestournées=$entityManager->getRepository(Tourner::class)->findBy(['date' => $now]);
+
+
         $response = $this->render('adminv2/dashboard.html.twig',[
             'user'=> $currentUser, 'clients'=> $clients ,'commande'=> $commande,'revenus'=> $totale,'recentliv'=> $livs,'lastFiveCouriers'=>  $lastFiveCouriers
-            ,'treports'=>$treports
+            ,'treports'=>$treports,'touslestournées'=> $touslestournées
            
         ]);
         $response ->headers->set('set-cookie', $cookieGenerator->generate($this->getUser()));
