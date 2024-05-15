@@ -446,7 +446,7 @@ class AdministratorController extends AbstractController
     public function perdus(LivraisonRepository $livraisonRepository,StatutLivraisonRepository $statut ,ManagerRegistry $registry,ClientRepository $clientRepository,EntityManagerInterface $entityManager): Response
     {         $now = new \DateTimeImmutable();
 
-        $livraisons = $statut->findBy(['status_title' => ['echec', 'annuler','non recu']]);
+        $livraisons = $statut->findBy(['status_title' => ['livraison suspecte']]);
         $resultArray=[];
         foreach ($livraisons as $livraison) {
             $statusDateModifier = $livraison->getStatusDateModifier();
@@ -559,7 +559,7 @@ class AdministratorController extends AbstractController
             elseif ($index->getEvent()=='signalée par coursier'){
                 $signalerCoursier+=1;  
             }
-            elseif ($index->getEvent()=='livrée avec succès'){
+            elseif ($index->getEvent()=='confirmée par client' or $index->getEvent()=='confirmée par coursier'){
                 $succe+=1;  
             }
             

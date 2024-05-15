@@ -276,6 +276,12 @@ class CoursierController extends AbstractController
             $error=2;
             $livstat->setStatusTitle('confirmé');
             $livstat->setStatusDateModifier($now);
+            $livHistory= new LivraisonHistory;
+            $livHistory->setLivraison($livraison);
+            $livHistory->setEvent("confirmée par coursier");
+            $livHistory->setDateAjout($now);
+            $entityManager->persist($livHistory);
+            $entityManager->flush();
             
         } elseif ($submitButton === 'pin') {
           if($pinform== $pinlivraison){
@@ -284,6 +290,12 @@ class CoursierController extends AbstractController
             $livstat->setStatusTitle('confirmé');
             $livstat->setStatusDateModifier($now);
             $livstat->setNote( 'confirmé avec code pin ');
+            $livHistory= new LivraisonHistory;
+            $livHistory->setLivraison($livraison);
+            $livHistory->setEvent("confirmée par client");
+            $livHistory->setDateAjout($now);
+            $entityManager->persist($livHistory);
+            $entityManager->flush();
           }else{
             $errorv2=1;
             return $this->redirectToRoute('afficher_tourneesAU',['errorv2' => $errorv2,'start' => 1]);
@@ -302,7 +314,8 @@ class CoursierController extends AbstractController
 
     #[Route('/echecsubmit', name: 'echecsubmit', methods: ['post'])]
     public function echecsubmit(Request $request ,LivraisonHistoryRepository $livraisonHistoryRepository,StatutLivraisonRepository $statutLivraison,EntityManagerInterface $entityManager,AdresseRepository $adresseRepository): Response
-    {   $newraison=$request->get('newItem');
+    {   
+        $newraison=$request->get('newItem');
         $livraisonId = $request->get('livraisonId');
         $livraison= $entityManager->getRepository(Livraison::class)->findOneBy(['id' =>  $livraisonId]);
         $livstat= $entityManager->getRepository(StatutLivraison::class)->findOneBy(['livraison' => $livraisonId]);
@@ -331,7 +344,7 @@ class CoursierController extends AbstractController
             $start=1;
             $livHistory= new LivraisonHistory;
             $livHistory->setLivraison($livraison);
-            $livHistory->setEvent("echec au cours de la livraison");
+            $livHistory->setEvent("signalée par coursier");
             $livHistory->setDateAjout($now);
             $entityManager->persist($livHistory);
             $entityManager->flush();
@@ -347,7 +360,14 @@ class CoursierController extends AbstractController
         $now = new \DateTimeImmutable('now', new \DateTimeZone('Africa/Tunis'));
         $livstat->setStatusTitle('annulée');
         $livstat->setStatusDateModifier($now);
-      
+        
+        $livHistory= new LivraisonHistory;
+        $livHistory->setLivraison($livraison);
+        $livHistory->setEvent("annulée par coursier");
+        $livHistory->setDateAjout($now);
+        $entityManager->persist($livHistory);
+        $entityManager->flush();
+
         $prix= $livraison->getPrixTotaleLivraison();
         $poid = $livraison->getPoidLivraison();
         $tour=$livraison->getTourner();
