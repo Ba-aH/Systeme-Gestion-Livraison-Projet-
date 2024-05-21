@@ -2,8 +2,10 @@
 
 namespace App\Form;
 
+use App\Entity\TransportationMeans;
 use App\Entity\Coursier;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -46,6 +48,13 @@ class RegistrationFormType extends AbstractType
                 'attr' => [
                     'placeholder' => 'Entrer votre prénom',
                 ],
+            ])
+            ->add('transportMean', EntityType::class, [
+                'class' => TransportationMeans::class,
+                'choice_label' => 'type', // or any other field you want to display
+                'label' => false,
+                'placeholder' => 'Choisir un moyen de transport',
+                'required' => true,
             ])
             ->add('phone', TextType::class, [
                 'label' => false,

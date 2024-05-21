@@ -38,7 +38,12 @@
                         <label for="Email" class="form-label">Email</label>
                         {{ form_row(registrationForm.email, {'attr': {'class': 'form-input'}}) }}
                     </div>
-                   
+
+                   <div class="flex flex-col pt-4">
+                        <label for="Email" class="form-label">Moyen de transportation</label>
+                        {{ form_row(registrationForm.transportMean, {'attr': {'class': 'form-input'}}) }}
+                    </div>
+
                     <div class="flex flex-col pt-4">
                         <label for="telephone" class="form-label">Password</label>
                         {{ form_row(registrationForm.plainPassword, {'attr': {'class': 'form-input'}}) }}

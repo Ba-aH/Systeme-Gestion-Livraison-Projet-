@@ -32,6 +32,7 @@ use App\Entity\LivraisonHistory;
 use App\Entity\Region;
 use App\Entity\Warehouse;
 use App\Repository\LivraisonHistoryRepository;
+use App\Repository\TransportationMeansRepository;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use DateTime; 
@@ -475,8 +476,9 @@ class CoursierController extends AbstractController
 
     }
     #[Route('/profile', name: 'coursierProfile')]
-        public function profile(Request $request): Response
+        public function profile(Request $request,TransportationMeansRepository $transportationMeansRepository): Response
         {
+            $trasportMeans=$transportationMeansRepository->findAll();
             $token = $this->tokenStorage->getToken();
             $currentUser = $token->getUser();
             if ($currentUser instanceof Coursier) {
@@ -485,17 +487,22 @@ class CoursierController extends AbstractController
             $error = $request->query->get('error', 0);
             return $this->render('coursierV2/profile.html.twig', [
                 'user' =>  $currentUser,
-                'dateAjout' =>  $dateAjout,'error'=> $error
+                'dateAjout' =>  $dateAjout,
+                'transportMeans'=>$trasportMeans,
+                'error'=> $error
             ]);
         }
 
         #[Route('/update-profile', name: 'update_coursier_profile')]
-        public function updateProfile(Request $request, EntityManagerInterface $entityManager, CoursierRepository $coursierRepository): Response
+        public function updateProfile(Request $request,TransportationMeansRepository $transportationMeansRepository, EntityManagerInterface $entityManager, CoursierRepository $coursierRepository): Response
         {
             $token = $this->tokenStorage->getToken();
             $currentUser = $token->getUser();
+            
 
             if ($currentUser instanceof Coursier) {
+                $transportationMeanId = $request->get('transportationMean');
+
                 $dateAjout = $currentUser->getDateAjout()->format('Y-m-d');
                 $id = $currentUser->getId();
                 $user =$coursierRepository->findOneBy(['id' => $id]);
@@ -503,6 +510,11 @@ class CoursierController extends AbstractController
                 $user->setUsername($request->get('username'));
                 $user->setNom($request->get('nom'));
                 $user->setPhone($request->get('phone'));
+                $transortM=$request->get('transportationMean');
+                if ($transortM != null){
+                $transportType=$transportationMeansRepository->findOneBy(['id'=>$transportationMeanId]);
+                $user->setTransportMean($transportType);
+                }
                 $entityManager->persist($user);
                 $entityManager->flush();
             }
