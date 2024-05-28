@@ -218,7 +218,9 @@ class ClientController extends AbstractController
 
 
     #[Route('/liv_non_recu', name: 'liv_non_recu')]
-    public function liv_non_recu(Request $request ,StatutLivraisonRepository $statutLivraisonRepository,RaisonSignalementRepository $raisonSignalementRepository,LivraisonRepository $livraisonRepository,EntityManagerInterface $entityManager): Response
+    public function liv_non_recu(Request $request ,StatutLivraisonRepository $statutLivraisonRepository,
+    RaisonSignalementRepository $raisonSignalementRepository,LivraisonRepository $livraisonRepository,
+    EntityManagerInterface $entityManager,LivraisonHistoryRepository $livraisonHistoryRepository): Response
     {
         $token = $this->tokenStorage->getToken();
         $currentUser = $token->getUser();
@@ -231,7 +233,17 @@ class ClientController extends AbstractController
         }
         $now = new \DateTimeImmutable('now', new \DateTimeZone('Africa/Tunis'));
         $livstat= $statutLivraisonRepository->findOneBy(['livraison' => $livraisonId]);
-        $livstat->setStatusTitle('non recu');
+        $livstat->setStatusTitle('signalée par client');
+        $livraison=$livraisonRepository->findOneBy(['id' =>$livraisonId]);
+
+        if ($raison->getRaison()=='Livraison incorrecte' or $raison->getRaison()=='Livraison non reçue' or $raison->getRaison()=='Commande incomplète'){
+            $livrHistoryExist = $livraisonHistoryRepository->findOneBy([
+                'livraison' => $livraison,
+                'event' => 'confirmée par coursier'
+            ]); 
+            $livstat->setStatusTitle('livraison suspecte');
+            }
+        //$livstat->setStatusTitle('non recu');
         $livstat->setStatusDateModifier($now);
         $livstat->setRaisonSignalement($raison);
         $entityManager->flush();
@@ -239,7 +251,7 @@ class ClientController extends AbstractController
         $livHistory = new LivraisonHistory;
         $now = new \DateTimeImmutable('now', new \DateTimeZone('Africa/Tunis'));
         $livHistory->setEvent("signalée par client");
-        $livraison=$livraisonRepository->findOneBy(['id' =>$livraisonId]);
+        
         $livHistory->setLivraison($livraison);
         $livHistory->setDateAjout($now);
         $entityManager->persist($livHistory);

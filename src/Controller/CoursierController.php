@@ -32,6 +32,7 @@ use App\Entity\LivraisonHistory;
 use App\Entity\Region;
 use App\Entity\Warehouse;
 use App\Repository\LivraisonHistoryRepository;
+use App\Repository\TransportationMeansRepository;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use DateTime; 
@@ -272,29 +273,30 @@ class CoursierController extends AbstractController
         $livstat= $entityManager->getRepository(StatutLivraison::class)->findOneBy(['livraison' => $livraisonId]);
         $submitButton = $request->request->get('submit_button');
         if ($submitButton === 'normal') {
-            $noww = new \DateTimeImmutable('now', new \DateTimeZone('Africa/Tunis'));
+            $now = new \DateTimeImmutable('now', new \DateTimeZone('Africa/Tunis'));
             $error=2;
             $livstat->setStatusTitle('confirmé');
-            $livstat->setStatusDateModifier($noww);
-            $error=2;
-
-         
+            $livstat->setStatusDateModifier($now);
+            $livHistory= new LivraisonHistory;
+            $livHistory->setLivraison($livraison);
+            $livHistory->setEvent("confirmée par coursier");
+            $livHistory->setDateAjout($now);
+            $entityManager->persist($livHistory);
             $entityManager->flush();
-
-
-            
             
         } elseif ($submitButton === 'pin') {
           if($pinform== $pinlivraison){
-            $noww = new \DateTimeImmutable('now', new \DateTimeZone('Africa/Tunis'));
+            $now = new \DateTimeImmutable('now', new \DateTimeZone('Africa/Tunis'));
             $error=2;
             $livstat->setStatusTitle('confirmé');
-            $livstat->setStatusDateModifier($noww);
+            $livstat->setStatusDateModifier($now);
             $livstat->setNote( 'confirmé avec code pin ');
-
-          
+            $livHistory= new LivraisonHistory;
+            $livHistory->setLivraison($livraison);
+            $livHistory->setEvent("confirmée par client");
+            $livHistory->setDateAjout($now);
+            $entityManager->persist($livHistory);
             $entityManager->flush();
-
           }else{
             $errorv2=1;
             return $this->redirectToRoute('afficher_tourneesAU',['errorv2' => $errorv2,'start' => 1]);
@@ -313,7 +315,8 @@ class CoursierController extends AbstractController
 
     #[Route('/echecsubmit', name: 'echecsubmit', methods: ['post'])]
     public function echecsubmit(Request $request ,LivraisonHistoryRepository $livraisonHistoryRepository,StatutLivraisonRepository $statutLivraison,EntityManagerInterface $entityManager,AdresseRepository $adresseRepository): Response
-    {   $newraison=$request->get('newItem');
+    {   
+        $newraison=$request->get('newItem');
         $livraisonId = $request->get('livraisonId');
         $livraison= $entityManager->getRepository(Livraison::class)->findOneBy(['id' =>  $livraisonId]);
         $livstat= $entityManager->getRepository(StatutLivraison::class)->findOneBy(['livraison' => $livraisonId]);
@@ -340,7 +343,11 @@ class CoursierController extends AbstractController
 
             $entityManager->flush();
             $start=1;
-          
+            $livHistory= new LivraisonHistory;
+            $livHistory->setLivraison($livraison);
+            $livHistory->setEvent("signalée par coursier");
+            $livHistory->setDateAjout($now);
+            $entityManager->persist($livHistory);
             $entityManager->flush();
             return $this->redirectToRoute('afficher_tourneesAU',['start' => $start]);
     }
@@ -354,7 +361,14 @@ class CoursierController extends AbstractController
         $now = new \DateTimeImmutable('now', new \DateTimeZone('Africa/Tunis'));
         $livstat->setStatusTitle('annulée');
         $livstat->setStatusDateModifier($now);
-      
+        
+        $livHistory= new LivraisonHistory;
+        $livHistory->setLivraison($livraison);
+        $livHistory->setEvent("annulée par coursier");
+        $livHistory->setDateAjout($now);
+        $entityManager->persist($livHistory);
+        $entityManager->flush();
+
         $prix= $livraison->getPrixTotaleLivraison();
         $poid = $livraison->getPoidLivraison();
         $tour=$livraison->getTourner();
@@ -366,11 +380,7 @@ class CoursierController extends AbstractController
         $tour -> setNbLivraison($nb-1);
         $livraison->setTourner(null);
         // $livstat->setNote(null);
-
-        $noww = new \DateTimeImmutable('now', new \DateTimeZone('Africa/Tunis'));
-       
         $entityManager->flush();
-
         $start=1;
         return $this->redirectToRoute('afficher_tourneesAU',['start' => $start]);
     }
@@ -466,8 +476,9 @@ class CoursierController extends AbstractController
 
     }
     #[Route('/profile', name: 'coursierProfile')]
-        public function profile(Request $request): Response
+        public function profile(Request $request,TransportationMeansRepository $transportationMeansRepository): Response
         {
+            $trasportMeans=$transportationMeansRepository->findAll();
             $token = $this->tokenStorage->getToken();
             $currentUser = $token->getUser();
             if ($currentUser instanceof Coursier) {
@@ -476,17 +487,22 @@ class CoursierController extends AbstractController
             $error = $request->query->get('error', 0);
             return $this->render('coursierV2/profile.html.twig', [
                 'user' =>  $currentUser,
-                'dateAjout' =>  $dateAjout,'error'=> $error
+                'dateAjout' =>  $dateAjout,
+                'transportMeans'=>$trasportMeans,
+                'error'=> $error
             ]);
         }
 
         #[Route('/update-profile', name: 'update_coursier_profile')]
-        public function updateProfile(Request $request, EntityManagerInterface $entityManager, CoursierRepository $coursierRepository): Response
+        public function updateProfile(Request $request,TransportationMeansRepository $transportationMeansRepository, EntityManagerInterface $entityManager, CoursierRepository $coursierRepository): Response
         {
             $token = $this->tokenStorage->getToken();
             $currentUser = $token->getUser();
+            
 
             if ($currentUser instanceof Coursier) {
+                $transportationMeanId = $request->get('transportationMean');
+
                 $dateAjout = $currentUser->getDateAjout()->format('Y-m-d');
                 $id = $currentUser->getId();
                 $user =$coursierRepository->findOneBy(['id' => $id]);
@@ -494,6 +510,11 @@ class CoursierController extends AbstractController
                 $user->setUsername($request->get('username'));
                 $user->setNom($request->get('nom'));
                 $user->setPhone($request->get('phone'));
+                $transortM=$request->get('transportationMean');
+                if ($transortM != null){
+                $transportType=$transportationMeansRepository->findOneBy(['id'=>$transportationMeanId]);
+                $user->setTransportMean($transportType);
+                }
                 $entityManager->persist($user);
                 $entityManager->flush();
             }
@@ -677,7 +698,7 @@ $dailysal=$saltoday*5;
                 if ($currentUser instanceof Coursier) {
                     $idcoursier = $currentUser->getId();
                 }
-        $tourneés = $tournerRepository->findBy(['coursier' =>  $idcoursier,'statut_tourner' => ['complet', 'a faire']]);
+        $tourneés = $tournerRepository->findBy(['coursier' =>  $idcoursier,'statut_tourner' => 'complet']);
         $numItems = count($tourneés);
 
         $data = $serializer->serialize([

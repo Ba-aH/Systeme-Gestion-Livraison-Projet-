@@ -265,7 +265,7 @@ input[type="submit"]:hover {
 
     #map {
         width: 100%;
-        height: 40%; /* Adjust as needed */
+        height: 50%; /* Adjust as needed */
     }
     .notification-popup {
       position: fixed;
@@ -308,21 +308,37 @@ input[type="submit"]:hover {
     <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
     <script>
       const L = window.L;
-      const addressLatitude =  {{ adress.latitude }};
-      const addressLongitude = {{adress.longitude}};
-      const warehouseLatitude = {{warehouse.latitude}};
-      const warehouseLongitude = {{warehouse.longitude}};
+      const addressLatitude = {{ adress.latitude }};
+      const addressLongitude = {{ adress.longitude }};
+      const warehouseLatitude = {{ warehouse.latitude }};
+      const warehouseLongitude = {{ warehouse.longitude }};
+      const warehouseName = "{{ warehouse.nom }}";  // Assuming warehouse.nom is a string
 
       var map = L.map('map').setView([addressLatitude, addressLongitude], 8);
-      var marker = L.marker([addressLatitude, addressLongitude]).addTo(map);
-      mapLink = "<a href='http://openstreetmap.org'>OpenStreetMap</a>";
-      L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: 'Leaflet &copy; ' + mapLink + ', contribution', maxZoom: 18 }).addTo(map); 
+
+      L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', { 
+          attribution: 'Leaflet &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors', 
+          maxZoom: 18 
+      }).addTo(map);
+
+      var addressMarker = L.marker([addressLatitude, addressLongitude]).addTo(map);
+
+      var warehouseMarker = L.marker([warehouseLatitude, warehouseLongitude]).addTo(map);
+      var customTooltip = L.tooltip({
+          direction: 'top',
+          permanent: true,
+          opacity: 1
+      }).setContent(warehouseName);
+      warehouseMarker.bindTooltip(customTooltip);
 
       var routeControl = L.Routing.control({
           waypoints: [
               L.latLng(warehouseLatitude, warehouseLongitude),
               L.latLng(addressLatitude, addressLongitude)
-          ]
+          ],
+          routeWhileDragging: false,
+          draggableWaypoints: false,
+          show: false
       }).addTo(map);
 
 

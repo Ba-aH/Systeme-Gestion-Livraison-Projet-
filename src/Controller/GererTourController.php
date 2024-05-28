@@ -203,8 +203,10 @@ public function show(Request $request,RegionRepository $regionRepository,Livrais
             $changestat = $statutLivraisonRepository->findOneBy(['livraison' => $livraisonId]);
             $changestat->setStatusTitle('affecte');
             $entityManager->flush();
+            $coursierN = $coursierRepository->findOneBy(['id' => $id]);
+            $maxPoidVehicle=$coursierN->getTransportMean()->getCapacity();
             
-            if($nb+1>=8){
+            if($nb+1>=8 or $poidTour>$maxPoidVehicle){
                 $changestat = $statutCoursierRepository->findOneBy(['coursier' => $id]); 
                 $changestat->setTitreStatut('complet');
                 $entityManager->persist($changestat);

@@ -69,8 +69,10 @@ class Coursier  implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'boolean')]
     private $isVerified = false;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    private ?TransportationMeans $transport_mean = null;
+    #[ORM\ManyToOne(inversedBy: 'coursiers')]
+    private ?TransportationMeans $transportMean = null;
+
+    
 
 
     public function __construct()
@@ -322,15 +324,17 @@ class Coursier  implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getTransportMean(): ?TransportationMeans
     {
-        return $this->transport_mean;
+        return $this->transportMean;
     }
 
-    public function setTransportMean(?TransportationMeans $transport_mean): static
+    public function setTransportMean(?TransportationMeans $transportMean): static
     {
-        $this->transport_mean = $transport_mean;
+        $this->transportMean = $transportMean;
 
         return $this;
     }
+
+    
 
     
 }
