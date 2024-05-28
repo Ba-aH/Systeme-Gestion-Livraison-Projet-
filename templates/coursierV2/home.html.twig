@@ -123,9 +123,15 @@
           </div>
           <div class="col-lg-4" style="width:4000px; ">
             <div class="icon-box" >
-              <i class="bi bi-card-checklist"></i>
-              <h3><h2 >livraisons a faire </h2></h3>
-              <p>livraisons de {{ date|date('Y-m-d ') }}</p>
+              <i class="bi bi-card-checklist"></i>{% if livraisons is not empty %}
+              <h3><h2 >Livraisons a faire </h2></h3>
+              <p>Livraisons de {{ date|date('Y-m-d ') }}</p>
+              
+              
+              {% else %}
+             <h2>Pas de livraison pour aujourd'hui </h2>
+
+              {% endif %}
             </div>
           </div>
           <div class="col-lg-4 mt-4 mt-lg-0">
@@ -376,15 +382,17 @@ function deg2rad(deg) {
 {% endif %}
     </br>  
 <div class="container">
-  <h3> cliquer ici pour commencer </h3>
+{% if livraisons is not empty  %}
+  <h3> cliquer ici pour commencer </h3>{% endif %}
   {% if idtour is not null %}
- <a id="startBtn" href="#" class=""> Start </a>{% else %} <h3> pas de tournée a faire</h3>{% endif %}
+ <a id="startBtn" href="#" class=""> Start </a>{% else %} <h3> </h3>{% endif %}
 </div> </br>  </br>
 
     <section id="services" class="services">
 
      <div class="container">
-     <h1> Vos livraison d'aujourd'hui  </h1>
+     {% if livraisons is not empty  %}
+     <h1> Vos livraison d'aujourd'hui  </h1>{% endif %}
      {# <h1> Votre Tourner des livraisons de Aujourd'hui :  {{ date|date('Y-m-d ') }}  </h1> #}
      
          {% if errorv2 == 1 %}
@@ -400,8 +408,8 @@ function deg2rad(deg) {
 
          {% if error == 1  %}
   
-<h2 class="mb-0">pas de livraison pour aujourd'hui .</h2>
-   
+{# <h2 class="mb-0">pas de livraison pour aujourd'hui .</h2> #}
+   <h2 class="mb-0"></h2>
 {% else %}
        {% set myVariable = 0 %}
       {% set  Variable = 0 %}
@@ -567,7 +575,7 @@ function deg2rad(deg) {
      <div id="map" style="width:100%; height: 50vh"></div>
     <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
-
+{% if livraisons is not empty  %}
 <script>
     // Encode latLongDist array as JSON
     var latLongDistJSON = {{ latLongDist|json_encode|raw }};
@@ -678,7 +686,7 @@ for (var i = 0; i < latLongDist.length; i++) {
 
    
    
-   </script>             
+   </script>   {% endif %}          
 {% set test = 0 %}
   {% for row in status %}
           
