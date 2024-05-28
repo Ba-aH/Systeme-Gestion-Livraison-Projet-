@@ -272,18 +272,29 @@ class CoursierController extends AbstractController
         $livstat= $entityManager->getRepository(StatutLivraison::class)->findOneBy(['livraison' => $livraisonId]);
         $submitButton = $request->request->get('submit_button');
         if ($submitButton === 'normal') {
-            $now = new \DateTimeImmutable('now', new \DateTimeZone('Africa/Tunis'));
+            $noww = new \DateTimeImmutable('now', new \DateTimeZone('Africa/Tunis'));
             $error=2;
             $livstat->setStatusTitle('confirmé');
-            $livstat->setStatusDateModifier($now);
+            $livstat->setStatusDateModifier($noww);
+            $error=2;
+
+         
+            $entityManager->flush();
+
+
+            
             
         } elseif ($submitButton === 'pin') {
           if($pinform== $pinlivraison){
-            $now = new \DateTimeImmutable('now', new \DateTimeZone('Africa/Tunis'));
+            $noww = new \DateTimeImmutable('now', new \DateTimeZone('Africa/Tunis'));
             $error=2;
             $livstat->setStatusTitle('confirmé');
-            $livstat->setStatusDateModifier($now);
+            $livstat->setStatusDateModifier($noww);
             $livstat->setNote( 'confirmé avec code pin ');
+
+          
+            $entityManager->flush();
+
           }else{
             $errorv2=1;
             return $this->redirectToRoute('afficher_tourneesAU',['errorv2' => $errorv2,'start' => 1]);
@@ -329,11 +340,7 @@ class CoursierController extends AbstractController
 
             $entityManager->flush();
             $start=1;
-            $livHistory= new LivraisonHistory;
-            $livHistory->setLivraison($livraison);
-            $livHistory->setEvent("echec au cours de la livraison");
-            $livHistory->setDateAjout($now);
-            $entityManager->persist($livHistory);
+          
             $entityManager->flush();
             return $this->redirectToRoute('afficher_tourneesAU',['start' => $start]);
     }
@@ -359,7 +366,11 @@ class CoursierController extends AbstractController
         $tour -> setNbLivraison($nb-1);
         $livraison->setTourner(null);
         // $livstat->setNote(null);
+
+        $noww = new \DateTimeImmutable('now', new \DateTimeZone('Africa/Tunis'));
+       
         $entityManager->flush();
+
         $start=1;
         return $this->redirectToRoute('afficher_tourneesAU',['start' => $start]);
     }
@@ -666,7 +677,7 @@ $dailysal=$saltoday*5;
                 if ($currentUser instanceof Coursier) {
                     $idcoursier = $currentUser->getId();
                 }
-        $tourneés = $tournerRepository->findBy(['coursier' =>  $idcoursier,'statut_tourner' => 'complet']);
+        $tourneés = $tournerRepository->findBy(['coursier' =>  $idcoursier,'statut_tourner' => ['complet', 'a faire']]);
         $numItems = count($tourneés);
 
         $data = $serializer->serialize([
