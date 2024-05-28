@@ -45,7 +45,7 @@
         type: 'GET',
         url: '{{ path('tourEncours') }}',
         success: function(response) { 
-            tours = response; // Assign the response to 'tours'
+            tours = response; // assign the response to tours variable
             processTours();
                 var toursLength = tours.length;
                 console.log("Number of tours:", toursLength);
@@ -68,7 +68,7 @@
             type: 'GET',
             url: path,
             success: function(deliveryResponse) {
-                var tourWaypoints = []; // Array to store waypoints for the current tour
+                var tourWaypoints = []; // array to store waypoints for the current tour
                 deliveryResponse.forEach(function(item) {
                     if (item.client) {
                         var clientLatLng = L.latLng(item.client.latitude, item.client.longtitude);
@@ -91,12 +91,11 @@
                       
                 });
 
-                // Create routing control for this tour
                 L.Routing.control({
                     waypoints: tourWaypoints,
-                    routeWhileDragging: false, // Disable route dragging
-                    draggableWaypoints: false, // Disable waypoint dragging
-                    show: false, // Hide the control as we don't need to display it on the map
+                    routeWhileDragging: false, 
+                    draggableWaypoints: false, 
+                    show: false, 
                 }).addTo(map);
             },
             error: function(xhr, status, error) {   
@@ -153,7 +152,7 @@ const url = new URL('http://localhost:3000/hub');
 
 <style>
     .warehouse-icon {
-        background-color: #ff5733; /* Change the color as needed */
+        background-color: #ff5733; 
         border-radius: 50%;
         padding: 5px;
         text-align: center;
@@ -167,7 +166,7 @@ const url = new URL('http://localhost:3000/hub');
         position: absolute;
         transform: rotate(-45deg);
     }
-    /* to draw white circle */
+   
     .marker-pin::after {
         content: '';
         width: 24px;
@@ -184,7 +183,7 @@ const url = new URL('http://localhost:3000/hub');
     color: black;
     left: 5%;
     transform: translate(-50%, -50%);
-    padding: 20px; /* Add padding to the text */
+    padding: 20px; 
 }
 
 </style>
