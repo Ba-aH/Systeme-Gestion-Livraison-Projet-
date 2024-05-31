@@ -419,10 +419,12 @@ public function history(Request $request,LivraisonHistoryRepository $livraisonHi
         {
             $token = $this->tokenStorage->getToken();
             $currentUser = $token->getUser();
-            $address = $request->request->get('address');
-            $ville = $request->request->get('ville');
-            $region = $request->request->get('region');
-            $zip = $request->request->get('zipcode');
+            $address = $request->get('address');
+            $ville = $request->get('ville');
+            $region = $request->get('region');
+            $zip = $request->get('zipcode');
+            $lat = $request->get('latitude');
+            $long = $request->get('longtitude');
             $reg = $entityManager->getRepository(Region::class)->findOneBy(['id' =>  $region]);
             if (!empty($address)) {
                 $adr = new Adresse();
@@ -430,6 +432,8 @@ public function history(Request $request,LivraisonHistoryRepository $livraisonHi
                 $adr->setRegion($reg);
                 $adr->setFormattedAddress($address);
                 $adr->setZipCode($zip);
+                $adr->setLongitude($long);
+                $adr->setlatitude($lat);
                 if ($currentUser instanceof Client) {
                     $adr->setClient($currentUser);
                     $entityManager->persist($adr);

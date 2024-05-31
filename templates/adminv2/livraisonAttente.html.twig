@@ -33,68 +33,63 @@
                 </thead>
                 <tbody>
                 {% for livraison in livraisons %}
-            <tr>
-                <td>{{ livraison.reference }}</td>
-                <td>{{ livraison.livraisonDate ? livraison.livraisonDate|date('Y-m-d') : '' }}</td>
-                <td>{{ livraison.prixTotaleLivraison }}</td>
-                <td>{{ livraison.poidLivraison }}</td>
-
-                {# <td>
-                    <a class="modifier" href="{{ path('app_couriers', {'id': livraison.Client.id, 'livraisonId': livraison.id}) }}">Verifier les coursiers disponibles</a>
-                </td> #}
-                       
-                <td>
-                    {% if livraison.availableCouriers is not empty %}
+                <tr>
+                    <td>{{ livraison.reference }}</td>
+                    <td>{{ livraison.livraisonDate ? livraison.livraisonDate|date('Y-m-d') : '' }}</td>
+                    <td>{{ livraison.prixTotaleLivraison }} DT</td>
+                    <td>{{ livraison.poidLivraison }} Kg</td>
+                    <td>
+                        {% if livraison.availableCouriers is not empty %}
                         <button type="button" class="modifier fetchCouriersBtn" data-toggle="modal" data-target="#exampleModalCenter{{ livraison.id }}" data-livraison-id="{{ livraison.id }}">
-                            Verifier les coursiers disponibles
+                            Vérifier les coursiers disponibles
                         </button>
-                    {% else %}
+                        {% else %}
                         <a style="color: red;" href="#">Aucun coursier n'est disponible</a>
-                    {% endif %}
-                    <!-- Modal -->
-                    <div class="modal fade" id="exampleModalCenter{{ livraison.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLongTitle">Liste des couriers disponibles à {{ livraison.getLivraisonRegion(adresseRepository) }} <br> en {{ livraison.livraisonDate ? livraison.livraisonDate|date('Y-m-d') : '' }}</h5>
-                                </div>
-                                <div class="modal-body">
-                                    <table class="table table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th scope="col">Email</th>
-                                                <th scope="col">Nom</th>
-                                                <th scope="col">Prenom</th>
-                                                <th scope="col">Action</th> 
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for coursier in livraison.availableCouriers %}
-                                            <tr>
-                                                {% if coursier is not null %}
+                        {% endif %}
+                        <!-- Modal -->
+                        <div class="modal fade" id="exampleModalCenter{{ livraison.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered custom-modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLongTitle">Liste des coursiers disponibles à {{ livraison.getLivraisonRegion(adresseRepository) }} <br> en {{ livraison.livraisonDate ? livraison.livraisonDate|date('Y-m-d') : '' }}</h5>
+                                    </div>
+                                    <div class="modal-body">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">Email</th>
+                                                    <th scope="col">Nom</th>
+                                                    <th scope="col">Prenom</th>
+                                                    <th scope="col">Télephone</th>
+                                                    <th scope="col">Action</th> 
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for coursier in livraison.availableCouriers %}
+                                                <tr>
+                                                    {% if coursier is not null %}
                                                     <td>{{ coursier.email }}</td>
                                                     <td>{{ coursier.nom }}</td>
                                                     <td>{{ coursier.prenom }}</td>
-                                                <td>
-                                                    <a href="{{ path('affectRoute', {'id': coursier.id, 'livraisonId': livraison.id}) }}">Add to tour</a>
-                                                </td>
-                                                {% endif %}
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                    <td> <p> <a href="tel:+216  {{ coursier.phone }}" style="color: green;">{{ coursier.phone }}</a></p></td> 
+                                                    <td>
+                                                        <a href="{{ path('affectRoute', {'id': coursier.id, 'livraisonId': livraison.id}) }}">Ajouter à sa tournée</a>
+                                                    </td>
+                                                    {% endif %}
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="modal-footer justify-content-start">
+                                        <button type="button" class="btn btn-danger" data-dismiss="modal">Fermer</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </td>
-                
-                
-            </tr>
-            {% endfor %}
+                    </td>
+                </tr>
+                {% endfor %}
             </tbody>
         </table>
           
@@ -107,6 +102,9 @@
   </main><!-- End #main -->
 
 <style> 
+.custom-modal-dialog {
+    max-width: 630px; /* Adjust the width as needed */
+}
   .modifier {
       display: inline-block;
       padding: 10px 20px;

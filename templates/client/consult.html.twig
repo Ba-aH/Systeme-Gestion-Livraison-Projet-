@@ -307,91 +307,108 @@ input[type="submit"]:hover {
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
     <script>
-      const L = window.L;
-      const addressLatitude = {{ adress.latitude }};
-      const addressLongitude = {{ adress.longitude }};
-      const warehouseLatitude = {{ warehouse.latitude }};
-      const warehouseLongitude = {{ warehouse.longitude }};
-      const warehouseName = "{{ warehouse.nom }}";  // Assuming warehouse.nom is a string
+    const L = window.L;
+    const addressLatitude = {{ adress.latitude }};
+    const addressLongitude = {{ adress.longitude }};
+    const warehouseLatitude = {{ warehouse.latitude }};
+    const warehouseLongitude = {{ warehouse.longitude }};
+    const warehouseName = "{{ warehouse.nom }}";  // Assuming warehouse.nom is a string
 
-      var map = L.map('map').setView([addressLatitude, addressLongitude], 8);
+    var map = L.map('map').setView([addressLatitude, addressLongitude], 8);
 
-      L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', { 
-          attribution: 'Leaflet &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors', 
-          maxZoom: 18 
-      }).addTo(map);
+    L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', { 
+        attribution: 'Leaflet &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors', 
+        maxZoom: 18 
+    }).addTo(map);
 
-      var addressMarker = L.marker([addressLatitude, addressLongitude]).addTo(map);
+    var addressMarker = L.marker([addressLatitude, addressLongitude]).addTo(map);
+    var warehouseMarker = L.marker([warehouseLatitude, warehouseLongitude]).addTo(map);
+    var customTooltip = L.tooltip({
+        direction: 'top',
+        permanent: true,
+        opacity: 1
+    }).setContent(warehouseName);
+    warehouseMarker.bindTooltip(customTooltip);
 
-      var warehouseMarker = L.marker([warehouseLatitude, warehouseLongitude]).addTo(map);
-      var customTooltip = L.tooltip({
-          direction: 'top',
-          permanent: true,
-          opacity: 1
-      }).setContent(warehouseName);
-      warehouseMarker.bindTooltip(customTooltip);
+    var routeControl = L.Routing.control({
+        waypoints: [
+            L.latLng(warehouseLatitude, warehouseLongitude),
+            L.latLng(addressLatitude, addressLongitude)
+        ],
+        routeWhileDragging: false,
+        draggableWaypoints: false,
+        show: false
+    }).addTo(map);
 
-      var routeControl = L.Routing.control({
-          waypoints: [
-              L.latLng(warehouseLatitude, warehouseLongitude),
-              L.latLng(addressLatitude, addressLongitude)
-          ],
-          routeWhileDragging: false,
-          draggableWaypoints: false,
-          show: false
-      }).addTo(map);
-
-
-        function showNotification(message, type) {
-          const notificationList = document.getElementById('hero');
-          const notification = document.createElement('div');
-          notification.classList.add('notification-popup', type);
-          notification.innerHTML = `
+    function showNotification(message, type) {
+        const notificationList = document.getElementById('hero');
+        const notification = document.createElement('div');
+        notification.classList.add('notification-popup', type);
+        notification.innerHTML = `
             <span class="close-btn">&times;</span>
             <p>${message}</p>
-          `;
-          notificationList.appendChild(notification);
+        `;
+        notificationList.appendChild(notification);
 
-          const closeButton = notification.querySelector('.close-btn');
-          closeButton.addEventListener('click', () => {
+        const closeButton = notification.querySelector('.close-btn');
+        closeButton.addEventListener('click', () => {
             notification.remove();
-          });
+        });
+    }
 
-          
+    function updateVehicleLocation(newLat, newLng) {
+        routeControl.setWaypoints([
+            L.latLng(newLat, newLng),
+            L.latLng(addressLatitude, addressLongitude)
+        ]);
+        var currentLocation = L.latLng(newLat, newLng);
+        var destinationLocation = L.latLng(addressLatitude, addressLongitude);
+        var distance = currentLocation.distanceTo(destinationLocation);
+
+        var distanceElement = document.createElement('div');
+        distanceElement.className = 'not';
+        distanceElement.textContent = 'Votre commande est à ' + (distance / 1000).toFixed(2) + ' Km';
+        const distanceContainer = document.querySelector('.distanceContainer');
+        distanceContainer.innerHTML = '';
+        distanceContainer.appendChild(distanceElement);
+
+        if (distance < 500) {
+            showNotification("Le livreur est très proche et il devrait arriver dans quelques minutes.", 'success');
         }
-      function updateVehicleLocation(newLat, newLng) {
-          routeControl.setWaypoints([
-              L.latLng(newLat, newLng),
-              L.latLng(addressLatitude, addressLongitude)
-          ]);
-          var currentLocation = L.latLng(newLat, newLng);
-          var destinationLocation = L.latLng(addressLatitude, addressLongitude);
-          var distance = currentLocation.distanceTo(destinationLocation);
-          
-          var distanceElement = document.createElement('div');
-          distanceElement.className = 'not';
-          distanceElement.textContent = 'Votre commande est à ' + (distance / 1000).toFixed(2) + ' Km';
-          const distanceContainer = document.querySelector('.distanceContainer');
-          distanceContainer.innerHTML = '';
-          distanceContainer.appendChild(distanceElement);
-          
-          if(distance<500){
-              showNotification("Le livreur est très proche et il devrait arriver dans quelques minutes.", 'success');         
-          }
+    }
 
-      }
+    const markers = {}; // object of courier markers
 
-      // Code pour écouter les mises à jour de position du coursier
-      const url = new URL('http://localhost:3000/hub');
-      url.searchParams.append('topic', `http://monsite.com/user/{{coursier.email}}`);
-      const eventSource = new EventSource(url);
-      eventSource.onmessage = e => { 
-        if('{{stat.getStatusTitle()}}'=='en cours'){
+    // update coursier position
+    const url = new URL('http://localhost:3000/hub');
+    url.searchParams.append('topic', `http://monsite.com/user/{{coursier.email}}`);
+    const eventSource = new EventSource(url);
+    eventSource.onmessage = e => { 
+        if ('{{stat.getStatusTitle()}}' === 'en cours') {
             const data = JSON.parse(e.data);
-            updateVehicleLocation(data.positionHistoryLat, data.positionHistoryLong); 
-            console.log(data);
-          }
-      }
+            updateVehicleLocation(data.positionHistoryLat, data.positionHistoryLong);
+
+            var newCoordinates = L.latLng(data.positionHistoryLat, data.positionHistoryLong); 
+            if (!markers[data.tourner]) {
+                markers[data.tourner] = L.marker(newCoordinates).addTo(map);
+            } else {
+                markers[data.tourner].setLatLng(newCoordinates);
+            }
+
+            var tooltipContent = 'Coursier: ' + data.coursier;
+            var customTooltip = L.tooltip({
+                direction: 'top',
+                permanent: true,
+                opacity: 1
+            }).setContent(tooltipContent);
+
+            markers[data.tourner].bindTooltip(customTooltip).openTooltip();
+            if (map.hasLayer(warehouseMarker)) {
+                map.removeLayer(warehouseMarker);
+            }
+            console.log(data);   
+        }   
+    }
 </script>
 {% else %}
 </div>

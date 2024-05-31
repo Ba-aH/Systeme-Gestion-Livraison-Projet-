@@ -373,12 +373,16 @@
             var address = document.getElementById('newAddressInput').value;
             var ville = document.getElementById('newVilleInput').value;
             var region = document.getElementById('newRegionInput').value;
-              var zipcode = document.getElementById('zipcodeInput').value;
+            var zipcode = document.getElementById('zipcodeInput').value;
+            var lat = document.getElementById('latitude').value;
+            var long = document.getElementById('longitude').value;
             var data = {
                 address: address,
                 ville: ville,
                 region: region,
-                zipcode: zipcode
+                zipcode: zipcode,
+                latitude: lat,
+                longtitude: long
             };  
             $.ajax({
                 type: 'POST',
