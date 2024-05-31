@@ -521,6 +521,7 @@ class AdministratorController extends AbstractController
         return $this->render('adminv2/coursierpath.html.twig', [
                              'tour' => $tour, 
                              'adresses'=> $adresses,
+                             'livs'=>$livs
                             ]);
      }
 
