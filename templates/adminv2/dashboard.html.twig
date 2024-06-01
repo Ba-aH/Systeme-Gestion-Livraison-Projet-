@@ -39,7 +39,7 @@
                     </div>
                     <div class="ps-3">
                       <h6>{{commande}}</h6>
-                      <span class="text-success small pt-1 fw-bold">{{commande}}</span> <span class="text-muted small pt-2 ps-1">Commandes en totale</span>
+                      <span class="text-success small pt-1 fw-bold">{{commande}} Commandes</span><br> <span class="text-muted small pt-2 ps-1"> en totale</span>
 
                     </div>
                   </div>
@@ -88,7 +88,7 @@
                     </div>
                     <div class="ps-3">
                       <h6>{{clients}}</h6>
-                      <span class="text-danger small pt-1 fw-bold">{{clients}}</span> <span class="text-muted small pt-2 ps-1">clients en totale</span>
+                      <span class="text-danger small pt-1 fw-bold">{{clients}} Clients</span><br> <span class="text-muted small pt-2 ps-1"> en totale</span>
                       
                     </div>
                       
@@ -163,10 +163,14 @@
                     <tbody>
                      {% for liv in recentliv %}
                       <tr>
-                       
                         <th scope="row"><a href="#">{{liv.reference}}</a></th>
                         <td>{{liv.client.username}}</td>
-                        <td><a href="#" class="text-primary">{{liv.tourner.coursier.username}}</a></td>
+                        {% if liv.tourner and liv.tourner.coursier %}
+                        <td> <a href="#" class="text-primary">{{ liv.tourner.coursier.username }}</a></td>
+                        {% else %}
+                        <td><span>Aucun coursier disponible</span></td>
+                        {% endif %}
+                        {# <td><a href="#" class="text-primary">{{liv.tourner.coursier.username}}</a></td> #}
                         <td>{{liv.getPrixTotaleLivraison()}}</td>
                         <td><span class="badge bg-success">{{liv.getLivraisonDate()|date('Y-m-d ') }}</span></td>
                       </tr>
