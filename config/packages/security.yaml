@@ -75,8 +75,8 @@ security:
     access_control:
         - { path: ^/administrator, roles: ROLE_ADMIN }
         # - { path: ^/home, roles: ROLE_USER }
-        - { path: ^/coursier, roles: ROLE_USER }
-        - { path: ^/client, roles: ROLE_USER }
+        - { path: ^/coursier, roles: ROLE_COURSIER }
+        - { path: ^/client, roles: ROLE_CLIENT }
         - { path: '^/administrator/add-admin', roles: ROLE_SUPER_ADMIN }
 
 when@test:
