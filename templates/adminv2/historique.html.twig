@@ -88,6 +88,7 @@
                     <th scope="col">Coursier</th>
                     <th scope="col">Frais</th>
                     <th scope="col">Date </th>
+                    <th scope="col">Action </th>
                   
                   </tr>
                 </thead>
@@ -97,7 +98,8 @@
                             <td>{{ history.livraison.reference }}</td>
                             <td>{{ history.livraison.tourner.coursier.nom }} {{ history.livraison.tourner.coursier.prenom }}</td>
                             <td>${{ history.livraison.prixTotaleLivraison }}</td>
-                            <td>{{ history.livraison.livraisonDate ? history.livraison.livraisonDate|date('Y-m-d') : ''  }}</td>                           
+                            <td>{{ history.livraison.livraisonDate ? history.livraison.livraisonDate|date('Y-m-d') : ''  }}</td>
+                            <td>{{ history.event}}</td>                          
                         </tr>
                             {% else %}
                                 <tr>

@@ -334,10 +334,10 @@ class CoursierController extends AbstractController
            $livstat->setRaisonEchec($reason);}
                
             else{
-           $reason= $entityManager->getRepository(RaisonsEchec::class)->findOneBy(['id' => $idreason]);
+            $reason= $entityManager->getRepository(RaisonsEchec::class)->findOneBy(['id' => $idreason]);
             $livstat->setRaisonEchec($reason);}
             
-            $livraison->setTourner(null);
+            // $livraison->setTourner(null);
         }
 
 
@@ -656,6 +656,17 @@ $dailysal=$saltoday*5;
             $id = $request->get('id');
             $livstat= $entityManager->getRepository(Tourner::class)->findOneBy(['id' => $id]);
             $livstat->setStatutTourner('en cours');
+           
+            $liv = $entityManager->getRepository(StatutLivraison::class)->findAll();
+            foreach ($liv as $item) {
+            if($item->getLivraison()->getTourner()->getId()== $livstat->getId()){
+            $item->setStatusTitle('en cours');
+            $item->setDisponibilité(0);
+
+           }
+
+            }
+
             $entityManager->flush();
             $start=1;
             return $this->redirectToRoute('afficher_tourneesAU',['start' => $start]);
