@@ -97,7 +97,7 @@
     <div class="container">
 
       <ol>
-        <li><a href="index.html">Home</a></li>
+        <li><a href="#">Home</a></li>
         <li>livrer</li>
       </ol>
       <h2>Livraison prévue pour aujourd'hui</h2>
@@ -509,7 +509,7 @@ function deg2rad(deg) {
 </script>
 
 {% set a = status[(loop.index)-1] %}
-   {% if a == 'confirmé'  %}
+   {% if a == 'confirmé' or a == 'echec' %}
 <div class="widget-49-meeting-action">
 <a href="{{ path('details', {'id': livraison.id}) }}"  class="btn btn-sm btn-flash-border-primary">details </a>
 

@@ -659,11 +659,13 @@ $dailysal=$saltoday*5;
            
             $liv = $entityManager->getRepository(StatutLivraison::class)->findAll();
             foreach ($liv as $item) {
+                if ($item->getLivraison()->getTourner()!=null){
             if($item->getLivraison()->getTourner()->getId()== $livstat->getId()){
             $item->setStatusTitle('en cours');
             $item->setDisponibilité(0);
 
-           }
+                }
+            }
 
             }
 
