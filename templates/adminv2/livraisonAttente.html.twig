@@ -44,7 +44,7 @@
                             Vérifier les coursiers disponibles
                         </button>
                         {% else %}
-                        <a style="color: red;" href="#">Aucun coursier n'est disponible</a>
+                        <a style="color: red;" href="#">Aucun coursier n'est disponible en {{livraison.getLivraisonRegion(adresseRepository)}}</a>
                         {% endif %}
                         <!-- Modal -->
                         <div class="modal fade" id="exampleModalCenter{{ livraison.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">

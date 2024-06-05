@@ -439,11 +439,13 @@ class AdministratorController extends AbstractController
     }
 
     #[Route('/tarcking/couriers', name: 'trackCoursier')]
-    public function trackCoursier(): Response
+    public function trackCoursier(TournerRepository $tournerRepository): Response
     {
-        
-        return $this->render('adminv2/suivieTours.html.twig');
-    }
+        $toursEC=$tournerRepository->findBy(['statut_tourner'=>'en cours']);
+        return $this->render('adminv2/suivieTours.html.twig',[
+           'toursEC' => $toursEC,
+        ]);
+    }   
 
 
     #[Route('/perdus', name: 'perdus', methods: ['get'])]
