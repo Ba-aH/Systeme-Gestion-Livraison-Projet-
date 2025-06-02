@@ -1,5 +1,3 @@
-# 8-a-M
-## First Commit
 
 Final Year Project: Real-Time Delivery Management System with Smart Tracking
 
